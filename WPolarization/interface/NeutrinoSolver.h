@@ -61,11 +61,11 @@ public:
 
     virtual void End();
 private:
-    double ETMiss[2];
-    double BPt[4];
-    double BBarPt[4];
-    double LPPt[4];
-    double LMPt[4];
+//    double ETMiss[2];
+//    double BPt[4];
+//    double BBarPt[4];
+//    double LPPt[4];
+//    double LMPt[4];
 
     vector<double> pnux;
     vector<double> pnuy;

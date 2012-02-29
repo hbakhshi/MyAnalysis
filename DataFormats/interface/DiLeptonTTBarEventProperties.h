@@ -97,20 +97,11 @@ namespace TopAnalysis {
         template<bool Gen>
         class EffectiveMass : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
-            string SolverName;
-            TTBarDileptonicEvent::SolverResults::solutions Solution;
-            EffectiveMass(string solverName = "" , TTBarDileptonicEvent::SolverResults::solutions solution = TTBarDileptonicEvent::SolverResults::MinEffMass) : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("TTBarEffectiveMass", "TTBar Effective Mass", 0, 1000, 1000, "TTBarDileptonicEvent", 1) {
+            EffectiveMass() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("TTBarEffectiveMass", "TTBar Effective Mass", 0, 1000, 1000, "TTBarDileptonicEvent", 1) {
                 if (Gen) {
                     this->PropertyName = ("Gen" + this->PropertyName);
                     this->PropertyTitle = ("Gen " + this->PropertyTitle);
                     this->PropertyID = 2;
-                }
-                else{
-                    if(solverName == "")
-                        throw Exception("Reco EffectiveMass property needs solverName property ");
-                    
-                    SolverName = solverName;
-                    Solution = solution;
                 }
             };
             
@@ -120,7 +111,6 @@ namespace TopAnalysis {
                 if(Gen)
                     return (t->TOP_Gen.getTop() + t->TOPBar_Gen.getTop()).M();
                 else{
-                    t->SelectASolution(SolverName , Solution);
                     return (t->Top_Rec->getTop() + t->TopBar_Rec->getTop()).M();
                 }
             };
@@ -266,7 +256,7 @@ namespace TopAnalysis {
                 TLorentzVector rec;
 
                 const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t_gen = (TopAntiTop == 1 ? &(t->TOP_Gen) : &(t->TOPBar_Gen));
-                const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t_rec = (TopAntiTop == 1 ? &(t->Top_Rec) : &(t->TopBar_Rec));
+                const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t_rec = (TopAntiTop == 1 ? (t->Top_Rec) : (t->TopBar_Rec));
 
                 switch (obj) {
                     case 1:

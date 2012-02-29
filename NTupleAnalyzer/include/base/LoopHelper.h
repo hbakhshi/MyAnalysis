@@ -309,7 +309,8 @@ void LoopHelper::Start(RunInfo info) throw (LoopExceptions) {
         tAllRuns->AutoSave();
     }
 
-    file_tree->Close();
+    if(file_tree != NULL)
+        file_tree->Close();
     
     cout << "\nNumber of total events anlyzed : " << Total << endl;
 }

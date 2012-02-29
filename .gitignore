@@ -2,3 +2,6 @@
 obj/*
 bin/*
 external/*/*
+/nbproject/private/
+/data/
+*.pyc

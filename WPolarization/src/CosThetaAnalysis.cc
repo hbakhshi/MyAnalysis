@@ -9,7 +9,9 @@
 #include "TLorentzVector.h"
 
 CosThetaAnalysis::CosThetaAnalysis(const edm::ParameterSet& ps) : BASE(ps),
-AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")) {
+AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")),
+solverSolution((TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions)(ps.getParameter<int >("SolverSolution"))),
+solverName(ps.getParameter<string >("SolverName")) {
 
     hCosThetaPosLepton = new TH1D("hCosThetaPosLepton", "cos(#theta) for positive Lepton", 200, -1., 1.);
     hCosThetaNegLepton = new TH1D("hCosThetaNegLepton", "cos(#theta) for negative Lepton", 200, -1., 1.);
@@ -21,7 +23,7 @@ CosThetaAnalysis::~CosThetaAnalysis() {
 }
 
 bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
-    if (!ev->hasBeenSolved)
+    if (!ev->SelectASolution(solverName, solverSolution))
         return false;
 
     double evtType = EventTypeReader.ReadValue(ev);
@@ -30,16 +32,16 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
     }
 
     //for first lepton :
-    double costheta_top = ev->Top_Rec.CosTheta();
+    double costheta_top = ev->Top_Rec->CosTheta();
     hCosThetaPosLepton->Fill(costheta_top);
 
-    double costheta_tbar = ev->TopBar_Rec.CosTheta();
+    double costheta_tbar = ev->TopBar_Rec->CosTheta();
     hCosThetaNegLepton->Fill(costheta_tbar);
 
-    if (ev->Top_Rec.W.lepton.Pt() > ev->TopBar_Rec.W.lepton.Pt()) {
+    if (ev->Top_Rec->W.lepton.Pt() > ev->TopBar_Rec->W.lepton.Pt()) {
         hCosTheta1stLepton->Fill(costheta_top);
         hCosTheta2ndLepton->Fill(costheta_tbar);
-    }else{
+    } else {
         hCosTheta1stLepton->Fill(costheta_tbar);
         hCosTheta2ndLepton->Fill(costheta_top);
     }

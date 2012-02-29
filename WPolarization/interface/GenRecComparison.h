@@ -30,6 +30,8 @@ public:
 
     bool Run(TopAnalysis::TTBarDileptonicEvent* ev);
 
+    string solverName ;
+    TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions solverSolution;
 private:
 
 };

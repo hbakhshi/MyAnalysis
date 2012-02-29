@@ -18,7 +18,10 @@ public:
 
     TopAnalysis::DiLeptonTTBarEventProperties::EventType EventTypeReader;
     std::vector<double> AcceptedEventTypes;
-
+    
+    string solverName;
+    TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions solverSolution;
+    
     TH1* hCosThetaPosLepton;
     TH1* hCosThetaNegLepton;
     TH1* hCosTheta1stLepton;

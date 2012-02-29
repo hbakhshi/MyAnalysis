@@ -2,7 +2,83 @@
 #include "../interface/DiLeptonEventProperties.h"
 #include "DataFormats/interface/DiLeptonTTBarEventProperties.h"
 
-void TopAnalysis::TTBarDileptonicEvent::SolverResults::AnalyzeSolutions() {
+
+#include "WPolarization/interface/DileptonAnalyticalSolver.h"
+
+TopAnalysis::TTBarDileptonicEvent::SolverResults::SolverResults() : Top_Rec(+1),
+TopBar_Rec(-1),
+Top_Gen(NULL),
+TopBar_Gen(NULL),
+NumberOfSolutions(0) {
+
+}
+
+TopAnalysis::TTBarDileptonicEvent::SolverResults::SolverResults(string name, math::XYZTLorentzVector the_b, math::XYZTLorentzVector the_bbar,
+        math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen) :
+Top_Rec(+1),
+TopBar_Rec(-1),
+Top_Gen(tgen),
+TopBar_Gen(tbargen),
+NumberOfSolutions(0) {
+    this->Name = name;
+
+    Top_Rec.b.SetXYZT(the_b.X(), the_b.Y(), the_b.Z(), the_b.T());
+    Top_Rec.W.lepton.SetXYZT(the_lplus.X(), the_lplus.Y(), the_lplus.Z(), the_lplus.T());
+
+    TopBar_Rec.b.SetXYZT(the_bbar.X(), the_bbar.Y(), the_bbar.Z(), the_bbar.T());
+    TopBar_Rec.W.lepton.SetXYZT(the_lminus.X(), the_lminus.Y(), the_lminus.Z(), the_lminus.T());
+
+    this->MET.Set(met_x, met_y);
+
+    ETMiss[0] = MET.X();
+    ETMiss[1] = MET.Y();
+    BPt[1] = Top_Rec.b.X();
+    BPt[2] = Top_Rec.b.Y();
+    BPt[3] = Top_Rec.b.Z();
+    BPt[0] = Top_Rec.b.T();
+    BBarPt[1] = TopBar_Rec.b.X();
+    BBarPt[2] = TopBar_Rec.b.Y();
+    BBarPt[3] = TopBar_Rec.b.Z();
+    BBarPt[0] = TopBar_Rec.b.T();
+    LPPt[1] = Top_Rec.W.lepton.X();
+    LPPt[2] = Top_Rec.W.lepton.Y();
+    LPPt[3] = Top_Rec.W.lepton.Z();
+    LPPt[0] = Top_Rec.W.lepton.T();
+    LMPt[1] = TopBar_Rec.W.lepton.X();
+    LMPt[2] = TopBar_Rec.W.lepton.Y();
+    LMPt[3] = TopBar_Rec.W.lepton.Z();
+    LMPt[0] = TopBar_Rec.W.lepton.T();
+}
+
+void TopAnalysis::TTBarDileptonicEvent::SolverResults::SwapBs() {
+    TLorentzVector tmp(Top_Rec.b);
+    Top_Rec.b = TopBar_Rec.b;
+    TopBar_Rec.b = tmp;
+}
+
+TopAnalysis::TTBarDileptonicEvent::SolverResults* TopAnalysis::TTBarDileptonicEvent::AddSolverResults(string name, int the_b_index, int the_bbar_index) {
+    TopAnalysis::TTBarDileptonicEvent::SolverResults results(name, Jets[the_b_index], Jets[the_bbar_index],
+            GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
+
+    return & (AllSolutions.insert(std::make_pair(name, results)).first->second);
+}
+
+void TopAnalysis::TTBarDileptonicEvent::SolverResults::SetSolverResultsAndAnalyze(vector<double>* pnux, vector<double>* pnuy, vector<double>* pnuz, vector<double>* pnubx, vector<double>* pnuby, vector<double>* pnubz) {
+
+    NumberOfSolutions = pnux->size();
+    NeutrinoSolutions.clear();
+    NeutrinoBarSolutions.clear();
+
+    for (int i = 0; i < NumberOfSolutions; i++) {
+        TLorentzVector lnu;
+        lnu.SetXYZM(pnux->at(i), pnuy->at(i), pnuz->at(i), 0.0);
+        NeutrinoSolutions.push_back(lnu);
+
+        TLorentzVector lnub;
+        lnub.SetXYZM(pnubx->at(i), pnuby->at(i), pnubz->at(i), 0.0);
+        NeutrinoBarSolutions.push_back(lnub);
+    }
+
     SolEffMass.clear();
     SolTopDR.clear();
     SolTopBarDR.clear();
@@ -11,62 +87,120 @@ void TopAnalysis::TTBarDileptonicEvent::SolverResults::AnalyzeSolutions() {
     SolNuBarChi2.clear();
     SolNuNuBarChi2.clear();
 
-    TopAnalysis::DiLeptonTTBarEventProperties::EffectiveMass<false> effMass;
-    TopAnalysis::DiLeptonTTBarEventProperties::GenRecComp<1 , 1 , 1 > topDr;
-    TopAnalysis::DiLeptonTTBarEventProperties::GenRecComp<2 , 1 , 1 > topBDr;
-    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* ttbarDr = topDr + &topBDr;
-    TopAnalysis::DiLeptonTTBarEventProperties::GenRecComp<1 , 5 , 5 > nuchi2;
-    TopAnalysis::DiLeptonTTBarEventProperties::GenRecComp<2 , 5 , 5 > nubchi2;
-    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* nunubarchi2 = sqrt( * (nuchi2*(&nuchi2)) + nubchi2* (&nubchi2) );
-    
+    TLorentzVector top;
+    TLorentzVector top_bar;
+
+    TLorentzVector topG;
+    TLorentzVector top_barG;
+
+    TLorentzVector nu;
+    TLorentzVector nu_bar;
+
+    TLorentzVector nuG;
+    TLorentzVector nu_barG;
 
     for (int i = 0; i < NumberOfSolutions; i++)
-        if (SelectASolution(i)) {
-            SolEffMass[effMass.ReadValue(this)] = i;
-            SolTopDR[topDr.ReadValue(this)] = i;
-            SolTopBarDR[topBDr.ReadValue(this)] = i;
-            SolTTBarDR[ttbarDr->ReadValue(this)] = i;
-            SolNuChi2[nuchi2.ReadValue(this)] = i;
-            SolNuBarChi2[nubchi2.ReadValue(this)] = i;
-            SolNuNuBarChi2[nunubarchi2->ReadValue(this)] = i;
+        if (GetTops((solutions) (i + 100))) {
+            top = Top_Rec.getTop();
+            top_bar = TopBar_Rec.getTop();
+
+            topG = Top_Gen->getTop();
+            top_barG = TopBar_Gen->getTop();
+
+            double effMass = (top + top_bar).M();
+            SolEffMass[effMass] = i;
+
+            double topDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top, topG);
+            double topBDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top_bar, top_barG);
+
+            SolTopDR[topDr] = i;
+            SolTopBarDR[topBDr] = i;
+            SolTTBarDR[topDr + topBDr] = i;
+
+            nu = Top_Rec.W.neutrino;
+            nu_bar = TopBar_Rec.W.neutrino;
+
+            nuG = Top_Gen->W.neutrino;
+            nu_barG = TopBar_Gen->W.neutrino;
+
+
+            double nuChi2 = (nu - nuG).Mag();
+            double nubChi2 = (nu_bar - nu_barG).Mag();
+
+            SolNuChi2[ nuChi2 ] = i;
+            SolNuBarChi2[nubChi2] = i;
+            SolNuNuBarChi2[ sqrt(nuChi2 * nuChi2 + nubChi2 * nubChi2) ] = i;
         }
 }
 
-TopAnalysis::TTBarDileptonicEvent::SolverResults::SolverResults(vector<double> pnux, vector<double> pnuy, vector<double> pnuz, vector<double> pnubx, vector<double> pnuby, vector<double> pnubz) {
-    NumberOfSolutions = pnux.size();
-    NeutrinoSolutions.clear();
-    NeutrinoBarSolutions.clear();
-
-    for (int i = 0; i < NumberOfSolutions; i++) {
-        TLorentzVector lnu;
-        lnu.SetXYZM(pnux[i], pnuy[i], pnuz[i], 0.0);
-        NeutrinoSolutions.push_back(lnu);
-
-        TLorentzVector lnub;
-        lnub.SetXYZM(pnubx[i], pnuby[i], pnubz[i], 0.0);
-        NeutrinoBarSolutions.push_back(lnub);
-    }
-}
-
-bool TopAnalysis::TTBarDileptonicEvent::SelectASolution(string name, SolverResults::solutions solution) {
+bool TopAnalysis::TTBarDileptonicEvent::SolverResults::GetTops(solutions solution, TopDecayChain** top, TopDecayChain** topbar) {
+    int solution_id(-1);
     if (NumberOfSolutions == 0)
         return false;
 
-    if (solution >= NumberOfSolutions || solution < 0)
+    if (NumberOfSolutions != NeutrinoSolutions.size())
+        cout << NumberOfSolutions << "  " << NeutrinoSolutions.size() << endl;
+
+    switch (solution) {
+        case MinEffMass:
+            solution_id = SolEffMass.begin()->second;
+            break;
+        case MinNuChi2:
+            solution_id = SolNuChi2.begin()->second;
+            break;
+        case MinNuNubarChi2:
+            solution_id = SolNuNuBarChi2.begin()->second;
+            break;
+        case MinNubarChi2:
+            solution_id = SolNuBarChi2.begin()->second;
+            break;
+        case MinTTbarDR:
+            solution_id = SolTTBarDR.begin()->second;
+            break;
+        case MinTopDR:
+            solution_id = SolTopDR.begin()->second;
+            break;
+        case MinTopbarDR:
+            solution_id = SolTopBarDR.begin()->second;
+            break;
+        default:
+            solution_id = (int) solution - 100;
+            break;
+    }
+
+    if (solution_id >= NumberOfSolutions)
         return false;
 
-    Top_Rec.W.neutrino = this->AllSolutions[name].NeutrinoSolutions[solution];
-    TopBar_Rec.W.neutrino = NeutrinoBarSolutions[solution];
+    this->Top_Rec.W.neutrino.SetXYZT(NeutrinoSolutions[solution_id].X(), NeutrinoSolutions[solution_id].Y(), NeutrinoSolutions[solution_id].Z(), NeutrinoSolutions[solution_id].T());
+    this->TopBar_Rec.W.neutrino.SetXYZT(NeutrinoBarSolutions[solution_id].X(), NeutrinoBarSolutions[solution_id].Y(), NeutrinoBarSolutions[solution_id].Z(), NeutrinoBarSolutions[solution_id].T());
+
+    if (top != NULL)
+        (*top) = &Top_Rec;
+    if (topbar != NULL)
+        (*topbar) = &TopBar_Rec;
+
+    return true;
+}
+
+bool TopAnalysis::TTBarDileptonicEvent::SelectASolution(string name, SolverResults::solutions solution) {
+    if (this->AllSolutions[name].NumberOfSolutions == 0)
+        return false;
+
+    if (solution >= this->AllSolutions[name].NumberOfSolutions || solution < 0)
+        return false;
+
+    this->AllSolutions[name].GetTops(solution, & this->Top_Rec, & this->TopBar_Rec);
+
     return true;
 }
 
 TopAnalysis::TTBarDileptonicEvent::TTBarDileptonicEvent() : DiLepton(),
 TOP_Gen(+1),
 TOPBar_Gen(-1),
-Top_Rec(+1),
-TopBar_Rec(-1),
-GenDecayMode(NOT_SET),
-RecDecayMode(NOT_SET) {
+Top_Rec(NULL),
+TopBar_Rec(NULL) {
+    GenDecayMode = NOT_SET;
+    RecDecayMode = NOT_SET;
     hasBeenSolved = false;
     hasGenInfo = false;
 };
@@ -91,17 +225,17 @@ void TopAnalysis::TTBarDileptonicEvent::SetLeptons(Lepton* lep1, Lepton* lep2) {
         this->RecDecayMode = DiMu;
 
 
-    math::XYZTLorentzVector ll1 = lep1->get4Vector(0);
-    math::XYZTLorentzVector ll2 = lep2->get4Vector(0);
-
-    if (lep1->Charge > 0) //it is for T
-    {
-        Top_Rec.W.lepton.SetXYZT(ll1.x(), ll1.y(), ll1.z(), ll1.t());
-        TopBar_Rec.W.lepton.SetXYZT(ll2.x(), ll2.y(), ll2.z(), ll2.t());
-    } else {
-        TopBar_Rec.W.lepton.SetXYZT(ll1.x(), ll1.y(), ll1.z(), ll1.t());
-        Top_Rec.W.lepton.SetXYZT(ll2.x(), ll2.y(), ll2.z(), ll2.t());
-    }
+    //    math::XYZTLorentzVector ll1 = lep1->get4Vector(0);
+    //    math::XYZTLorentzVector ll2 = lep2->get4Vector(0);
+    //
+    //    if (lep1->Charge > 0) //it is for T
+    //    {
+    //        Top_Rec.W.lepton.SetXYZT(ll1.x(), ll1.y(), ll1.z(), ll1.t());
+    //        TopBar_Rec.W.lepton.SetXYZT(ll2.x(), ll2.y(), ll2.z(), ll2.t());
+    //    } else {
+    //        TopBar_Rec.W.lepton.SetXYZT(ll1.x(), ll1.y(), ll1.z(), ll1.t());
+    //        Top_Rec.W.lepton.SetXYZT(ll2.x(), ll2.y(), ll2.z(), ll2.t());
+    //    }
 }
 
 double TopAnalysis::TTBarDileptonicEvent::TopDecayChain::CosTheta() const {

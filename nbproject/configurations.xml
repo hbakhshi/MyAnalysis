@@ -1,0 +1,3172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="80">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="Analysis" root=".">
+      <df name="BaseAnalysis">
+        <df name="interface">
+          <in>CorrelationHandler.h</in>
+          <in>DeltaR.h</in>
+          <in>EfficiencyExt.h</in>
+          <in>EfficiencyH1.h</in>
+          <in>EfficiencyH2.h</in>
+          <in>EfficiencyHandler.h</in>
+          <in>EfficiencyHandlerReader.h</in>
+          <in>EfficiencyPlotter.h</in>
+          <in>Histograms.h</in>
+          <in>HistogramsManager.h</in>
+          <in>IntLumHandler.h</in>
+          <in>ObjectIDHandler.h</in>
+          <in>ObjectProperty.h</in>
+          <in>PropertyOperatorResult.h</in>
+          <in>StyleManager.h</in>
+          <in>TH1Ext.h</in>
+          <in>TH2Ext.h</in>
+          <in>TreeCreator.h</in>
+          <in>TreeMVAReader.h</in>
+          <in>TreeMVARunner.h</in>
+          <in>UnaryOperators.h</in>
+          <in>tdrStyle.h</in>
+        </df>
+        <df name="src">
+          <in>EfficiencyExt.cc</in>
+          <in>EfficiencyH1.cc</in>
+          <in>ObjectIDHandler.cc</in>
+          <in>Tester.cc</in>
+          <in>TreeCreator.cc</in>
+        </df>
+      </df>
+      <df name="CMSSW">
+        <df name="CLHEPINCLUDE">
+          <df name="CLHEP">
+            <df name="Units">
+              <in>GlobalPhysicalConstants.h</in>
+              <in>GlobalSystemOfUnits.h</in>
+              <in>PhysicalConstants.h</in>
+              <in>SystemOfUnits.h</in>
+              <in>defs.h</in>
+            </df>
+          </df>
+        </df>
+        <df name="src">
+          <df name="DataFormats">
+            <df name="BeamSpot">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>BeamSpot.h</in>
+              </df>
+              <df name="src">
+                <in>BeamSpot.cc</in>
+                <in>classes.h</in>
+              </df>
+            </df>
+            <df name="Math">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>AlgebraicROOTObjects.h</in>
+                <in>CholeskyDecomp.h</in>
+                <in>Error.h</in>
+                <in>FastMath.h</in>
+                <in>LorentzVector.h</in>
+                <in>LorentzVectorFwd.h</in>
+                <in>Matrix.h</in>
+                <in>Point3D.h</in>
+                <in>ProjectMatrix.h</in>
+                <in>SSEArray.h</in>
+                <in>SSERot.h</in>
+                <in>SSEVec.h</in>
+                <in>Vector.h</in>
+                <in>Vector3D.h</in>
+                <in>angle.h</in>
+                <in>deltaPhi.h</in>
+                <in>deltaR.h</in>
+                <in>invertPosDefMatrix.h</in>
+                <in>normalizedPhi.h</in>
+                <in>sse_mathfun.h</in>
+              </df>
+              <df name="src">
+                <in>FastMath.cc</in>
+                <in>SSEVec.cc</in>
+                <in>classes.h</in>
+                <in>normalizedPhi.cc</in>
+              </df>
+              <df name="test">
+                <in>FastMath_t.cpp</in>
+                <in>Matrices_t.cpp</in>
+                <in>ProjectMatrix_t.cpp</in>
+                <in>ReadMath.cc</in>
+                <in>ReadMath.h</in>
+                <in>SSEMathFun_t.cpp</in>
+                <in>SSEVec_t.cpp</in>
+                <in>SealModule.cc</in>
+                <in>WriteMath.cc</in>
+                <in>WriteMath.h</in>
+                <in>sign_t.cpp</in>
+              </df>
+            </df>
+            <df name="Provenance">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>BranchChildren.h</in>
+                <in>BranchDescription.h</in>
+                <in>BranchDescriptionIndex.h</in>
+                <in>BranchEntryDescription.h</in>
+                <in>BranchID.h</in>
+                <in>BranchIDList.h</in>
+                <in>BranchIDListHelper.h</in>
+                <in>BranchIDListRegistry.h</in>
+                <in>BranchKey.h</in>
+                <in>BranchListIndex.h</in>
+                <in>BranchMapper.h</in>
+                <in>BranchType.h</in>
+                <in>ConstBranchDescription.h</in>
+                <in>ESRecordAuxiliary.h</in>
+                <in>EntryDescription.h</in>
+                <in>EntryDescriptionID.h</in>
+                <in>EntryDescriptionRegistry.h</in>
+                <in>EventAux.h</in>
+                <in>EventAuxiliary.h</in>
+                <in>EventEntryDescription.h</in>
+                <in>EventEntryInfo.h</in>
+                <in>EventID.h</in>
+                <in>EventProcessHistoryID.h</in>
+                <in>EventRange.h</in>
+                <in>EventSelectionID.h</in>
+                <in>FileFormatVersion.h</in>
+                <in>FileID.h</in>
+                <in>FileIndex.h</in>
+                <in>Hash.h</in>
+                <in>HashedTypes.h</in>
+                <in>History.h</in>
+                <in>IndexIntoFile.h</in>
+                <in>LuminosityBlockAux.h</in>
+                <in>LuminosityBlockAuxiliary.h</in>
+                <in>LuminosityBlockID.h</in>
+                <in>LuminosityBlockRange.h</in>
+                <in>MinimalEventID.h</in>
+                <in>ModuleDescription.h</in>
+                <in>ParameterSetBlob.h</in>
+                <in>ParameterSetID.h</in>
+                <in>Parentage.h</in>
+                <in>ParentageID.h</in>
+                <in>ParentageRegistry.h</in>
+                <in>PassID.h</in>
+                <in>ProcessConfiguration.h</in>
+                <in>ProcessConfigurationID.h</in>
+                <in>ProcessConfigurationRegistry.h</in>
+                <in>ProcessHistory.h</in>
+                <in>ProcessHistoryID.h</in>
+                <in>ProcessHistoryRegistry.h</in>
+                <in>ProductID.h</in>
+                <in>ProductIDToBranchID.h</in>
+                <in>ProductLookupIndex.h</in>
+                <in>ProductProvenance.h</in>
+                <in>ProductRegistry.h</in>
+                <in>ProductStatus.h</in>
+                <in>ProductTransientIndex.h</in>
+                <in>Provenance.h</in>
+                <in>ProvenanceFwd.h</in>
+                <in>ReleaseVersion.h</in>
+                <in>RunAux.h</in>
+                <in>RunAuxiliary.h</in>
+                <in>RunID.h</in>
+                <in>RunLumiEntryInfo.h</in>
+                <in>Selections.h</in>
+                <in>Timestamp.h</in>
+                <in>Transient.h</in>
+                <in>TransientProductLookupMap.h</in>
+                <in>TransientStreamer.h</in>
+                <in>TypeInBranchType.h</in>
+              </df>
+              <df name="src">
+                <in>BranchChildren.cc</in>
+                <in>BranchDescription.cc</in>
+                <in>BranchEntryDescription.cc</in>
+                <in>BranchID.cc</in>
+                <in>BranchIDListHelper.cc</in>
+                <in>BranchKey.cc</in>
+                <in>BranchMapper.cc</in>
+                <in>BranchType.cc</in>
+                <in>ESRecordAuxiliary.cc</in>
+                <in>EntryDescription.cc</in>
+                <in>EventAux.cc</in>
+                <in>EventAuxiliary.cc</in>
+                <in>EventEntryDescription.cc</in>
+                <in>EventEntryInfo.cc</in>
+                <in>EventID.cc</in>
+                <in>EventRange.cc</in>
+                <in>FileFormatVersion.cc</in>
+                <in>FileID.cc</in>
+                <in>FileIndex.cc</in>
+                <in>Hash.cc</in>
+                <in>History.cc</in>
+                <in>IndexIntoFile.cc</in>
+                <in>LuminosityBlockAux.cc</in>
+                <in>LuminosityBlockAuxiliary.cc</in>
+                <in>LuminosityBlockID.cc</in>
+                <in>LuminosityBlockRange.cc</in>
+                <in>ModuleDescription.cc</in>
+                <in>ParameterSetBlob.cc</in>
+                <in>Parentage.cc</in>
+                <in>ProcessConfiguration.cc</in>
+                <in>ProcessHistory.cc</in>
+                <in>ProductID.cc</in>
+                <in>ProductIDToBranchID.cc</in>
+                <in>ProductProvenance.cc</in>
+                <in>ProductRegistry.cc</in>
+                <in>Provenance.cc</in>
+                <in>RunAux.cc</in>
+                <in>RunAuxiliary.cc</in>
+                <in>RunID.cc</in>
+                <in>RunLumiEntryInfo.cc</in>
+                <in>Timestamp.cc</in>
+                <in>TransientProductLookupMap.cc</in>
+                <in>TransientStreamer.cc</in>
+                <in>classes.h</in>
+              </df>
+              <df name="test">
+                <in>EntryDescription_t.cpp</in>
+                <in>eventid_t.cppunit.cc</in>
+                <in>eventrange_t.cppunit.cc</in>
+                <in>indexIntoFile_t.cppunit.cc</in>
+                <in>lumirange_t.cppunit.cc</in>
+                <in>parametersetid_t.cppunit.cc</in>
+                <in>testRunner.cpp</in>
+                <in>timestamp_t.cppunit.cc</in>
+                <in>transientproductlookupmap_t.cc</in>
+              </df>
+            </df>
+          </df>
+          <df name="FWCore">
+            <df name="MessageLogger">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="examples">
+              </df>
+              <df name="interface">
+                <in>AbstractMLscribe.h</in>
+                <in>ConfigurationHandshake.h</in>
+                <in>ELextendedID.h</in>
+                <in>ELlist.h</in>
+                <in>ELmap.h</in>
+                <in>ELseverityLevel.h</in>
+                <in>ELseverityLevel.icc</in>
+                <in>ELstring.h</in>
+                <in>ErrorObj.h</in>
+                <in>ErrorObj.icc</in>
+                <in>ErrorSummaryEntry.h</in>
+                <in>ExceptionMessages.h</in>
+                <in>JobReport.h</in>
+                <in>LoggedErrorsSummary.h</in>
+                <in>MessageDrop.h</in>
+                <in>MessageLogger.h</in>
+                <in>MessageLoggerQ.h</in>
+                <in>MessageSender.h</in>
+                <in>SilentMLscribe.h</in>
+                <in>ThreadSafeErrorLog.icc</in>
+              </df>
+              <df name="python">
+              </df>
+              <df name="src">
+                <in>AbstractMLscribe.cc</in>
+                <in>ELextendedID.cc</in>
+                <in>ELmap.cc</in>
+                <in>ELseverityLevel.cc</in>
+                <in>ELstring.cc</in>
+                <in>ErrorObj.cc</in>
+                <in>ExceptionMessages.cc</in>
+                <in>JobReport.cc</in>
+                <in>LoggedErrorsSummary.cc</in>
+                <in>MessageDrop.cc</in>
+                <in>MessageLogger.cc</in>
+                <in>MessageLoggerQ.cc</in>
+                <in>MessageSender.cc</in>
+                <in>SilentMLscribe.cc</in>
+                <in>classes.h</in>
+              </df>
+            </df>
+            <df name="ParameterSet">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>ANDGroupDescription.h</in>
+                <in>AllowedLabelsDescription.h</in>
+                <in>AllowedLabelsDescriptionBase.h</in>
+                <in>ConfigurationDescriptions.h</in>
+                <in>DocFormatHelper.h</in>
+                <in>EmptyGroupDescription.h</in>
+                <in>Entry.h</in>
+                <in>FileInPath.h</in>
+                <in>FillDescriptionFromPSet.h</in>
+                <in>FillProductRegistryTransients.h</in>
+                <in>IfExistsDescription.h</in>
+                <in>ORGroupDescription.h</in>
+                <in>ParameterDescription.h</in>
+                <in>ParameterDescriptionBase.h</in>
+                <in>ParameterDescriptionCases.h</in>
+                <in>ParameterDescriptionNode.h</in>
+                <in>ParameterSet.h</in>
+                <in>ParameterSetConverter.h</in>
+                <in>ParameterSetDescription.h</in>
+                <in>ParameterSetDescriptionFiller.h</in>
+                <in>ParameterSetDescriptionFillerBase.h</in>
+                <in>ParameterSetDescriptionFillerPluginFactory.h</in>
+                <in>ParameterSetEntry.h</in>
+                <in>ParameterSetfwd.h</in>
+                <in>ParameterSwitch.h</in>
+                <in>ParameterSwitchBase.h</in>
+                <in>ParameterWildcard.h</in>
+                <in>ParameterWildcardBase.h</in>
+                <in>ProcessDesc.h</in>
+                <in>Registry.h</in>
+                <in>VParameterSetEntry.h</in>
+                <in>XORGroupDescription.h</in>
+                <in>split.h</in>
+                <in>types.h</in>
+              </df>
+              <df name="python">
+              </df>
+              <df name="scripts">
+              </df>
+              <df name="src">
+                <in>ANDGroupDescription.cc</in>
+                <in>AllowedLabelsDescription.cc</in>
+                <in>AllowedLabelsDescriptionBase.cc</in>
+                <in>ConfigurationDescriptions.cc</in>
+                <in>DocFormatHelper.cc</in>
+                <in>EmptyGroupDescription.cc</in>
+                <in>Entry.cc</in>
+                <in>FileInPath.cc</in>
+                <in>FillDescriptionFromPSet.cc</in>
+                <in>FillProductRegistryTransients.cc</in>
+                <in>IfExistsDescription.cc</in>
+                <in>ORGroupDescription.cc</in>
+                <in>ParameterDescription.cc</in>
+                <in>ParameterDescriptionBase.cc</in>
+                <in>ParameterDescriptionCases.cc</in>
+                <in>ParameterDescriptionNode.cc</in>
+                <in>ParameterSet.cc</in>
+                <in>ParameterSetConverter.cc</in>
+                <in>ParameterSetDescription.cc</in>
+                <in>ParameterSetDescriptionFillerBase.cc</in>
+                <in>ParameterSetDescriptionFillerPluginFactory.cc</in>
+                <in>ParameterSetEntry.cc</in>
+                <in>ParameterSwitchBase.cc</in>
+                <in>ParameterWildcard.cc</in>
+                <in>ParameterWildcardBase.cc</in>
+                <in>ProcessDesc.cc</in>
+                <in>Registry.cc</in>
+                <in>VParameterSetEntry.cc</in>
+                <in>XORGroupDescription.cc</in>
+                <in>types.cc</in>
+              </df>
+              <df name="test">
+                <in>IncludeFileFinder_t.cppunit.cc</in>
+                <in>TestFWCoreParameterSetDriver.cpp</in>
+                <in>parameterSetDescription_t.cc</in>
+                <in>ps_t.cppunit.cc</in>
+              </df>
+            </df>
+            <df name="Python">
+              <df name="doc">
+              </df>
+              <df name="src">
+                <in>EventWrapper.cc</in>
+                <in>EventWrapper.h</in>
+                <in>PyModule.cc</in>
+                <in>PythonFilter.cc</in>
+                <in>PythonFilter.h</in>
+                <in>PythonManager.cc</in>
+                <in>PythonManager.h</in>
+                <in>PythonService.cc</in>
+                <in>PythonService.h</in>
+                <in>SealModule.cc</in>
+              </df>
+              <df name="test">
+              </df>
+            </df>
+            <df name="PythonParameterSet">
+              <df name="interface">
+                <in>BoostPython.h</in>
+                <in>MakeParameterSets.h</in>
+                <in>PythonParameterSet.h</in>
+                <in>PythonProcessDesc.h</in>
+                <in>pythonFileToConfigure.h</in>
+              </df>
+              <df name="src">
+                <in>MakeParameterSets.cc</in>
+                <in>PythonModule.h</in>
+                <in>PythonParameterSet.cc</in>
+                <in>PythonProcessDesc.cc</in>
+                <in>PythonWrapper.cc</in>
+                <in>PythonWrapper.h</in>
+                <in>initializeModule.cc</in>
+                <in>initializeModule.h</in>
+                <in>pythonFileToConfigure.cc</in>
+              </df>
+              <df name="test">
+                <in>makeprocess_t.cppunit.cc</in>
+                <in>makepset_t.cppunit.cc</in>
+                <in>processbuilder_t.cppunit.cpp</in>
+                <in>readpsetsfrom_t.cppunit.cc</in>
+              </df>
+            </df>
+            <df name="Utilities">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>Adler32Calculator.h</in>
+                <in>Algorithms.h</in>
+                <in>BranchType.h</in>
+                <in>CPUTimer.h</in>
+                <in>CRC16.h</in>
+                <in>CRC32Calculator.h</in>
+                <in>CodedException.h</in>
+                <in>DebugMacros.h</in>
+                <in>Digest.h</in>
+                <in>ECGetterBase.h</in>
+                <in>EDMException.h</in>
+                <in>ESInputTag.h</in>
+                <in>Exception.h</in>
+                <in>ExceptionCollector.h</in>
+                <in>ExtensionCord.h</in>
+                <in>FriendlyName.h</in>
+                <in>GCCPrerequisite.h</in>
+                <in>GetEnvironmentVariable.h</in>
+                <in>GetPassID.h</in>
+                <in>GlobalIdentifier.h</in>
+                <in>GlobalMutex.h</in>
+                <in>HRRealTime.h</in>
+                <in>InputTag.h</in>
+                <in>JobMode.h</in>
+                <in>Likely.h</in>
+                <in>MallocOpts.h</in>
+                <in>Map.h</in>
+                <in>OutletBase.h</in>
+                <in>Parse.h</in>
+                <in>Presence.h</in>
+                <in>PretendToUse.h</in>
+                <in>RandomNumberGenerator.h</in>
+                <in>ReflexTools.h</in>
+                <in>RegexMatch.h</in>
+                <in>RootHandlers.h</in>
+                <in>SimpleOutlet.h</in>
+                <in>SingleConsumerQ.h</in>
+                <in>TestHelper.h</in>
+                <in>ThreadSafeIndexedRegistry.h</in>
+                <in>ThreadSafeRegistry.h</in>
+                <in>TimeOfDay.h</in>
+                <in>TypeDemangler.h</in>
+                <in>TypeID.h</in>
+                <in>TypeIDBase.h</in>
+                <in>UnixSignalHandlers.h</in>
+                <in>UseReflex.h</in>
+                <in>Verbosity.h</in>
+                <in>WrappedClassName.h</in>
+                <in>do_nothing_deleter.h</in>
+                <in>math.h</in>
+                <in>math_private.h</in>
+                <in>md5.h</in>
+                <in>tinystr.h</in>
+                <in>tinyxml.h</in>
+                <in>typelookup.h</in>
+                <in>value_ptr.h</in>
+              </df>
+              <df name="python">
+              </df>
+              <df name="src">
+                <in>Adler32Calculator.cc</in>
+                <in>CPUTimer.cc</in>
+                <in>CRC32Calculator.cc</in>
+                <in>DebugMacros.cc</in>
+                <in>Digest.cc</in>
+                <in>EDMException.cc</in>
+                <in>ESInputTag.cc</in>
+                <in>Exception.cc</in>
+                <in>ExceptionCollector.cc</in>
+                <in>FriendlyName.cc</in>
+                <in>GlobalIdentifier.cc</in>
+                <in>GlobalMutex.cc</in>
+                <in>Guid.cc</in>
+                <in>Guid.h</in>
+                <in>InputTag.cc</in>
+                <in>MallocOpts.cc</in>
+                <in>Parse.cc</in>
+                <in>Presence.cc</in>
+                <in>RandomNumberGenerator.cc</in>
+                <in>ReflexTools.cc</in>
+                <in>RegexMatch.cc</in>
+                <in>SingleConsumerQ.cc</in>
+                <in>TestHelper.cc</in>
+                <in>TimeOfDay.cc</in>
+                <in>TypeDemangler.cc</in>
+                <in>TypeID.cc</in>
+                <in>UnixSignalHandlers.cc</in>
+                <in>WrappedClassName.cc</in>
+                <in>md5.c</in>
+                <in>tinystr.cc</in>
+                <in>tinyxml.cc</in>
+                <in>tinyxmlerror.cc</in>
+                <in>tinyxmlparser.cc</in>
+                <in>typelookup.cc</in>
+              </df>
+              <df name="test">
+                <in>CRC32Calculator_t.cpp</in>
+                <in>CodedException_t.cpp</in>
+                <in>Digest_t.cpp</in>
+                <in>EDMException_t.cpp</in>
+                <in>ExceptionDerived_t.cpp</in>
+                <in>Exception_t.cpp</in>
+                <in>Guid_t.cpp</in>
+                <in>HRTime_t.cpp</in>
+                <in>MallocOpts_t.cpp</in>
+                <in>Math_t.cpp</in>
+                <in>Simple_t.cpp</in>
+                <in>TestHelper_t.cpp</in>
+                <in>cputimer_t.cppunit.cpp</in>
+                <in>extensioncord_t.cppunit.cpp</in>
+                <in>friendlyname_t.cppunit.cpp</in>
+                <in>likely_t.cpp</in>
+                <in>typeid_t.cppunit.cpp</in>
+                <in>typeidbase_t.cppunit.cpp</in>
+                <in>value_ptr_t.cpp</in>
+              </df>
+            </df>
+          </df>
+        </df>
+      </df>
+      <df name="data">
+        <df name="V02-05-01">
+          <df name="DoubleMu-Run2011A-05Aug2011-v1-AOD">
+            <in>NTupleProducer_42X_data_93_1_aNb.root</in>
+            <in>TreeClassBase.C</in>
+            <in>TreeClassBase.h</in>
+          </df>
+          <in>TTJet_status3.root</in>
+        </df>
+      </df>
+      <df name="DataFormats">
+        <df name="interface">
+          <in>DiElecEffHandler.h</in>
+          <in>DiElecEffHandler_IJ.h</in>
+          <in>DiElectronEvent.h</in>
+          <in>DiElectronEventProperties.h</in>
+          <in>DiLeptonEventProperties.h</in>
+          <in>DiLeptonTTBarEvent.h</in>
+          <in>DiLeptonTTBarEventProperties.h</in>
+          <in>ElecEffHandler.h</in>
+          <in>Electron.h</in>
+          <in>ElectronProperties.h</in>
+          <in>Lepton.h</in>
+          <in>Muon.h</in>
+          <in>TreeReaderEvent.h</in>
+        </df>
+        <df name="src">
+          <in>DiElectronEvent.cc</in>
+          <in>DiLeptonTTBarEvent.cc</in>
+          <in>Electron.cc</in>
+        </df>
+      </df>
+      <df name="ElectronCharge">
+        <df name="include">
+          <in>EventPrinter.h</in>
+          <in>PMMReader.h</in>
+          <in>PmmCalculator.h</in>
+          <in>Predict.h</in>
+          <in>SSSusySelector.h</in>
+          <in>TTbarEventSelector.h</in>
+          <in>ZEventSelector.h</in>
+        </df>
+        <df name="src">
+          <in>EventPrinter.cc</in>
+          <in>PMMReader.cc</in>
+          <in>Pmm.cpp</in>
+          <in>PmmCalculator.cc</in>
+          <in>Predict.cc</in>
+          <in>SSSusySelector.cc</in>
+          <in>ZEventSelector.cc</in>
+        </df>
+      </df>
+      <df name="Fake">
+        <df name="include">
+          <in>BaseAlgorithm.h</in>
+          <in>CalculateFakeRate.h</in>
+          <in>EleIsoTemplate.h</in>
+          <in>EleJetFR.hh</in>
+          <in>ExtendedFakeEstimator.h</in>
+          <in>FPRatios.h</in>
+          <in>Factory.h</in>
+          <in>FakeOrigin.h</in>
+          <in>MuonIsoTemplate.h</in>
+          <in>SameFlavourDiLeptonFakeEstimator.h</in>
+          <in>SingleLeptonSelector.h</in>
+          <in>StyleManager.h</in>
+        </df>
+        <df name="src">
+          <in>BaseAlgorithm.cc</in>
+          <in>CalculateFakeRate.cc</in>
+          <in>EleIsoTemplate.cc</in>
+          <in>EleJetFR.cc</in>
+          <in>Estimator.cc</in>
+          <in>ExtendedFakeEstimator.cc</in>
+          <in>FPRatios.cc</in>
+          <in>Factory.cc</in>
+          <in>FakeOrigin.cc</in>
+          <in>FakeOriginAnalysis.cc</in>
+          <in>MuonIsoTemplate.cc</in>
+          <in>SameFlavourDiLeptonFakeEstimator.cc</in>
+          <in>SingleLeptonSelector.cc</in>
+        </df>
+      </df>
+      <df name="NTupleAnalyzer">
+        <df name="include">
+          <df name="base">
+            <in>Analyzer.h</in>
+            <in>BaseEventSelector.h</in>
+            <in>Configuration.h</in>
+            <in>LoopHelper.h</in>
+            <in>TreeAnalyzerBase.hh</in>
+            <in>TreeClassBase.h</in>
+            <in>TreeClassBase_OLD.h</in>
+            <in>TreeReader.hh</in>
+            <in>Trigger.h</in>
+          </df>
+          <df name="helper">
+            <in>AnaClass.hh</in>
+            <in>Davismt2.h</in>
+            <in>Hemisphere.hh</in>
+            <in>LeptJetStat.h</in>
+            <in>Utilities.hh</in>
+            <in>pdgparticle.hh</in>
+          </df>
+        </df>
+        <df name="src">
+          <df name="base">
+            <in>Configuration.cc</in>
+            <in>TreeAnalyzerBase.cc</in>
+            <in>TreeClassBase.C</in>
+            <in>TreeClassBase_OLD.C</in>
+            <in>TreeReader.cc</in>
+            <in>Trigger.cc</in>
+          </df>
+          <df name="helper">
+            <in>AnaClass.cc</in>
+            <in>Davismt2.cc</in>
+            <in>Hemisphere.cc</in>
+            <in>LeptJetStat.cc</in>
+          </df>
+        </df>
+      </df>
+      <df name="Run">
+        <df name="Configs">
+          <df name="FWCore">
+            <df name="ParameterSet">
+              <df name="test">
+              </df>
+            </df>
+          </df>
+          <df name="FWCore__">
+            <df name="ParameterSet">
+              <df name="test">
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="RunOnData">
+          <df name="FakeRateCalcElec">
+          </df>
+          <df name="FakeRateCalcMuon">
+          </df>
+          <df name="FakeRateEstimateSF">
+          </df>
+          <df name="PRatioElec">
+          </df>
+          <df name="SelectDileptonEvents">
+          </df>
+          <df name="SelectZEvents">
+          </df>
+        </df>
+        <df name="Scripts">
+          <df name="GetData">
+            <df name="Staging">
+            </df>
+          </df>
+        </df>
+        <df name="WPolarization">
+        </df>
+      </df>
+      <df name="WPolarization">
+        <df name="interface">
+          <in>BJetAssigner.h</in>
+          <in>CosThetaAnalysis.h</in>
+          <in>DileptonAnalyticalSolver.h</in>
+          <in>GenRecComparison.h</in>
+          <in>NeutrinoSolver.h</in>
+          <in>TTbarSelector.h</in>
+        </df>
+        <df name="src">
+          <in>BJetAssigner.cc</in>
+          <in>CosThetaAnalysis.cc</in>
+          <in>DileptonAnalyticalSolver.cc</in>
+          <in>GenRecComparison.cc</in>
+          <in>NeutrinoSolver.cc</in>
+          <in>TTbarSelector.cc</in>
+          <in>WPolarization.cc</in>
+        </df>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject|external|obj|bin)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile -j4</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>bin/Goraz/WPolarization</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>external/Goraz/PYTHONINCLUDE</pElem>
+              <pElem>external/Goraz/CMSSWREALEASEBASE/src</pElem>
+              <pElem>/opt/root/include</pElem>
+              <pElem>external/Goraz/BOOSTINCLUDE</pElem>
+              <pElem>.</pElem>
+              <pElem>external/Goraz/CLHEPINCLUDE</pElem>
+              <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+              <pElem>NTupleAnalyzer/include</pElem>
+            </incDir>
+          </cTool>
+          <ccTool>
+            <incDir>
+              <pElem>external/Goraz/PYTHONINCLUDE</pElem>
+              <pElem>external/Goraz/CMSSWREALEASEBASE/src</pElem>
+              <pElem>/opt/root/include</pElem>
+              <pElem>external/Goraz/BOOSTINCLUDE</pElem>
+              <pElem>.</pElem>
+              <pElem>external/Goraz/CLHEPINCLUDE</pElem>
+              <pElem>NTupleAnalyzer/include</pElem>
+            </incDir>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="BaseAnalysis/src/EfficiencyExt.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="BaseAnalysis/src/EfficiencyH1.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="BaseAnalysis/src/Tester.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="BaseAnalysis/src/TreeCreator.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/BeamSpot/src/classes.h"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/interface/LorentzVectorFwd.h"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/src/FastMath.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/src/SSEVec.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/src/classes.h"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/FastMath_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/Matrices_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/ProjectMatrix_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/ReadMath.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/SSEMathFun_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/SSEVec_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/SealModule.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/WriteMath.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Math/test/sign_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/interface/MinimalEventID.h"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchChildren.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchEntryDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchIDListHelper.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchKey.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchMapper.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/BranchType.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ESRecordAuxiliary.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EntryDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventAux.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventAuxiliary.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventEntryDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventEntryInfo.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/EventRange.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/FileFormatVersion.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/FileID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/FileIndex.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/Hash.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/History.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/IndexIntoFile.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/LuminosityBlockAux.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/LuminosityBlockAuxiliary.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/LuminosityBlockID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/LuminosityBlockRange.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ModuleDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ParameterSetBlob.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/Parentage.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProcessConfiguration.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProcessHistory.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProductID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProductIDToBranchID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProductProvenance.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/ProductRegistry.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/Provenance.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/RunAux.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/RunAuxiliary.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/RunID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/RunLumiEntryInfo.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/TransientProductLookupMap.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/src/TransientStreamer.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/EntryDescription_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/eventid_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/eventrange_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/indexIntoFile_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/lumirange_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/parametersetid_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/DataFormats/Provenance/test/transientproductlookupmap_t.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/interface/ELseverityLevel.icc"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/interface/ErrorObj.icc"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/interface/ThreadSafeErrorLog.icc"
+            ex="true"
+            tool="3"
+            flavor="0">
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/AbstractMLscribe.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/ELstring.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/ExceptionMessages.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/JobReport.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/MessageDrop.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/MessageLogger.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/MessageLoggerQ.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/MessageLogger/src/MessageSender.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ANDGroupDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/AllowedLabelsDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/AllowedLabelsDescriptionBase.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ConfigurationDescriptions.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/DocFormatHelper.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/EmptyGroupDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/Entry.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/FileInPath.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/FillDescriptionFromPSet.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/FillProductRegistryTransients.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/IfExistsDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ORGroupDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterDescriptionBase.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterDescriptionCases.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterDescriptionNode.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSet.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSetConverter.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSetDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSetDescriptionFillerPluginFactory.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSetEntry.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterSwitchBase.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterWildcard.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ParameterWildcardBase.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/ProcessDesc.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/Registry.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/VParameterSetEntry.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/XORGroupDescription.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/src/types.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/test/IncludeFileFinder_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/test/parameterSetDescription_t.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/ParameterSet/test/ps_t.cppunit.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Python/src/PyModule.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Python/src/PythonFilter.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Python/src/PythonManager.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Python/src/PythonService.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Python/src/SealModule.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/PythonParameterSet/src/MakeParameterSets.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/PythonParameterSet/src/PythonParameterSet.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/PythonParameterSet/src/PythonProcessDesc.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/PythonParameterSet/src/initializeModule.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/Adler32Calculator.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/CPUTimer.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/CRC32Calculator.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/DebugMacros.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/Digest.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/EDMException.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/ESInputTag.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/Exception.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/ExceptionCollector.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/FriendlyName.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/GlobalIdentifier.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/GlobalMutex.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/Guid.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/InputTag.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/MallocOpts.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/openmpi/include/openmpi/opal/util</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/Parse.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/RandomNumberGenerator.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/ReflexTools.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/RegexMatch.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/SingleConsumerQ.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/TestHelper.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/TimeOfDay.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/TypeDemangler.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/TypeID.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/UnixSignalHandlers.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/detail</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/thread/pthread</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/WrappedClassName.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/tinyxml.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/tinyxmlerror.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/tinyxmlparser.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/src/typelookup.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/CRC32Calculator_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/CodedException_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/Digest_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/EDMException_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/ExceptionDerived_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/Exception_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/Guid_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/HRTime_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/MallocOpts_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/Math_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/Simple_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/cputimer_t.cppunit.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/extensioncord_t.cppunit.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/friendlyname_t.cppunit.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/likely_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/typeid_t.cppunit.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/typeidbase_t.cppunit.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="CMSSW/src/FWCore/Utilities/test/value_ptr_t.cpp"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="DataFormats/src/DiElectronEvent.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="DataFormats/src/DiLeptonTTBarEvent.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/PMMReader.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/Pmm.cpp" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/PmmCalculator.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/Predict.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/SSSusySelector.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="ElectronCharge/src/ZEventSelector.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/BaseAlgorithm.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/CalculateFakeRate.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/EleIsoTemplate.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/EleJetFR.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/Estimator.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/ExtendedFakeEstimator.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/FPRatios.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/Factory.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/FakeOrigin.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/FakeOriginAnalysis.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/MuonIsoTemplate.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/SameFlavourDiLeptonFakeEstimator.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="Fake/src/SingleLeptonSelector.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/Configuration.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/TreeAnalyzerBase.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/TreeClassBase.C"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/TreeClassBase_OLD.C"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/TreeReader.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/base/Trigger.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/helper/AnaClass.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/helper/Davismt2.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="NTupleAnalyzer/src/helper/Hemisphere.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/BJetAssigner.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/CosThetaAnalysis.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/GenRecComparison.cc"
+            ex="false"
+            tool="1"
+            flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/NeutrinoSolver.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/TTbarSelector.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="WPolarization/src/WPolarization.cc" ex="false" tool="1" flavor="0">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/gcc/x86_64-linux-gnu/4.6/include</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <folder path="Analysis/BaseAnalysis">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/DataFormats/BeamSpot">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/DataFormats/Math">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/FWCore/MessageLogger">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/FWCore/ParameterSet/src">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/FWCore/Python">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/FWCore/PythonParameterSet">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/CMSSW/src/FWCore/PythonParameterSet/test">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/DataFormats">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/BOOSTINCLUDE/compatibility/cpp_c_headers</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/ElectronCharge">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/NTupleAnalyzer">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/NTupleAnalyzer/src/base">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/PYTHONLIB/syslinux/com32/include/syslinux</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="Analysis/WPolarization">
+        <ccTool>
+          <incDir>
+            <pElem>external/Goraz/BOOSTINCLUDE/tr1/tr1</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+    </conf>
+  </confs>
+</configurationDescriptor>

@@ -43,6 +43,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         return NULL;
     }
 
+    TheEvent.AllSolutions.clear();
+    
     if (((TTbarSelectorConfig*) BASE::Config)->IsTTBarSample) {
         //cout << "gen is going to be set" ;
         this->SetGenTops();

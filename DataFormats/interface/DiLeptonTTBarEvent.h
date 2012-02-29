@@ -87,9 +87,17 @@ namespace TopAnalysis {
             std::vector< TLorentzVector > NeutrinoSolutions;
             std::vector< TLorentzVector > NeutrinoBarSolutions;
 
-            SolverResults(vector<double> pnux, vector<double> pnuy, vector<double> pnuz, vector<double> pnubx, vector<double> pnuby, vector<double> pnubz);
+            //SolverResults(vector<double> pnux, vector<double> pnuy, vector<double> pnuz, vector<double> pnubx, vector<double> pnuby, vector<double> pnubz);
 
-            SolverResults(string name, TLorentzVector the_b, TLorentzVector the_bbar, TLorentzVector the_lminus, TLorentzVector the_lplus);
+            SolverResults(string name,  math::XYZTLorentzVector the_b,  math::XYZTLorentzVector the_bbar,  math::XYZTLorentzVector the_lminus,  math::XYZTLorentzVector the_lplus, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen);
+            void SwapBs();
+            //to be able to put in a map
+            SolverResults();
+
+            double MWP;
+            double MWM;
+            double MTop;
+            double MTBar;
 
             std::map< double, int > SolEffMass;
             std::map< double, int > SolTopDR;
@@ -99,26 +107,46 @@ namespace TopAnalysis {
             std::map< double, int > SolNuBarChi2;
             std::map< double, int > SolNuNuBarChi2;
 
-            void AnalyzeSolutions();
+            void SetSolverResultsAndAnalyze(vector<double>* pnux, vector<double>* pnuy, vector<double>* pnuz, vector<double>* pnubx, vector<double>* pnuby, vector<double>* pnubz);
 
-            enum solutions{
-                MinEffMass,
+            enum solutions {
+                MinEffMass = 0,
                 MinTopDR,
                 MinTopbarDR,
                 MinTTbarDR,
                 MinNuChi2,
                 MinNubarChi2,
-                MinNuNubarChi2
+                MinNuNubarChi2,
+                Solution0 = 100,
+                Solution1 = 101,
+                Solution2 = 102,
+                Solution3 = 103,
+                Solution4 = 104,
+                Solution5 = 105,
+                Solution6 = 106,
+                Solution7 = 107
             };
-        
+
             TopDecayChain Top_Rec;
             TopDecayChain TopBar_Rec;
-            
-            void GetTops(solutions solution,TopDecayChain** top ,TopDecayChain** topbar  );
+
+            TopDecayChain* Top_Gen;
+            TopDecayChain* TopBar_Gen;
+
+            TVector2 MET;
+
+            bool GetTops(solutions solution, TopDecayChain** top = NULL, TopDecayChain** topbar = NULL);
+
+            //information needed for solver
+            double ETMiss[2];
+            double BPt[4];
+            double BBarPt[4];
+            double LPPt[4];
+            double LMPt[4];
         };
 
         std::map<string, SolverResults> AllSolutions;
-        SolverResults* AddSolverResults(string name, TLorentzVector the_b, TLorentzVector the_bbar);
+        SolverResults* AddSolverResults(string name, int the_b_index, int the_bbar_index);
         bool SelectASolution(string name, SolverResults::solutions solution);
 
         //
@@ -129,6 +157,15 @@ namespace TopAnalysis {
 
         bool hasBeenSolved;
         bool hasGenInfo;
+
+        Lepton* GetLepton(int charge) {
+            if (charge == 0)
+                return NULL;
+            else if (FirstElectron->Charge * charge > 0)
+                return FirstElectron;
+            else
+                return SecondElectron;
+        }
     };
 }
 #endif	/* DILEPTONTTBAREVENT_H */

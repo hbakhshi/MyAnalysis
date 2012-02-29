@@ -32,7 +32,7 @@ __CopyTreeFileName =  STARTUPDIR + "/" + COPYTREEFILENAME
 
 process.SelectedTTBars = cms.VPSet(
     cms.PSet(
-        File=cms.string('/home/hbakhshi/Documents/Analysis/Main/Run/WPolarization/TreeTTbar_EETTBarSummer2011.root'),
+        File=cms.string('/home/hbakhshi/Documents/Analysis/Run/WPolarization/TreeTTbar_EETTBarSummer2011.root'),
         IsDirectory = cms.untracked.bool(False),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
@@ -144,15 +144,15 @@ process.WPolarization = cms.PSet(
         )
     ),
     Analyzers=cms.VPSet(
-        cms.PSet(
-            Name=cms.string("neutrino_solver_ee"),
-            Type=cms.string("neutrino_solver"),
-            EventTypes=cms.vdouble( 0.25 ),
-            bJetAssigner = cms.PSet (
-                method = cms.string("random"),
-                Name=cms.string("random_bAssigner")
-            )
-        ),
+#        cms.PSet(
+#            Name=cms.string("neutrino_solver_ee"),
+#            Type=cms.string("neutrino_solver"),
+#            EventTypes=cms.vdouble( 0.25 ),
+#            bJetAssigner = cms.PSet (
+#                method = cms.string("random"),
+#                Name=cms.string("random_bAssigner")
+#            )
+#        ),
         cms.PSet(
             Name=cms.string("neutrino_solver_mm"),
             Type=cms.string("neutrino_solver"),
@@ -162,45 +162,49 @@ process.WPolarization = cms.PSet(
                 Name=cms.string("random_bAssigner")
             )
         ),
-        cms.PSet(
-            Name=cms.string("neutrino_solver_em"),
-            Type=cms.string("neutrino_solver"),
-            EventTypes=cms.vdouble( 2.25 , 3.25 ),
-            bJetAssigner = cms.PSet (
-                method = cms.string("random"),
-                Name=cms.string("random_bAssigner")
-            )
-        ),
-        cms.PSet(
-            Name=cms.string("costheta_ee"),
-            Type=cms.string("costheta"),
-            EventTypes=cms.vdouble( 0.25 )
-        ),
+#        cms.PSet(
+#            Name=cms.string("neutrino_solver_em"),
+#            Type=cms.string("neutrino_solver"),
+#            EventTypes=cms.vdouble( 2.25 , 3.25 ),
+#            bJetAssigner = cms.PSet (
+#                method = cms.string("random"),
+#                Name=cms.string("random_bAssigner")
+#            )
+#        ),
+#        cms.PSet(
+#            Name=cms.string("costheta_ee"),
+#            Type=cms.string("costheta"),
+#            EventTypes=cms.vdouble( 0.25 )
+#        ),
         cms.PSet(
             Name=cms.string("costheta_mm"),
             Type=cms.string("costheta"),
-            EventTypes=cms.vdouble( 1.25 )
+            EventTypes=cms.vdouble( 1.25 ),
+            SolverName = cms.string("neutrino_solver_mm"),
+            SolverSolution = cms.int32(0)
         ),
-        cms.PSet(
-            Name=cms.string("costheta_em"),
-            Type=cms.string("costheta"),
-            EventTypes=cms.vdouble( 2.25 , 3.25 )
-        ),
-        cms.PSet(
-            Name=cms.string("GenRecComparison_ee"),
-            Type=cms.string("GenRecComparison"),
-            EventTypes=cms.vdouble( 0.25  )
-        ),
+#        cms.PSet(
+#            Name=cms.string("costheta_em"),
+#            Type=cms.string("costheta"),
+#            EventTypes=cms.vdouble( 2.25 , 3.25 )
+#        ),
+#        cms.PSet(
+#            Name=cms.string("GenRecComparison_ee"),
+#            Type=cms.string("GenRecComparison"),
+#            EventTypes=cms.vdouble( 0.25  )
+#        ),
         cms.PSet(
             Name=cms.string("GenRecComparison_mm"),
             Type=cms.string("GenRecComparison"),
-            EventTypes=cms.vdouble( 1.25 )
-        ),
-        cms.PSet(
-            Name=cms.string("GenRecComparison_em"),
-            Type=cms.string("GenRecComparison"),
-            EventTypes=cms.vdouble( 2.25 , 3.25 )
+            EventTypes=cms.vdouble( 1.25 ),
+            SolverName = cms.string("neutrino_solver_mm"),
+            SolverSolution = cms.int32(0)
         )
+#        cms.PSet(
+#            Name=cms.string("GenRecComparison_em"),
+#            Type=cms.string("GenRecComparison"),
+#            EventTypes=cms.vdouble( 2.25 , 3.25 )
+#        )
     )
 )
 

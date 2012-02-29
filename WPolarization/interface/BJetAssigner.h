@@ -27,7 +27,9 @@ public:
     //random tools and configs
     TRandom random_generator;
     //
-    
+    int the_b_index;
+    int the_bbar_index;
+            
     typedef Analyzer<TopAnalysis::TTBarDileptonicEvent> BASE;
 
     BJetAssigner(const edm::ParameterSet& ps);
