@@ -19,7 +19,7 @@ DEPObjs_cpp = \
 	Pmm.o
 
 ElectronChargeUSERLIBS = \
-	-L$(PYTHONLIB) -lpython2.7 \
+	-L$(PYTHONLIB) $(python_lib) \
 	-L$(BOOSTLIB) -lboost_python \
 	-lboost_thread \
 	-lboost_signals \
@@ -45,7 +45,7 @@ $(PWD)/obj/$(MACHINE)/Pmm_Z.o:  $(call FindSourceFiles,Pmm) $(value Pmm_Deps)
 	@echo $@ :
 	@echo `ls -l $(BOOSTLIB)/libboost_python.so`
 	@$(CXX) $< -DZSelector -c -o $@ $(CXXFLAGS) $(INCLUDEDIRS)
-	
+
 $(PWD)/obj/$(MACHINE)/Pmm_Susy.o:  $(call FindSourceFiles,Pmm) $(value Pmm_Deps)
 	@echo $@
 	@$(CXX) $< -DSUSYSelector -c -o $@ $(CXXFLAGS) $(INCLUDEDIRS)

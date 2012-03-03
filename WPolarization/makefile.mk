@@ -8,7 +8,7 @@ WPOLOBJS = \
 	GenRecComparison.o
 
 WPolarizationUSERLIBS = \
-	-L$(PYTHONLIB) -lpython2.7 \
+	-L$(PYTHONLIB) $(python_lib) \
 	-L$(BOOSTLIB) -lboost_python \
 	-lboost_thread \
 	-lboost_signals \
@@ -29,7 +29,7 @@ $(PWD)/obj/$(MACHINE)/WPolarization_deps.mk: $(WPOLOBJS:.o=.cc)
 		echo $$p \\ >> $@ ;\
 		echo `$(CXX) -MM $(CXXFLAGS) $(INCLUDEDIRS) $$p | grep $(PWD)/ | grep -v $$p | grep -v external | grep -v CMSSW/src/ | tr '\n' ' ' | tr -d '\\'`  >> $@ ; \
 	done
-	
+
 $(TARGETDIR)/WPolarization :  $(WPOLOBJS:%=$(PWD)/obj/$(MACHINE)/%)
 	@echo $@ :
 	#@echo $^

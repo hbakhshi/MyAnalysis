@@ -36,7 +36,9 @@ int main(int argc, char *argv[]) {
     info::TheInfo->Print();
 
     //__CPU_SET(info::CPU_Number, &mask_t); //Run over CPU #1
-    __CPU_ALLOC(info::CPU_Number);
+    for(int i=0 ; i < __CPU_SETSIZE / __NCPUBITS ; i++ )
+        mask_t.__bits[i] = (i == info::CPU_Number);
+    
     if (sched_setaffinity(0, sizeof (cpu_set_t), &mask_t) < 0)
         perror("sched_setaffinity");
 
