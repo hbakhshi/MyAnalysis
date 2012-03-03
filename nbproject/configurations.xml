@@ -552,11 +552,9 @@
       <df name="data">
         <df name="V02-05-01">
           <df name="DoubleMu-Run2011A-05Aug2011-v1-AOD">
-            <in>NTupleProducer_42X_data_93_1_aNb.root</in>
             <in>TreeClassBase.C</in>
             <in>TreeClassBase.h</in>
           </df>
-          <in>TTJet_status3.root</in>
         </df>
       </df>
       <df name="DataFormats">

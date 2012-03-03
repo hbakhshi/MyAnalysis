@@ -59,7 +59,7 @@ process.RunSetup = cms.untracked.PSet(
 
 process.WPolarization = cms.PSet(
     Name=cms.untracked.string("WPolarization"),
-    TotalInput=cms.untracked.int32(-1),
+    TotalInput=cms.untracked.int32(500000),
     NumberOfEventsPerPrintLoop=cms.untracked.int32(10000),
     Verbosity=cms.untracked.int32(0),
     OutFileName=cms.string("WPol_" + INPUT + ".root"),
@@ -81,7 +81,7 @@ process.WPolarization = cms.PSet(
             IsoCutValue=cms.double(0.15), # 0.15
             IsoRelative=cms.bool(True),
 
-            ConvRejMethod=cms.int32(43), #all cuts
+            ConvRejMethod=cms.int32(46), #hybrid2
 
             RejectCrack=cms.bool(True), #i am not sure if it is needed, twiki : not
 
@@ -92,6 +92,19 @@ process.WPolarization = cms.PSet(
             PtCut=cms.double(20.0),
 
             deltaRNearestMuon=cms.untracked.double(0.1), #0.1 from all selected muons, in twiki : all muons
+            MuonSelection=cms.PSet(
+                GlobalMuon=cms.bool(True),
+                TrackerMuon=cms.bool(True),
+                PtCut=cms.double(0.0),
+                Eta=cms.double(8.0),
+                NChi2=cms.double(1000000.0),
+                EEm=cms.double( 10000000.0),
+                EHad=cms.double(10000000.0),
+                IsoCut=cms.double(10000000.0), # 0.2
+                d0Cut=cms.double(10000000.0),
+                NTrkHits=cms.int32(-1),
+                NMuHits=cms.int32(-1)
+            ),
             allChargesAgree=cms.untracked.bool(False), #True
             CTFGSFChargesAgree=cms.untracked.bool(False),
 
@@ -140,19 +153,19 @@ process.WPolarization = cms.PSet(
         TriggerNames=cms.vstring(), #"HLTElectronTTBar","HLTSusySS","HLTElectronZandW","HLTMuon")
 
         SelectedEventTypesByDSName=cms.PSet( #Event types : 0.5 ee, 1.5 mm, 2.5 em, 3.5 me ; SS 0.25, OS -0.25
-            #TTBarSummer2011 = cms.vdouble(0.25 , 0.75)
+            TTBarSummer2011 = cms.vdouble(0.25 , 0.75)
         )
     ),
     Analyzers=cms.VPSet(
-#        cms.PSet(
-#            Name=cms.string("neutrino_solver_ee"),
-#            Type=cms.string("neutrino_solver"),
-#            EventTypes=cms.vdouble( 0.25 ),
-#            bJetAssigner = cms.PSet (
-#                method = cms.string("random"),
-#                Name=cms.string("random_bAssigner")
-#            )
-#        ),
+       cms.PSet(
+           Name=cms.string("neutrino_solver_ee"),
+           Type=cms.string("neutrino_solver"),
+           EventTypes=cms.vdouble( 0.25 ),
+           bJetAssigner = cms.PSet (
+               method = cms.string("random"),
+               Name=cms.string("random_bAssigner")
+           )
+       ),
         cms.PSet(
             Name=cms.string("neutrino_solver_mm"),
             Type=cms.string("neutrino_solver"),
@@ -171,11 +184,13 @@ process.WPolarization = cms.PSet(
 #                Name=cms.string("random_bAssigner")
 #            )
 #        ),
-#        cms.PSet(
-#            Name=cms.string("costheta_ee"),
-#            Type=cms.string("costheta"),
-#            EventTypes=cms.vdouble( 0.25 )
-#        ),
+        cms.PSet(
+            Name=cms.string("costheta_ee"),
+            Type=cms.string("costheta"),
+            EventTypes=cms.vdouble( 0.25 ),
+            SolverName = cms.string("neutrino_solver_ee"),
+            SolverSolution = cms.int32(0)
+        ),
         cms.PSet(
             Name=cms.string("costheta_mm"),
             Type=cms.string("costheta"),
@@ -188,11 +203,13 @@ process.WPolarization = cms.PSet(
 #            Type=cms.string("costheta"),
 #            EventTypes=cms.vdouble( 2.25 , 3.25 )
 #        ),
-#        cms.PSet(
-#            Name=cms.string("GenRecComparison_ee"),
-#            Type=cms.string("GenRecComparison"),
-#            EventTypes=cms.vdouble( 0.25  )
-#        ),
+       cms.PSet(
+           Name=cms.string("GenRecComparison_ee"),
+           Type=cms.string("GenRecComparison"),
+           EventTypes=cms.vdouble( 0.25  ),
+           SolverName = cms.string("neutrino_solver_ee"),
+           SolverSolution = cms.int32(0)
+       ),
         cms.PSet(
             Name=cms.string("GenRecComparison_mm"),
             Type=cms.string("GenRecComparison"),

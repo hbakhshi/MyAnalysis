@@ -107,7 +107,8 @@ public:
             convInnerHitsOnly = 42,
             convAllCuts = 43,
             convUseWPInfo = 44,
-            convNone = 45
+            convNone = 45,
+            convORCutsHits2 = 46
         };
 
         enum ElectronD0 {
@@ -1087,6 +1088,13 @@ bool BaseEventSelector<T>::CheckEleConv(int eleidx) {
             break;
         case BaseSelectorConfig::ElectronSelection::convNone:
             return true;
+        case BaseSelectorConfig::ElectronSelection::convORCutsHits2 :
+            checkGeo = false;
+            checkTrk = true;
+            cutOnMissingHits = 1;
+            if( (distVal <= 0.02) && (dcotVal <= 0.02) )
+                return false;
+            break;
     }
 
     bool ret = true;
