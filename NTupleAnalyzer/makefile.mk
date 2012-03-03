@@ -58,7 +58,7 @@ $(PWD)/obj/$(MACHINE)/NTupleAnalyzer_deps.mk: $(ConfOBJS:.o=.cc) $(NTupleOBJS:.o
 	done
 
 NTupleAnalyzerUSERLIBS = \
-	-L$(PYTHONLIB) -lpython2.7 \
+	-L$(PYTHONLIB) $(python_lib) \
 	-L$(BOOSTLIB) -lboost_python \
 	-lboost_thread \
 	-lboost_signals \

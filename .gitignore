@@ -5,3 +5,5 @@ external/*/*
 /nbproject/private/
 /data/
 *.pyc
+!/external/*.tar
+*~

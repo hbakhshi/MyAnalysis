@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
     info::AnalyzeArgs(argc, argv , "WPolarization");
     info::TheInfo->Print();
 
-    for(int i=0 ; i < __CPU_SETSIZE / __NCPUBITS ; i++ )
-        mask_t.__bits[i] = (i == info::CPU_Number);
+    CPU_ZERO(&mask_t) ;
+    CPU_SET(info::CPU_Number , &mask_t);
     
     if (sched_setaffinity(0, sizeof (cpu_set_t), &mask_t) < 0)
         perror("sched_setaffinity");

@@ -13,6 +13,12 @@ BOOSTLIB = $(PWD)/external/$(MACHINE)/BOOSTLIB
 CLHEPINCLUDE = $(PWD)/external/$(MACHINE)/CLHEPINCLUDE
 CMSSWREALEASEBASE = $(PWD)/external/$(MACHINE)/CMSSWREALEASEBASE
 
+python_version_full := $(wordlist 2,4,$(subst ., ,$(shell python --version 2>&1)))
+python_version_major := $(word 1,${python_version_full})
+python_version_minor := $(word 2,${python_version_full})
+python_version_patch := $(word 3,${python_version_full})
+python_lib = -lpython$(python_version_major).$(python_version_minor)
+
 CXX = $(if $(wildcard $(PWD)/external/$(MACHINE)/GCC),$(PWD)/external/$(MACHINE)/GCC/bin/g++ ,g++)
 BASICOPTS = -O0 -g -DDEBUG
 
@@ -50,7 +56,7 @@ LDLIBS = $(ROOTGLIBS) -lTree -lTreePlayer -lGenVector \
 	$(if $(wildcard $(PWD)/external/$(MACHINE)/PCRE/libpcre.so.0),$(PWD)/external/$(MACHINE)/PCRE/libpcre.so.0,) \
 	$(if $(wildcard $(PWD)/external/$(MACHINE)/DCAP/libdcap.so),$(PWD)/external/$(MACHINE)/DCAP/libdcap.so $(PWD)/external/$(MACHINE)/DCAP/libpdcap.so,)
 
-.PHONY : all clean distclean
+.PHONY : all clean distclean prepare
 
 all:    $(TARGETDIR) \
 	$(TARGETDIR)/libNTupleAnalyzer.so \
@@ -59,9 +65,19 @@ all:    $(TARGETDIR) \
 	$(TARGETDIR)/WPolarization \
 	$(TARGETDIR)/Pmm \
 	$(TARGETDIR)/SusySelection \
-	$(TARGETDIR)/FRCalculator
+	$(TARGETDIR)/FRCalculator \
+	$(PWD)/external/$(MACHINE).tar
+	@echo $(python_lib)
 	@echo $(LDLIBS)
 	@echo $(CXX)
+
+$(PWD)/external/$(MACHINE).tar: external/$(MACHINE)
+	tar -cf $@ $<
+
+prepare: $(PWD)/external/$(MACHINE).tar
+	rm -rf external/$(MACHINE)
+	tar -xf external/$(MACHINE).tar -C external/
+
 
 FindSourceFiles = $(shell find . -name "$1.cc") $(shell find . -name "$1.C") $(shell find . -name "$1.cpp") $(shell find . -name "$1.c")
 #FindHeaderFile = $(shell find . -name "$1.h") $(shell find . -name "$1.hh")
