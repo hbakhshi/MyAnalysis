@@ -322,20 +322,26 @@ public:
     };
 };
 
+
+#include <sstream>
+
 class SelectionException : public exception {
 public:
 
     string __WHAT;
+    int lineNumber;
+    string fileName;
 
-    SelectionException(string WHAT) : __WHAT(WHAT) {
+    SelectionException(string WHAT, int line = __LINE__, string file = __FILE__) : __WHAT(WHAT), lineNumber(line), fileName(file) {
     }
 
     virtual ~SelectionException() throw () {
     };
 
     virtual const char* what() const throw () {
-
-        return __WHAT.c_str();
+        std::stringstream ss;
+        ss << __WHAT << "\nLine : " << lineNumber << "\nFile : " << fileName;
+        return ss.str().c_str();
     }
 };
 
@@ -353,6 +359,11 @@ public:
     TreeReader *TheTree;
     BaseSelectorConfig* Config;
     map<string, bool>* TriggerResults;
+
+    ~BaseEventSelector() {
+        if (info::TheInfo->Verbosity > 100)
+            cout << "EventSelector Ended" << endl;
+    }
 
     virtual void SetTree(TreeReader* tree) {
         TheTree = tree;
@@ -1088,11 +1099,11 @@ bool BaseEventSelector<T>::CheckEleConv(int eleidx) {
             break;
         case BaseSelectorConfig::ElectronSelection::convNone:
             return true;
-        case BaseSelectorConfig::ElectronSelection::convORCutsHits2 :
+        case BaseSelectorConfig::ElectronSelection::convORCutsHits2:
             checkGeo = false;
             checkTrk = true;
             cutOnMissingHits = 1;
-            if( (distVal <= 0.02) && (dcotVal <= 0.02) )
+            if ((distVal <= 0.02) && (dcotVal <= 0.02))
                 return false;
             break;
     }

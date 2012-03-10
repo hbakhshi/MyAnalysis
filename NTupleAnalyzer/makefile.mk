@@ -64,6 +64,7 @@ NTupleAnalyzerUSERLIBS = \
 	-lboost_signals \
 	-lboost_filesystem \
 	-lboost_system \
+	-lboost_regex
 
 $(TARGETDIR)/libNTupleAnalyzer.so: $(NTupleOBJS:%=$(PWD)/obj/$(MACHINE)/%) $(ConfOBJS:%=$(PWD)/obj/$(MACHINE)/%) $(ConfOBJS_c:%=$(PWD)/obj/$(MACHINE)/%) $(ConfOBJS_C:%=$(PWD)/obj/$(MACHINE)/%)
 	@echo $@ :

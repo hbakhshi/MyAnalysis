@@ -23,6 +23,11 @@ public:
     virtual void OnChangeFile(FileInfo* fi, DataSet* ds) {
     };
 
+    ~Analyzer() {
+        if (info::TheInfo->Verbosity > 100)
+            cout << Name << " Ended" << endl;
+    }
+
     virtual void OnChangeRun(std::map<string, int>* hltTable) {
         if (info::TheInfo->PrintTriggerTable) {
             cout << "HLT Table :" << endl;

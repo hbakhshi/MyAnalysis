@@ -2,7 +2,7 @@
 
 setenv STARTUPDIR `pwd`
 setenv INPUT $1 # "ElDSRunAReRec_DCap"  "ElDSRunBPRec_DCap" "MuDSRunBPRec_DCap" "MuDSRunAReRec_DCap"
-setenv COPYTREEFILENAME "TreeTTbar_EE"$INPUT".root"
+setenv COPYTREEFILENAME "TreeTTbar_"$INPUT".root"
 setenv MALLOC_CHECK_ 0
 setenv CPUNumber $2
 

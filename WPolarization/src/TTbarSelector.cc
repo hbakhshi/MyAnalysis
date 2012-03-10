@@ -1,4 +1,5 @@
 #include <deque>
+#include <stdio.h>
 
 #include "DataFormats/interface/DiLeptonTTBarEventProperties.h"
 #include "WPolarization/interface/TTbarSelector.h"
@@ -44,11 +45,13 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     }
 
     TheEvent.AllSolutions.clear();
-    
+
     if (((TTbarSelectorConfig*) BASE::Config)->IsTTBarSample) {
         //cout << "gen is going to be set" ;
         this->SetGenTops();
         //cout << "it is set ";
+        if (((TTbarSelectorConfig*) BASE::Config)->MCStudy)
+            return &TheEvent;
     } else
         TheEvent.hasGenInfo = false;
 
@@ -181,6 +184,7 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_PairChoose));
 
     this->TheEvent.Jets.clear();
+    this->TheEvent.BJets.clear();
     for (deque<int>::const_iterator iJet = GoodJets.begin(); iJet < GoodJets.end(); iJet++) {
         math::XYZTLorentzVector jet(this->TheTree->JPx[*iJet], this->TheTree->JPy[*iJet], this->TheTree->JPz[*iJet], this->TheTree->JE[*iJet]);
         double dr1 = reco::deltaR(jet.eta(), jet.phi(), firstLepton->get4Vector(0).eta(), firstLepton->get4Vector(0).phi());
@@ -194,6 +198,17 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             this->TheEvent.Jets.push_back(jet);
             this->TheEvent.Jets_TrackCountingHighEff.push_back(this->TheTree->JbTagProbTkCntHighEff[*iJet]);
             this->TheEvent.Jets_simpleSecondaryVertexHighEff.push_back(this->TheTree->JbTagProbSimpSVHighEff[*iJet]);
+
+            switch (((TTbarSelectorConfig*) Config)->getBTagAlgo()) {
+                case 1:
+                    if (TheTree->JbTagProbTkCntHighEff[*iJet] > ((TTbarSelectorConfig*) Config)->BJetSelectionBTag)
+                        this->TheEvent.BJets.push_back(this->TheEvent.Jets.size() - 1);
+                    break;
+                case 2:
+                    if (TheTree->JbTagProbSimpSVHighEff[*iJet] > ((TTbarSelectorConfig*) Config)->BJetSelectionBTag)
+                        this->TheEvent.BJets.push_back(this->TheEvent.Jets.size() - 1);
+                    break;
+            }
         }
     }
     TheEvent.NJets = this->TheEvent.Jets.size();
@@ -288,10 +303,80 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_bTag2 - TTbarEventSelectionSteps_SameFlavours);
     }
 
+
+    if (TheEvent.BJets.size() < ((TTbarSelectorConfig*) Config)->NBJets) {
+        stat = 14;
+        return NULL;
+    }
+
+
+    if (TheEvent.IsSameFlavour()) {
+        BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_SameFlavours_NumberOfBJets));
+        BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_SameFlavours_NumberOfBJets - TTbarEventSelectionSteps_SameFlavours);
+    } else {
+        BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_NumberOfBJets));
+        BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_NumberOfBJets - TTbarEventSelectionSteps_SameFlavours);
+    }
+
+
     double evtType = EventTypeReader.ReadValue(&TheEvent);
     if (std::find(CurrentFileAcceptedEventTypes.begin(), CurrentFileAcceptedEventTypes.end(), evtType) == CurrentFileAcceptedEventTypes.end()) {
         stat = 1000;
         return NULL;
+    }
+
+    vector<string>* accept_triggers;
+    vector<string>* veto_triggers;
+    int rejecting_status(0);
+    switch (TheEvent.RecDecayMode) {
+        case TopAnalysis::TTBarDileptonicEvent::DiEle:
+            rejecting_status = 0;
+            accept_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger);
+            veto_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger_Veto);
+            break;
+        case TopAnalysis::TTBarDileptonicEvent::DiMu:
+            rejecting_status = 1;
+            accept_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger);
+            veto_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger_Veto);
+            break;
+        case TopAnalysis::TTBarDileptonicEvent::ElP_MuM:
+        case TopAnalysis::TTBarDileptonicEvent::ElM_MuP:
+            rejecting_status = 2;
+            accept_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger);
+            veto_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger_Veto);
+            break;
+        default:
+            throw SelectionException("unacceptable value for RecDecayMode", __LINE__, __FILE__);
+            break;
+    }
+
+    Trigger = this->Config->TriggerNames.size() == 0;
+    for (vector<string>::iterator trg = accept_triggers->begin(); trg != accept_triggers->end(); trg++) {
+        map<string, bool>::const_iterator res = TriggerResults->find(*trg);
+        if (res == TriggerResults->end())
+            throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
+
+        Trigger = (Trigger || res->second);
+    }
+    for (vector<string>::iterator trg = veto_triggers->begin(); trg != veto_triggers->end(); trg++) {
+        map<string, bool>::const_iterator res = TriggerResults->find(*trg);
+        if (res == TriggerResults->end())
+            throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
+
+        Trigger = (Trigger && !(res->second));
+    }
+
+    if (!Trigger) {
+        stat = 15 + rejecting_status;
+        return NULL;
+    } else {
+        if (TheEvent.IsSameFlavour()) {
+            BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_SameFlavours_Triggers));
+            BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_SameFlavours_Triggers - TTbarEventSelectionSteps_SameFlavours);
+        } else {
+            BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_Triggers));
+            BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_Triggers - TTbarEventSelectionSteps_SameFlavours);
+        }
     }
 
     BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllSelectedEvents));
@@ -303,7 +388,7 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
 
 }
 
-void TTbarEventSelector::End(TDirectory* dir) {
+void TTbarEventSelector::End(TDirectory * dir) {
     BASE::End(dir);
 
     //    for(multimap<int, int>::const_iterator event = RunEventNumbers.begin() ; event != RunEventNumbers.end(); event++){
@@ -457,11 +542,15 @@ void TTbarEventSelector::AddSelectionStepsEvent() {
     BASE::EventSelectionHistos.CreateHistos("SameFlavours_MET");
     BASE::EventSelectionHistos.CreateHistos("SameFlavours_bTag1");
     BASE::EventSelectionHistos.CreateHistos("SameFlavours_bTag2");
+    BASE::EventSelectionHistos.CreateHistos("SameFlavours_NumberOfBJets");
+    BASE::EventSelectionHistos.CreateHistos("SameFlavours_Triggers");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_NJets");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_MET");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_bTag1");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_bTag2");
+    BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_NumberOfBJets");
+    BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_Triggers");
     BASE::EventSelectionHistos.CreateHistos("AllSelectedEvents");
 
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours");
@@ -471,11 +560,15 @@ void TTbarEventSelector::AddSelectionStepsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_MET");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_bTag1");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_bTag2");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_NumberOfBJets");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_Triggers");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_NJets");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_MET");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_bTag1");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_bTag2");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_NumberOfBJets");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_Triggers");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllSelectedEvents");
 }
 
@@ -557,9 +650,9 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
 }
 
 void TTbarEventSelector::AddTriggerHistos() {
-    ObjectPropertyFromFltArray::ObjectInfo elPtInf("Pt", "P_{t}", 10, 200, 50, "Electron", 0);
-    ObjectPropertyFromFltArray* ElePt = new ObjectPropertyFromFltArray(this->TheTree->ElPt, &(this->TheTree->NEles), elPtInf);
-    info::TheInfo->triggerCuts.AddHistogram(ElePt);
+    //    ObjectPropertyFromFltArray::ObjectInfo elPtInf("Pt", "P_{t}", 10, 200, 50, "Electron", 0);
+    //    ObjectPropertyFromFltArray* ElePt = new ObjectPropertyFromFltArray(this->TheTree->ElPt, &(this->TheTree->NEles), elPtInf);
+    //    info::TheInfo->triggerCuts.AddHistogram(ElePt);
 
     ObjectPropertyFromIntArray::ObjectInfo elN("NElecs", "Number of electrons", 0, 20, 20, "Event", 0);
     ObjectPropertyFromIntArray* EleN = new ObjectPropertyFromIntArray(&(this->TheTree->NEles), elN);
@@ -605,6 +698,14 @@ string GetStatusString(int stat) {
             return "!OK, first btag";
         case 13:
             return "!OK, second btag";
+        case 14:
+            return "!OK, number of bjets";
+        case 15:
+            return "!OK, EE, but wrong trigger";
+        case 16:
+            return "!OK, MM, but wrong trigger";
+        case 17:
+            return "!OK, EM, but wrong trigger";
         case 25:
             return "!OK, Trigger";
         case 100:
@@ -740,7 +841,7 @@ void TTbarEventSelector::SetGenTops() {
             TheEvent.GenDecayMode = TTBarDileptonicEvent::TauJets;
         else
             TheEvent.GenDecayMode = TTBarDileptonicEvent::Others;
-    } else if ((nelecs + nmuons+ ntaus == 2) && (nnus == 2)) { //full leptonic
+    } else if ((nelecs + nmuons + ntaus == 2) && (nnus == 2)) { //full leptonic
         TheEvent.TOPBar_Gen.W.lepton.SetPtEtaPhiM(this->TheTree->GenLeptonPt[lepm_id], this->TheTree->GenLeptonEta[lepm_id], this->TheTree->GenLeptonPhi[lepm_id], 0.000510);
         TheEvent.TOPBar_Gen.W.neutrino.SetPtEtaPhiM(this->TheTree->GenLeptonPt[nub_id], this->TheTree->GenLeptonEta[nub_id], this->TheTree->GenLeptonPhi[nub_id], 0.0);
 
@@ -755,11 +856,11 @@ void TTbarEventSelector::SetGenTops() {
             TheEvent.GenDecayMode = TTBarDileptonicEvent::DiEle;
         else if (nmuons == 2)
             TheEvent.GenDecayMode = TTBarDileptonicEvent::DiMu;
-        else if(ntaus == 2)
+        else if (ntaus == 2)
             TheEvent.GenDecayMode = TTBarDileptonicEvent::DiTau;
-        else if(ntaus == 1 && nelecs == 1)
+        else if (ntaus == 1 && nelecs == 1)
             TheEvent.GenDecayMode = TTBarDileptonicEvent::ElTau;
-        else if(ntaus == 1 && nelecs == 0)
+        else if (ntaus == 1 && nelecs == 0)
             TheEvent.GenDecayMode = TTBarDileptonicEvent::MuTau;
         else
             TheEvent.GenDecayMode = TTBarDileptonicEvent::Others;

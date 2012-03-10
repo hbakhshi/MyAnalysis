@@ -19,6 +19,8 @@
 
 #include "BaseAnalysis/interface/HistogramsManager.h"
 
+#include <boost/regex.hpp>
+
 using namespace std;
 
 class TriggerException : public exception {
@@ -43,6 +45,7 @@ public:
     int MinRun;
     int MaxRun;
     vector<string> HLTs;
+    vector<boost::regex > HLT_RegExps;
     string Name;
 
     bool SkipRunsWithInconsistentMenu;

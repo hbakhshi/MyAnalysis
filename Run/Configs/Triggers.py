@@ -1,5 +1,95 @@
 import FWCore.ParameterSet.Config as cms
 
+HLTDiElectronMCTTBar2011 = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(0),
+        MaxRun=cms.int32(2),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v." , "HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v."),
+        Name=cms.string("AllMC"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
+HLTDiMuonMCTTBar2011 = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(0),
+        MaxRun=cms.int32(2),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu3_v.", "HLT_DoubleMu6_v." , "HLT_DoubleMu7_v."),
+        Name=cms.string("AllMC"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
+HLTMuElMCTTBar2011 = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(0),
+        MaxRun=cms.int32(2),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Mu10_Ele10_CaloIdL_v." , "HLT_Mu17_Ele8_CaloIdL_v." , "HLT_Mu8_Ele17_CaloIdL_v."),
+        Name=cms.string("AllMC"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
+HLTEETTBar2011Data = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(160329),
+        MaxRun=cms.int32(175770),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v.","HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v.","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v."),
+        Name=cms.string("RunA2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    ),
+    cms.PSet(
+        MinRun=cms.int32(175832),
+        MaxRun=cms.int32(180296),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Ele17_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_Ele8_CaloIdT_TrkIdVL_CaloIsoVL_TrkIsoVL_v.","HLT_Ele17_CaloIdL_CaloIsoVL_Ele8_CaloIdL_CaloIsoVL_v.","HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_v."),
+        Name=cms.string("RunB2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
+HLTEMuTTBar2011Data = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(160329),
+        MaxRun=cms.int32(175770),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Mu10_Ele10_CaloIdL_v.","HLT_Mu17_Ele8_CaloIdL_v.","HLT_Mu8_Ele17_CaloIdL_v.","HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v.","HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v."),
+        Name=cms.string("RunA2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    ),
+    cms.PSet(
+        MinRun=cms.int32(175832),
+        MaxRun=cms.int32(180296),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_Mu10_Ele10_CaloIdL_v.","HLT_Mu17_Ele8_CaloIdL_v.","HLT_Mu8_Ele17_CaloIdL_v.","HLT_Mu8_Ele17_CaloIdT_CaloIsoVL_v.","HLT_Mu17_Ele8_CaloIdT_CaloIsoVL_v."),
+        Name=cms.string("RunB2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
+HLTMuMuTTBar2011Data = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(160329),
+        MaxRun=cms.int32(175770),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu7_v.","HLT_Mu13_Mu8_v.","HLT_Mu17_Mu8_v."),
+        Name=cms.string("RunA2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    ),
+    cms.PSet(
+        MinRun=cms.int32(175832),
+        MaxRun=cms.int32(180296),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu7_v.","HLT_Mu13_Mu8_v.","HLT_Mu17_Mu8_v."),
+        Name=cms.string("RunB2011"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+
 HLTNoTrigger = cms.VPSet(
     cms.PSet(
         MinRun=cms.int32(0),

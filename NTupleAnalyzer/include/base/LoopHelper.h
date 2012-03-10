@@ -56,6 +56,12 @@ public:
     };
 
     ~LoopHelper() {
+        for(analyzers::reverse_iterator analyzer = Analyzers.rbegin() ; analyzer != Analyzers.rend() ; analyzer++){
+            cout << (*analyzer)->Name << " is being killed .... " ;
+            delete *(analyzer);
+        }
+        if(info::TheInfo->Verbosity > 100)
+            cout << "LoopHelper Ended" << endl;
     };
 
     void Start(RunInfo) throw (LoopExceptions);
@@ -79,8 +85,8 @@ public:
 
             TFile *f = fTR->fChain->GetCurrentFile();
             TTree* runTree = (TTree*) f->Get("analyze/RunInfo");
-            std::vector<std::string>* HLTNames;
-            int RunHolder;
+            std::vector<std::string>* HLTNames = new std::vector<std::string>();
+            int RunHolder(-100);
             if (!runTree) {
                 std::cerr << "!!! LoopHelper::GetHLTNames "
                         << "Coudln't get analyze/RunInfo tree" << std::endl;
@@ -90,7 +96,9 @@ public:
             if (info::TheInfo->Verbosity > 0) std::cout << "Retrieving HLTNames for run " << run << std::endl;
             runTree->SetBranchAddress("HLTNames", (&HLTNames));
             runTree->SetBranchAddress("Run", &RunHolder);
+            //runTree->Print("ALL");
             for (int entry = 0; entry < runTree->GetEntries(); entry++) {
+                //cout << entry << "  " << runTree->GetEntries() << endl;
                 runTree->GetEntry(entry);
                 if (RunHolder == run)
                     break;

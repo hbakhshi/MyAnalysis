@@ -193,6 +193,7 @@ namespace ElectronAnalysis {
         DiLepton();
 
         vector<math::XYZTLorentzVector> Jets;
+        vector<int> BJets;
         vector<double> Jets_TrackCountingHighEff;
         vector<double> Jets_simpleSecondaryVertexHighEff;
         math::XYZVectorD CaloMET;

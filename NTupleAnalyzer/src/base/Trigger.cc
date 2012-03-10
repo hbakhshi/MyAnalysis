@@ -1,4 +1,5 @@
 #include "NTupleAnalyzer/include/base/Trigger.h"
+#include "base/Configuration.h"
 
 void TriggerCutSingleRunRange::Print() const {
     cout << "|" << Name << "|" << MinRun << "|" << MaxRun << "|";
@@ -20,6 +21,19 @@ TriggerCutFullRunRange::TriggerCutFullRunRange(const edm::VParameterSet& input, 
         trg->Name = itr->getParameter< string > ("Name");
         trg->SkipRunsWithInconsistentMenu = itr->getUntrackedParameter< bool > ("SkipRunsWithInconsistentMenu", false);
 
+        if (itr->exists("HTLRegExpNames")) {
+            vector<string> hlt_regexps(itr->getParameter< vector<string> > ("HTLRegExpNames"));
+            for (vector<string>::const_iterator regexp = hlt_regexps.begin(); regexp != hlt_regexps.end(); regexp++) {
+                try {
+                    boost::regex regex_(*regexp);
+                    trg->HLT_RegExps.push_back(regex_);
+                } catch (boost::regex_error& e) {
+                    cout << *regexp << " is not a valid regular expression: \""
+                            << e.what() << "\"" << endl;
+                    continue;
+                }
+            }
+        }
         //to remove the duplicated names of HLT's
         std::vector<string>::iterator it = unique(trg->HLTs.begin(), trg->HLTs.end());
         trg->HLTs.resize(it - trg->HLTs.begin());
@@ -61,7 +75,7 @@ TriggerAnalyzer::TriggerAnalyzer(TriggerCutFullRunRange* trgInf) {
     hPassedDifferentRunRanges.SetBins(this->TriggerInfo->Cuts.size(), 0, this->TriggerInfo->Cuts.size());
     for (uint i = 0; i<this->TriggerInfo->Cuts.size(); i++)
         this->hPassedDifferentRunRanges.GetXaxis()->SetBinLabel(i + 1, this->TriggerInfo->Cuts[i]->Name.c_str());
-    
+
     CurrentRunRangeSkip = false;
 }
 
@@ -81,13 +95,13 @@ void TriggerAnalyzer::Write(TDirectory* dir) {
     TH1D hPassEfficiency;
     hPassEfficiency.SetNameTitle(hName.c_str(), hName.c_str());
     hPassEfficiency.SetBins(this->TriggerInfo->Cuts.size(), 0, this->TriggerInfo->Cuts.size());
-    for (uint i = 0; i<this->TriggerInfo->Cuts.size(); i++){
+    for (uint i = 0; i<this->TriggerInfo->Cuts.size(); i++) {
         hPassEfficiency.GetXaxis()->SetBinLabel(i + 1, this->TriggerInfo->Cuts[i]->Name.c_str());
-        
-        hPassEfficiency.SetBinContent(i+1,hPassedDifferentRunRanges.GetBinContent(i+1)/hAllDifferentRunRanges.GetBinContent(i+1));
+
+        hPassEfficiency.SetBinContent(i + 1, hPassedDifferentRunRanges.GetBinContent(i + 1) / hAllDifferentRunRanges.GetBinContent(i + 1));
     }
     hPassEfficiency.Write();
-    
+
     dir->cd();
 }
 
@@ -97,15 +111,16 @@ void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
 
     const TriggerCutSingleRunRange* CurrentRunRange = TriggerInfo->FindARun(run);
 
-    this->CurrentRunRangeName = CurrentRunRange->Name;
-    const vector<string>* CurrentRunHLTs = &(CurrentRunRange->HLTs);
-
-    if (CurrentRunHLTs == NULL) {
+    if (CurrentRunRange == NULL) {
         stringstream str;
         str << "In trigger menu " << TriggerInfo->Name << " run " << run << " is not specified.";
 
         throw TriggerException(str.str());
     }
+
+    this->CurrentRunRangeName = CurrentRunRange->Name;
+    const vector<string>* CurrentRunHLTs = &(CurrentRunRange->HLTs);
+    const vector<boost::regex>* CurrentRunHLTRegExs = &(CurrentRunRange->HLT_RegExps);
 
     CurrentBits.clear();
     if (CurrentBits.size() > 0)
@@ -124,6 +139,36 @@ void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
         } else
             CurrentBits.push_back(itr->second);
     }
+
+    for (vector<boost::regex>::const_iterator hltREName = CurrentRunHLTRegExs->begin(); hltREName != CurrentRunHLTRegExs->end(); hltREName++) {
+        int nmatchedhlts(0);
+        for (itr = hltNames->begin(); itr != hltNames->end(); itr++)
+            if (boost::regex_match(itr->first, *hltREName)) {
+                CurrentBits.push_back(itr->second);
+                nmatchedhlts++;
+            }
+
+        if (nmatchedhlts == 0) {
+            stringstream sss;
+            sss << "TriggerAnalyzer::OnRunChange ==> " + TriggerInfo->Name << " run " << run << " - no hlt matches " + hltREName->str() + " found!";
+            if (CurrentRunRange->SkipRunsWithInconsistentMenu)
+                cout << sss.str() << endl;
+            else
+                throw TriggerException(sss.str());
+        }
+    }
+
+    std::vector<int>::iterator it_unique = unique(CurrentBits.begin(), CurrentBits.end());
+    CurrentBits.resize(it_unique - CurrentBits.begin());
+
+    if(info::TheInfo->Verbosity> 5){
+        cout << "selected hlts in " << TriggerInfo->Name << " : " ;
+        for(std::vector<int>::iterator it=CurrentBits.begin() ; it != CurrentBits.end() ; it++){
+            for(itr = hltNames->begin() ; itr != hltNames->end() ; itr++)
+                if(itr->second == *it)
+                    cout << "\t" << itr->first << endl;
+        }
+    }
     
     this->CurrentRunRangeSkip = CurrentRunRange->SkipRunsWithInconsistentMenu;
 }
@@ -136,9 +181,9 @@ bool TriggerAnalyzer::Analyze(int run) {
     for (std::vector<int>::iterator hltbit = CurrentBits.begin(); hltbit != CurrentBits.end(); hltbit++)
         ret = (ret || (*(HLTResutls + *hltbit) != 0));
 
-    if(CurrentBits.size() == 0 && this->CurrentRunRangeSkip)
+    if (CurrentBits.size() == 0 && this->CurrentRunRangeSkip)
         ret = true;
-    
+
     hAllDifferentRunRanges.Fill(CurrentRunRangeName.c_str(), 1);
     if (ret) hPassedDifferentRunRanges.Fill(CurrentRunRangeName.c_str(), 1);
 

@@ -404,6 +404,8 @@ public:
     }
 
     virtual ~RunInfo() {
+        if(Verbosity > 100)
+            cout << "RunInfo Ended" << endl;
     };
 
     void Print() {
