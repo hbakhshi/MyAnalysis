@@ -11,12 +11,32 @@ HLTDiElectronMCTTBar2011 = cms.VPSet (
     )
 )
 
-HLTDiMuonMCTTBar2011 = cms.VPSet (
+HLTDiMuonMCTTBar2011_1 = cms.VPSet (
     cms.PSet(
         MinRun=cms.int32(0),
         MaxRun=cms.int32(2),
         HLTNames=cms.vstring(),
-        HTLRegExpNames=cms.vstring("HLT_DoubleMu3_v.", "HLT_DoubleMu6_v." , "HLT_DoubleMu7_v."),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu3_v."),
+        Name=cms.string("AllMC"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+HLTDiMuonMCTTBar2011_2 = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(0),
+        MaxRun=cms.int32(2),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu6_v."),
+        Name=cms.string("AllMC"),
+        SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
+    )
+)
+HLTDiMuonMCTTBar2011_3 = cms.VPSet (
+    cms.PSet(
+        MinRun=cms.int32(0),
+        MaxRun=cms.int32(2),
+        HLTNames=cms.vstring(),
+        HTLRegExpNames=cms.vstring("HLT_DoubleMu7_v."),
         Name=cms.string("AllMC"),
         SkipRunsWithInconsistentMenu=cms.untracked.bool(True)
     )

@@ -16,5 +16,4 @@ cd $STARTUPDIR
 #python -i Config.py
 rm -f Log$INPUT
 rm -f Err$INPUT
-(WPolarization Config.py > Log$INPUT) >& Err$INPUT
-
+(WPolarization ConfigMC.py > Log$INPUT) >& Err$INPUT

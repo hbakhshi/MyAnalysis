@@ -198,12 +198,20 @@ public:
 
             for (vector<string>::iterator file = Files.begin();
                     file != Files.end(); file++) {
-                ((TChain*) __Tree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
-                ((TChain*) __RunTree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
+	      TFile* f_tmp = TFile::Open(  (*file).c_str() , "READ" );
+	      if( f_tmp != NULL){
+		if(!(f_tmp->IsZombie()) && !(f_tmp->TestBit(TFile::kRecovered)) ){
+		  ((TChain*) __Tree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
+		  ((TChain*) __RunTree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
+		}
+
+		f_tmp->Close();
+		delete f_tmp;
+	      }
             }
 
             this->__NEvents = TotalNumberOfEvents < 0 ? __Tree->GetEntries() : TotalNumberOfEvents;
-        }
+	    }
         return __Tree;
     }
 

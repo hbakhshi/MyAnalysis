@@ -198,6 +198,7 @@ void LoopHelper::Start(RunInfo info) throw (LoopExceptions) {
                 clone_tree = fTR->fChain->CloneTree(0);
             }
             if (info::TheInfo->CopyTree) {
+	        file_tree->cd();
                 TTree* runTree = file_itr->GetRunTree();
                 file_tree->GetDirectory("analyze")->cd();
                 clone_run_trees.Add(runTree->CloneTree(-1, "fast"));

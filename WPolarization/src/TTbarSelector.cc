@@ -211,6 +211,7 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             }
         }
     }
+    //cout << TheEvent.BJets.size() << "  " <<  ((TTbarSelectorConfig*) Config)->NBJets << endl;
     TheEvent.NJets = this->TheEvent.Jets.size();
 
     this->TheEvent.CaloMET.SetCoordinates(TheTree->MuJESCorrMETpx, TheTree->MuJESCorrMETpy, 0);
@@ -303,8 +304,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_bTag2 - TTbarEventSelectionSteps_SameFlavours);
     }
 
-
-    if (TheEvent.BJets.size() < ((TTbarSelectorConfig*) Config)->NBJets) {
+    int nBjets(TheEvent.BJets.size());
+    if ( nBjets < ((TTbarSelectorConfig*) Config)->NBJets) {
         stat = 14;
         return NULL;
     }
@@ -325,8 +326,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         return NULL;
     }
 
-    vector<string>* accept_triggers;
-    vector<string>* veto_triggers;
+    vector<string>* accept_triggers(NULL);
+    vector<string>* veto_triggers(NULL);
     int rejecting_status(0);
     switch (TheEvent.RecDecayMode) {
         case TopAnalysis::TTBarDileptonicEvent::DiEle:
@@ -350,7 +351,7 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             break;
     }
 
-    Trigger = this->Config->TriggerNames.size() == 0;
+    Trigger = (accept_triggers->size() == 0) ;
     for (vector<string>::iterator trg = accept_triggers->begin(); trg != accept_triggers->end(); trg++) {
         map<string, bool>::const_iterator res = TriggerResults->find(*trg);
         if (res == TriggerResults->end())
@@ -358,14 +359,16 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
 
         Trigger = (Trigger || res->second);
     }
-    for (vector<string>::iterator trg = veto_triggers->begin(); trg != veto_triggers->end(); trg++) {
+
+    if(Trigger){
+      for (vector<string>::iterator trg = veto_triggers->begin(); trg != veto_triggers->end(); trg++) {
         map<string, bool>::const_iterator res = TriggerResults->find(*trg);
         if (res == TriggerResults->end())
             throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
 
         Trigger = (Trigger && !(res->second));
+      }
     }
-
     if (!Trigger) {
         stat = 15 + rejecting_status;
         return NULL;
