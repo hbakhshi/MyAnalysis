@@ -31,7 +31,7 @@ WJetsSummer2011 = cms.VPSet(
     cms.PSet(
         File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
-        TotalNumberOfEvents = cms.int32(75152403),
+        TotalNumberOfEvents = cms.int32(75102403),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
         Name=cms.string("WJetsSummer2011"),

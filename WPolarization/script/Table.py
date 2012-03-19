@@ -42,10 +42,13 @@ class Table(object):
         """ quite stupid, just for demonstration purposes """
         txt = "|".join(sorted(self.rows[0].keys())).expandtabs()
         txt += "\n"
-        txt += "-"*len(txt)
+        txt += "|-"
         for r in self.rows:
             txt += "\n"
             txt += "|".join([str(r[key]) for key in sorted(self.rows[0].keys())])
+        txt += "\n"
+        txt += "|-\n"
+        txt += "|" + "|".join( [str(sum([r[key] for r in self.rows])) for key in sorted(self.rows[0].keys())[1:]] )
         return txt
 
 

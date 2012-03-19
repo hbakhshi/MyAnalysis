@@ -42,6 +42,18 @@ process.SyncTTBars = cms.VPSet(
         PreSelEfficiency=cms.double(1.0)
         )
     )
+process.Temp = cms.VPSet(
+    cms.PSet(
+        File=cms.string('/tmp/hbakhshi/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("Temp"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
 
 INPUT = ''
 INPUTPSet = cms.PSet()
