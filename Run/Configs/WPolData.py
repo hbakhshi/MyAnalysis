@@ -27,14 +27,119 @@ TTBarSummer2011 = cms.VPSet(
         )
     )
 
-WJetsSummer2011 = cms.VPSet(
+WJetsSummer2011_1a = cms.VPSet(
     cms.PSet(
         File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
-        TotalNumberOfEvents = cms.int32(75102403),
+        TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("WJetsSummer2011"),
+        Name=cms.string("WJetsSummer2011_1a"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_1[01].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_1b = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_1b"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_1[23].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_1c = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_1c"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_1[45].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_1d = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_1d"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_1[67].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_1e = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_1e"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_1[89].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_23 = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_23"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_[23].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_45 = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_45"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_[45].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_67 = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_67"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_[67].*_.*\.root"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
+WJetsSummer2011_89 = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/MC/V02-05-01/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/'),
+        IsDirectory = cms.untracked.bool(True),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("WJetsSummer2011_89"),
+        fileNamePattern=cms.untracked.string(".*NTupleProducer_42X_MC_[89].*_.*\.root"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )

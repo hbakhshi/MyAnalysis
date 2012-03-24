@@ -170,11 +170,15 @@ public:
     std::map<string, double> NTriggerRejections;
 };
 
+#include <boost/regex.hpp>
+
 class DirectoryInfo : public FileInfo {
 public:
     bool isCastor;
     int TotalNumberOfEvents;
     std::vector< string > Files;
+
+    boost::regex fileNamePattern;
 
     DirectoryInfo(string treeName = "analyze/Analysis") : FileInfo(treeName) {
     };
@@ -198,20 +202,26 @@ public:
 
             for (vector<string>::iterator file = Files.begin();
                     file != Files.end(); file++) {
-	      TFile* f_tmp = TFile::Open(  (*file).c_str() , "READ" );
-	      if( f_tmp != NULL){
-		if(!(f_tmp->IsZombie()) && !(f_tmp->TestBit(TFile::kRecovered)) ){
-		  ((TChain*) __Tree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
-		  ((TChain*) __RunTree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
-		}
+                if(fileNamePattern.str() != "")
+                    if( ! boost::regex_match( *file , fileNamePattern  ) )
+                        continue;
+                    else
+                        cout << *file << endl;
+                
+                TFile* f_tmp = TFile::Open((*file).c_str(), "READ");
+                if (f_tmp != NULL) {
+                    if (!(f_tmp->IsZombie()) && !(f_tmp->TestBit(TFile::kRecovered))) {
+                        ((TChain*) __Tree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
+                        ((TChain*) __RunTree)->AddFile((*file).c_str(), TotalNumberOfEvents < 0 ? 0 : TChain::kBigNumber);
+                    }
 
-		f_tmp->Close();
-		delete f_tmp;
-	      }
+                    f_tmp->Close();
+                    delete f_tmp;
+                }
             }
 
             this->__NEvents = TotalNumberOfEvents < 0 ? __Tree->GetEntries() : TotalNumberOfEvents;
-	    }
+        }
         return __Tree;
     }
 
@@ -231,17 +241,18 @@ public:
     DCapDir(string treeName = "analyze/Analysis") : BASE_(treeName) {
     };
 
-    string GetSRMFullAddress(string fileName = ""){
-        std::stringstream ret ;
-        ret << "srm://" <<  Server << ":" << SRMPort ;
+    string GetSRMFullAddress(string fileName = "") {
+        std::stringstream ret;
+        ret << "srm://" << Server << ":" << SRMPort;
         ret << "/srm/managerv2?SFN=";
         ret << BASE_::FileName << "/" << fileName;
-        
+
         return ret.str();
     }
-    string GetDCapFullAddress(string fileName){
-        std::stringstream ret ;
-        ret << "dcap://" <<  Server << ":" << DCapPort ;
+
+    string GetDCapFullAddress(string fileName) {
+        std::stringstream ret;
+        ret << "dcap://" << Server << ":" << DCapPort;
         ret << fileName;
 
         return ret.str();
@@ -292,13 +303,14 @@ public:
             if (itr->getUntrackedParameter<bool>("IsDirectory", false)) {
                 fi = new DirectoryInfo();
                 ((DirectoryInfo*) fi)->isCastor = itr->getParameter<bool>("IsCastor");
+                ((DirectoryInfo*) fi)->fileNamePattern.assign( itr->getUntrackedParameter<string>("fileNamePattern", "").c_str() );
                 ((DirectoryInfo*) fi)->TotalNumberOfEvents = itr->getParameter<int>("TotalNumberOfEvents");
             } else if (itr->getUntrackedParameter<bool>("IsDCap", false)) {
                 fi = new DCapDir();
                 ((DCapDir*) fi)->DCapPort = itr->getParameter<int>("DCapPort");
                 ((DCapDir*) fi)->SRMPort = itr->getParameter<int>("SRMPort");
-                ((DCapDir*) fi)->Server = itr->getParameter<string>("Server");
-                ((DCapDir*) fi)->LCG_LS = itr->getParameter<string>("LCG_LS");
+                ((DCapDir*) fi)->Server = itr->getParameter<string > ("Server");
+                ((DCapDir*) fi)->LCG_LS = itr->getParameter<string > ("LCG_LS");
                 ((DCapDir*) fi)->TotalNumberOfEvents = itr->getParameter<int>("TotalNumberOfEvents");
             } else
                 fi = new FileInfo();
@@ -412,7 +424,7 @@ public:
     }
 
     virtual ~RunInfo() {
-        if(Verbosity > 100)
+        if (Verbosity > 100)
             cout << "RunInfo Ended" << endl;
     };
 
@@ -430,7 +442,7 @@ class info {
 public:
     static RunInfo* TheInfo;
     static int CPU_Number;
-    static void AnalyzeArgs(int argc, char** argv , std::string module_name = "ElectronCharge" );
+    static void AnalyzeArgs(int argc, char** argv, std::string module_name = "ElectronCharge");
 };
 #endif	/* CONFIGURATION_H */
 

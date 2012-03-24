@@ -716,6 +716,8 @@
           <in>NeutrinoSolver.h</in>
           <in>TTbarSelector.h</in>
         </df>
+        <df name="script">
+        </df>
         <df name="src">
           <in>BJetAssigner.cc</in>
           <in>CosThetaAnalysis.cc</in>
