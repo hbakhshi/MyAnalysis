@@ -5,7 +5,8 @@ WPOLOBJS = \
 	BJetAssigner.o \
 	NeutrinoSolver.o \
 	CosThetaAnalysis.o \
-	GenRecComparison.o
+	GenRecComparison.o \
+	BTagWeight.o
 
 WPolarizationUSERLIBS = \
 	-L$(PYTHONLIB) $(python_lib) \

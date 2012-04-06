@@ -23,7 +23,7 @@ $(TARGETDIR)/BaseAnalysisTester: $(PWD)/obj/$(MACHINE)/Tester.o $(TARGETDIR)/lib
 	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) -g -gdb $< -o $@ $(LDLIBS) $(TARGETDIR)/libBaseAnalysis.so
 	#$(PWD)/external/$(MACHINE)/BOOSTLIB/libboost_thread.so
 	@echo Starting execution of $(@F)
-	#@$@
+	@$@
 
 # Enable dependency checking
 .KEEP_STATE:

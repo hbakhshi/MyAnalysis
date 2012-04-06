@@ -8,6 +8,7 @@
 #include <map>
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "WPolarization/interface/BTagWeight.h"
 
 using namespace std;
 using namespace ElectronAnalysis;
@@ -17,6 +18,8 @@ using ElectronAnalysis::Electron;
 
 class TTbarSelectorConfig : public BaseSelectorConfig {
 public:
+    string PUWFiles;
+
     bool RejectInvMassLessThan12;
     bool RejectZRegion;
     bool RejectLeptonsFromZ;
@@ -26,12 +29,13 @@ public:
 
     double DRJetsLeptons;
 
+    bool Data;
     bool IsTTBarSample;
     bool MCStudy;
 
     string btag_algo;
 
-    int getBTagAlgo() {
+    int getBTagAlgo() const{
         if (btag_algo == "TrackCountingHighEff")
             return 1;
 
@@ -39,6 +43,18 @@ public:
             return 2;
 
         return 100;
+    }
+
+    TF1* BTagScaleFactor;
+
+    const TF1* getBTagScaleFactor(){
+        if (BTagScaleFactor == NULL) {
+            if (getBTagAlgo() == 1)
+                BTagScaleFactor = new TF1("fSFB", "0.603913*((1.+(0.286361*x))/(1.+(0.170474*x)))" , 30 , 1000);
+            else if (getBTagAlgo() == 2)
+                BTagScaleFactor = new TF1("fSFB", "0.896462*((1.+(0.00957275*x))/(1.+(0.00837582*x)))" , 30 , 1000);
+            }
+        return BTagScaleFactor;
     }
     double BJetSelectionBTag;
     int NBJets;
@@ -50,7 +66,7 @@ public:
     vector<string> DiMuonTrigger_Veto;
     vector<string> ElectronMuonTrigger;
     vector<string> ElectronMuonTrigger_Veto;
-    
+
     edm::ParameterSet SelectedEventTypesByDSName;
 
     TTbarSelectorConfig(const edm::ParameterSet& ps) : BaseSelectorConfig(ps),
@@ -68,14 +84,18 @@ public:
     NBJets(ps.getParameter<int>("NBJets")),
     BJetSelectionBTag(ps.getParameter<double>("BJetSelectionBTag")),
     IsTTBarSample(ps.getUntrackedParameter<bool>("TTBarSample", false)),
-    MCStudy(ps.getUntrackedParameter<bool>("MCStudy", false)) ,
-    
+    MCStudy(ps.getUntrackedParameter<bool>("MCStudy", false)),
+
     DiElectronTrigger(ps.getParameter<vector<string> >("DiElectronTrigger")),
     DiElectronTrigger_Veto(ps.getParameter<vector<string> >("DiElectronTrigger_Veto")),
     DiMuonTrigger(ps.getParameter<vector<string> >("DiMuonTrigger")),
     DiMuonTrigger_Veto(ps.getParameter<vector<string> >("DiMuonTrigger_Veto")),
     ElectronMuonTrigger(ps.getParameter<vector<string> >("ElectronMuonTrigger")),
-    ElectronMuonTrigger_Veto(ps.getParameter<vector<string> >("ElectronMuonTrigger_Veto")){
+    ElectronMuonTrigger_Veto(ps.getParameter<vector<string> >("ElectronMuonTrigger_Veto")),
+
+    PUWFiles(ps.getParameter<string>("PUWFiles")),
+    Data(ps.getParameter<bool>("Data")),
+    BTagScaleFactor(NULL) {
 
         //        cout << RejectZRegion << endl;
         //        cout << RejectLeptonsFromZ << endl;
@@ -94,6 +114,9 @@ public:
     ObjectProperty<TTBarDileptonicEvent>* btag_1;
     ObjectProperty<TTBarDileptonicEvent>* btag_2;
 
+    TH1F hPileUpWeights;
+    BTagWeight BTagWeighter;
+    
     virtual TTBarDileptonicEvent* Read(int& stat);
 
     virtual bool CheckElectron(int eleidx, bool fillHisto = true);
@@ -139,6 +162,13 @@ public:
     virtual void OnChangeFile(FileInfo* fi, DataSet* ds);
     virtual void AddSelectionStepsJet();
 private:
+    
+    TH1D hEventSelectionMuonMuon;
+    TH1D hEventSelectionElectronElectron;
+    TH1D hEventSelectionElectronMuon;
+    TH1D hEventSelectionMuonMuonW;
+    TH1D hEventSelectionElectronElectronW;
+    TH1D hEventSelectionElectronMuonW;
 };
 
 typedef TTbarEventSelector EventSelector;

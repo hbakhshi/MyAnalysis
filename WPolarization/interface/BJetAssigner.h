@@ -17,6 +17,7 @@ class BJetAssigner : public Analyzer<TopAnalysis::TTBarDileptonicEvent> {
 public:
     enum methods{
         method_random,
+        method_random_firstbs,
         method_genmatch,
         method_mlb,
         method_deltaR,

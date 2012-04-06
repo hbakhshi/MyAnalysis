@@ -598,7 +598,7 @@ protected:
         return GoodJets.size();
     };
 
-    void FillAllValue(Histograms<int>* histos) {
+        void FillAllValue(Histograms<int>* histos) {
         if (!(this->Config->EnableElectronControlPlots))
             return;
 

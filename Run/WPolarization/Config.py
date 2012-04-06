@@ -30,28 +30,30 @@ if os.environ.has_key( 'CPUNumber' ):
 
 __CopyTreeFileName =  STARTUPDIR + "/" + COPYTREEFILENAME
 
-process.SelectedTTBars = cms.VPSet(
-    cms.PSet(
-        File=cms.string('/home/hbakhshi/Documents/Analysis/Run/WPolarization/TreeTTbar_TTBarSummer2011.root'),
-        IsDirectory = cms.untracked.bool(False),
-        TotalNumberOfEvents = cms.int32(-1),
-        IsCastor   = cms.bool(False),
-        XSec=cms.double(-1),
-        Name=cms.string("SelectedTTBars"),
-        MaxInput=cms.int32(-1),
-        PreSelEfficiency=cms.double(1.0)
-        )
-    )
 
 INPUT = ''
 INPUTPSet = cms.PSet()
 if os.environ.has_key( 'INPUT' ):
     INPUT = os.environ['INPUT']
-    INPUTPSet = process.vpsets[INPUT][0]
 else :
     raise Exception, "You should specify the input source via env-variable INPUT"
 
+process.SelectedEvents = cms.VPSet(
+    cms.PSet(
+        File=cms.string('/home/hbakhshi/Documents/WPolarization/NTuples/TreeTTbar_' + INPUT.replace( 'SELECTED' , '') +  '.root'),
+        IsDirectory = cms.untracked.bool(False),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("SelectedTTBars_" + INPUT.replace( 'SELECTED' , '')),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0)
+        )
+    )
 
+if INPUT.find( 'SELECTED' ) >= 0:
+    INPUT = 'SelectedEvents'
+INPUTPSet = process.vpsets[INPUT][0]
 
 process.RunSetup = cms.untracked.PSet(
     CPU_Number = cms.untracked.int32(CPUN)
@@ -60,9 +62,9 @@ process.RunSetup = cms.untracked.PSet(
 process.WPolarization = cms.PSet(
     Name=cms.untracked.string("WPolarization"),
     TotalInput=cms.untracked.int32(-1),
-    NumberOfEventsPerPrintLoop=cms.untracked.int32(10000),
+    NumberOfEventsPerPrintLoop=cms.untracked.int32(1000),
     Verbosity=cms.untracked.int32(0),
-    OutFileName=cms.string("WPol_" + INPUT + ".root"),
+    OutFileName=cms.string("WPol_" + INPUTPSet.Name.value() + ".root"),
     Inputs=cms.vstring(INPUT),
     IntLumi=cms.double(INPUTPSet.TotalNumberOfEvents.value() / INPUTPSet.XSec.value() ),
 
@@ -142,13 +144,16 @@ process.WPolarization = cms.PSet(
         METCutOF=cms.double(20.0), #20
         METCutSF=cms.double(30.0), #30
         NJets=cms.int32(2), #2
-        btag_algo = cms.string('simpleSecondaryVertexHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
-        BJetSelectionBTag = cms.double( 1.74 ), #to count the number of bjets
-        NBJets = cms.int32(-1),
-        BTag1 = cms.double(-10000.0),
-        BTag2 = cms.double(-10000.0),
+        btag_algo = cms.string('TrackCountingHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
+        BJetSelectionBTag = cms.double( 1.7 ), #to count the number of bjets
+        NBJets = cms.int32(1),
+        BTag1 = cms.double(-100000.0),
+        BTag2 = cms.double(-100000.0),
 
         DRJetsLeptons = cms.double(0.4), #it applies on jet after the two leptons of ttbar are selected
+
+        PUWFiles=cms.string('./Pileup.root'),
+        Data=cms.bool(True),
 
         LooseSelection=cms.bool(False),
         EnableEventControlPlots=cms.bool(True),
@@ -191,33 +196,33 @@ process.WPolarization = cms.PSet(
         )
     ),
     Analyzers=cms.VPSet(
-       cms.PSet(
-           Name=cms.string("neutrino_solver_ee"),
-           Type=cms.string("neutrino_solver"),
-           EventTypes=cms.vdouble( 0.25 ),
-           bJetAssigner = cms.PSet (
-               method = cms.string("random"),
-               Name=cms.string("random_bAssigner")
-           )
-       ),
-#        cms.PSet(
-#            Name=cms.string("neutrino_solver_mm"),
-#            Type=cms.string("neutrino_solver"),
-#            EventTypes=cms.vdouble( 1.25 ),
-#            bJetAssigner = cms.PSet (
-#                method = cms.string("random"),
-#                Name=cms.string("random_bAssigner")
-#            )
-#        ),
+        cms.PSet(
+            Name=cms.string("neutrino_solver_ee"),
+            Type=cms.string("neutrino_solver"),
+            EventTypes=cms.vdouble( 0.25 ),
+            bJetAssigner = cms.PSet (
+                method = cms.string("ranodm_firstbs"),
+                Name=cms.string("random_bAssigner")
+                )
+            ),
+        cms.PSet(
+            Name=cms.string("neutrino_solver_mm"),
+            Type=cms.string("neutrino_solver"),
+            EventTypes=cms.vdouble( 1.25 ),
+            bJetAssigner = cms.PSet (
+                method = cms.string("ranodm_firstbs"),
+                Name=cms.string("random_bAssigner")
+                )
+            ),
         cms.PSet(
             Name=cms.string("neutrino_solver_em"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 2.25 , 3.25 ),
             bJetAssigner = cms.PSet (
-                method = cms.string("random"),
+                method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
-            )
-        ),
+                )
+            ),
         cms.PSet(
             Name=cms.string("costheta_ee"),
             Type=cms.string("costheta"),
@@ -225,36 +230,19 @@ process.WPolarization = cms.PSet(
             SolverName = cms.string("neutrino_solver_ee"),
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(False),
+            GenDecayMode=cms.int32(3),
+            FillRec=cms.bool(True)
+            ),
+        cms.PSet(
+            Name=cms.string("costheta_mm"),
+            Type=cms.string("costheta"),
+            EventTypes=cms.vdouble( 1.25 ),
+            SolverName = cms.string("neutrino_solver_mm"),
+            SolverSolution = cms.int32(0),
+            FillGen=cms.bool(False),
             GenDecayMode=cms.int32(4),
             FillRec=cms.bool(True)
-        ),
-#        cms.PSet(
-#            Name=cms.string("costheta_mm"),
-#            Type=cms.string("costheta"),
-#            EventTypes=cms.vdouble( 1.25 ),
-#            SolverName = cms.string("neutrino_solver_mm"),
-#            SolverSolution = cms.int32(0)
-#        ),
-#        cms.PSet(
-#            Name=cms.string("costheta_mm_gen"),
-#            Type=cms.string("costheta"),
-#            FillGen=cms.bool(True),
-#            GenDecayMode=cms.int32(4),
-#            FillRec=cms.bool(False),
-#            EventTypes=cms.vdouble(  ),
-#            SolverName = cms.string("neutrino_solver_mm"),
-#            SolverSolution = cms.int32(0)
-#        ),
-#        cms.PSet(
-#            Name=cms.string("costheta_ee_gen"),
-#            Type=cms.string("costheta"),
-#            FillGen=cms.bool(True),
-#            GenDecayMode=cms.int32(3),
-#            FillRec=cms.bool(False),
-#            EventTypes=cms.vdouble(  ),
-#            SolverName = cms.string("neutrino_solver_mm"),
-#            SolverSolution = cms.int32(0)
-#        )
+            ),
         cms.PSet(
             Name=cms.string("costheta_em"),
             Type=cms.string("costheta"),
@@ -262,28 +250,9 @@ process.WPolarization = cms.PSet(
             SolverName = cms.string("neutrino_solver_em"),
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(False),
-            GenDecayMode=cms.int32(4),
+            GenDecayMode=cms.int32(1), #is hard-coded as em==me
             FillRec=cms.bool(True)
-        )
-#       cms.PSet(
-#           Name=cms.string("GenRecComparison_ee"),
-#           Type=cms.string("GenRecComparison"),
-#           EventTypes=cms.vdouble( 0.25  ),
-#           SolverName = cms.string("neutrino_solver_ee"),
-#           SolverSolution = cms.int32(0)
-#       ),
-#        cms.PSet(
-#           Name=cms.string("GenRecComparison_mm"),
-#            Type=cms.string("GenRecComparison"),
-#            EventTypes=cms.vdouble( 1.25 ),
-#            SolverName = cms.string("neutrino_solver_mm"),
-#            SolverSolution = cms.int32(0)
-#        )
-#        cms.PSet(
-#            Name=cms.string("GenRecComparison_em"),
-#            Type=cms.string("GenRecComparison"),
-#            EventTypes=cms.vdouble( 2.25 , 3.25 )
-#        )
+            )
     )
 )
 

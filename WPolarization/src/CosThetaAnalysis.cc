@@ -37,12 +37,14 @@ CosThetaAnalysis::~CosThetaAnalysis() {
 bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
 
     if (FillGen) {
-        if (ev->GenDecayMode == this->GenDecayMode) {
-            hCosThetaPosLepton_Gen->Fill(ev->TOP_Gen.CosTheta());
-            hCosThetaNegLepton_Gen->Fill(ev->TOPBar_Gen.CosTheta());
+        if (ev->GenDecayMode == this->GenDecayMode || 
+                (this->GenDecayMode == TopAnalysis::TTBarDileptonicEvent::ElP_MuM && ev->GenDecayMode == TopAnalysis::TTBarDileptonicEvent::ElM_MuP) )  //em == me
+        {
+            hCosThetaPosLepton_Gen->Fill(ev->TOP_Gen.CosTheta(), ev->Weight);
+            hCosThetaNegLepton_Gen->Fill(ev->TOPBar_Gen.CosTheta(), ev->Weight);
             
-            hCosThetaPtLep_Gen->Fill(ev->TOP_Gen.CosTheta() , ev->TOP_Gen.W.lepton.Pt() );
-            hCosThetaPtLep_Gen->Fill(ev->TOPBar_Gen.CosTheta() , ev->TOPBar_Gen.W.lepton.Pt() );
+            hCosThetaPtLep_Gen->Fill(ev->TOP_Gen.CosTheta() , ev->TOP_Gen.W.lepton.Pt(), ev->Weight );
+            hCosThetaPtLep_Gen->Fill(ev->TOPBar_Gen.CosTheta() , ev->TOPBar_Gen.W.lepton.Pt(), ev->Weight );
         }
     }
     if (!FillRec)
@@ -59,17 +61,17 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
     //for first lepton :
 
     double costheta_top = ev->Top_Rec->CosTheta();
-    hCosThetaPosLepton->Fill(costheta_top);
+    hCosThetaPosLepton->Fill(costheta_top, ev->Weight);
 
     double costheta_tbar = ev->TopBar_Rec->CosTheta();
-    hCosThetaNegLepton->Fill(costheta_tbar);
+    hCosThetaNegLepton->Fill(costheta_tbar, ev->Weight);
 
     if (ev->Top_Rec->W.lepton.Pt() > ev->TopBar_Rec->W.lepton.Pt()) {
-        hCosTheta1stLepton->Fill(costheta_top);
-        hCosTheta2ndLepton->Fill(costheta_tbar);
+        hCosTheta1stLepton->Fill(costheta_top, ev->Weight);
+        hCosTheta2ndLepton->Fill(costheta_tbar, ev->Weight);
     } else {
-        hCosTheta1stLepton->Fill(costheta_tbar);
-        hCosTheta2ndLepton->Fill(costheta_top);
+        hCosTheta1stLepton->Fill(costheta_tbar, ev->Weight);
+        hCosTheta2ndLepton->Fill(costheta_top, ev->Weight);
     }
     return true;
 }

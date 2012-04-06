@@ -13,7 +13,7 @@ cd ../Scripts
 source Env.csh
 
 cd $STARTUPDIR
-#python -i Config.py
+#python -i ConfigMC.py
 rm -f Log$INPUT
 rm -f Err$INPUT
 (WPolarization ConfigMC.py > Log$INPUT) >& Err$INPUT

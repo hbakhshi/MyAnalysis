@@ -38,17 +38,25 @@ class Table(object):
         tmp.extend(other.rows[:]) # use copys of lists !
         return Table(tmp)
 
+    def GetSumRow(self):
+        ret = RowObject()
+        for key in sorted(self.rows[0].keys())[1:]:
+            ret[key] = sum([r[key] for r in self.rows])
+        return ret
+
     def __str__(self):
         """ quite stupid, just for demonstration purposes """
-        txt = "|".join(sorted(self.rows[0].keys())).expandtabs()
+        txt = "  |" + "|".join(sorted(self.rows[0].keys())).expandtabs()
         txt += "\n"
         txt += "|-"
         for r in self.rows:
-            txt += "\n"
+            txt += "\n|"
             txt += "|".join([str(r[key]) for key in sorted(self.rows[0].keys())])
         txt += "\n"
         txt += "|-\n"
-        txt += "|" + "|".join( [str(sum([r[key] for r in self.rows])) for key in sorted(self.rows[0].keys())[1:]] )
+        #txt += "| |" + "|".join( [str(sum([r[key] for r in self.rows])) for key in sorted(self.rows[0].keys())[1:]] )
+        sumRow = self.GetSumRow()
+        txt += "| |" + "|".join( [str(sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
         return txt
 
 

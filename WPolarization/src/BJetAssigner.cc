@@ -16,6 +16,8 @@ the_bbar_index(-1) {
         this->Method = method_random;
     else if (method_name == "genmatch")
         this->Method = method_genmatch;
+    else if (method_name == "ranodm_firstbs")
+        this->Method = method_random_firstbs;
 }
 
 BJetAssigner::~BJetAssigner() {
@@ -30,6 +32,28 @@ bool BJetAssigner::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
             } else {
                 the_b_index = 1;
                 the_bbar_index = 0;
+            }
+            return true;
+        case method_random_firstbs:
+            int possible_jets[2];
+            if (ev->BJets.size() > 1) {
+                possible_jets[0] = ev->BJets[0];
+                possible_jets[1] = ev->BJets[1];
+            }
+            else if (ev->BJets.size() == 1) {
+                possible_jets[0] = ev->BJets[0];
+                if (possible_jets[0] == 0)
+                    possible_jets[1] = 1;
+                else
+                    possible_jets[1] = 0;
+            }
+            
+            if (random_generator.Uniform(0.0, 1.0) > 0.5) {
+                the_b_index = possible_jets[0];
+                the_bbar_index = possible_jets[1];
+            } else {
+                the_b_index = possible_jets[1];
+                the_bbar_index = possible_jets[0];
             }
             return true;
         default:

@@ -171,6 +171,20 @@ SingleTopSummer2011 = cms.VPSet(
         )
     )
 
+SingleTopTWSummer2011 = cms.VPSet(
+    cms.PSet(
+        File=cms.string(os.environ['ntpHome'] + '/Samples/SingleToptw_channel.root'),
+        IsDirectory = cms.untracked.bool(False),
+        TotalNumberOfEvents = cms.int32(-1),
+        IsCastor   = cms.bool(False),
+        XSec=cms.double(-1),
+        Name=cms.string("SingleTopTWSummer2011"),
+        MaxInput=cms.int32(-1),
+        PreSelEfficiency=cms.double(1.0),
+        #Note=cms.untracked.string("Just TOP, XSec=7.9, Anti-Top should be added separately")
+        )
+    )
+
 WWSummer2011 = cms.VPSet(
     cms.PSet(
         File=cms.string(os.environ['ntpHome'] + '/Samples/WW.root'),
