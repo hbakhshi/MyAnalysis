@@ -23,8 +23,8 @@ class HistogramsManager : public vector<Histograms<T>*> {
 public:
     typedef vector<Histograms<T>*> BASE;
 
-    HistogramsManager(string Name, bool LOGY = true, bool BuildLegend = true, bool normalized = false,bool enabled = true) {
-        name = Name;    
+    HistogramsManager(string Name, bool LOGY = true, bool BuildLegend = true, bool normalized = false, bool enabled = true) {
+        name = Name;
         logY = LOGY;
         buildLegend = BuildLegend;
         Normalized = normalized;
@@ -32,8 +32,8 @@ public:
     };
 
     void WriteAll(TDirectory* dir) {
-        if(!Enabled)
-            return ;
+        if (!Enabled)
+            return;
 
         cout << name << endl;
         TDirectory* dir__ = dir->mkdir(name.c_str());
@@ -76,25 +76,31 @@ public:
         }
     };
 
-    Histograms<T>* CreateHistos(string name){
-        Histograms<T>* ret = new Histograms<T>(name);
-        
+    Histograms<T>* CreateHistos(string name) {
+        Histograms<T>* ret = new Histograms<T > (name);
+
         this->push_back(ret);
 
-//        cout << this->size() << endl;
+        //        cout << this->size() << endl;
 
         return ret;
     };
-    ObjectProperty<T>* AddHisto1ToAll(ObjectProperty<T>* o){
-        for(int i = 0; i < this->size(); i++)
-            this->at(i)->AddHisto1(o);
-    };
-    void FillAll(const T* theObj, int JustThis = -1, double w = 1){
-        if(!Enabled)
-            return ;
 
-        if(JustThis < 0)
-            for(int ii = 0; ii < this->size(); ii++)
+    ObjectProperty<T>* AddHisto1ToAll(ObjectProperty<T>* o) {
+        for (int i = 0; i < this->size(); i++)
+            this->at(i)->AddHisto1(o);
+        
+        return o;
+    };
+    
+    void AddHisto2ToAll(ObjectProperty<T>* first,ObjectProperty<T>* second);
+
+    void FillAll(const T* theObj, int JustThis = -1, double w = 1) {
+        if (!Enabled)
+            return;
+
+        if (JustThis < 0)
+            for (int ii = 0; ii < this->size(); ii++)
                 this->at(ii)->Fill(theObj, w);
         else
             this->at(JustThis)->Fill(theObj, w);
@@ -357,6 +363,11 @@ public:
     bool Enabled;
 };
 
+template<class _T>
+void HistogramsManager<_T>::AddHisto2ToAll(ObjectProperty<_T>* first,ObjectProperty<_T>* second) {
+    for (int i = 0; i < this->size(); i++)
+        this->at(i)->AddHisto2(first,second);
+}
 
 #endif	/* _HISTOGRAMSMANAGER_H */
 

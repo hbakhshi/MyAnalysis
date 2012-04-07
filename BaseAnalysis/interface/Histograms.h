@@ -52,6 +52,8 @@ public:
   Property* AddHisto1();
 
   ObjectProperty<T>* AddHisto1(ObjectProperty<T>*);
+  
+  void AddHisto2(ObjectProperty<T>*,ObjectProperty<T>*);
 
   template<class Property1st, class Property2nd>
   void AddHisto2();
@@ -196,7 +198,11 @@ void Histograms<_T>::AddHisto2() {
   th2s->push_back(*h);
 }
 
-
+template<class _T>
+void Histograms<_T>::AddHisto2(ObjectProperty<_T>* first,ObjectProperty<_T>* second){
+    TH2Ext<_T> * h = first->GetH2(second, CollectionName(), _Title);
+    th2s->push_back(*h);
+}
 
 #endif	/* _HISTOMANAGER_H */
 

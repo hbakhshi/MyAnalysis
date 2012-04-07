@@ -710,6 +710,7 @@
       <df name="WPolarization">
         <df name="interface">
           <in>BJetAssigner.h</in>
+          <in>BTagWeight.h</in>
           <in>CosThetaAnalysis.h</in>
           <in>DileptonAnalyticalSolver.h</in>
           <in>GenRecComparison.h</in>
@@ -720,6 +721,7 @@
         </df>
         <df name="src">
           <in>BJetAssigner.cc</in>
+          <in>BTagWeight.cc</in>
           <in>CosThetaAnalysis.cc</in>
           <in>DileptonAnalyticalSolver.cc</in>
           <in>GenRecComparison.cc</in>
