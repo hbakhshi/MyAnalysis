@@ -215,14 +215,27 @@ void TopAnalysis::TTBarDileptonicEvent::SetLeptons(Lepton* lep1, Lepton* lep2) {
     int nele(0), nPmuons(0), nNmuons(0);
     this->FirstElectron->isElectron() ? nele++ : (this->FirstElectron->Charge > 0 ? nPmuons++ : nNmuons++);
     this->SecondElectron->isElectron() ? nele++ : (this->SecondElectron->Charge > 0 ? nPmuons++ : nNmuons++);
-    if (nele == 2)
-        this->RecDecayMode = DiEle;
-    else if (nele == 1 && nPmuons == 1)
-        this->RecDecayMode = ElM_MuP;
-    else if (nele == 1 && nNmuons == 1)
-        this->RecDecayMode = ElP_MuM;
-    else
-        this->RecDecayMode = DiMu;
+    if (nele == 2) {
+        if (this->TRG_DiEle)
+            this->RecDecayMode = DiEle;
+        else
+            this->RecDecayMode = EE_Inconsistent_With_Trigger;
+    } else if (nele == 1 && nPmuons == 1) {
+        if (this->TRG_EleMuon)
+            this->RecDecayMode = ElM_MuP;
+        else
+            this->RecDecayMode = EM_Inconsistent_With_Trigger;
+    } else if (nele == 1 && nNmuons == 1) {
+        if (this->TRG_EleMuon)
+            this->RecDecayMode = ElP_MuM;
+        else
+            this->RecDecayMode = EM_Inconsistent_With_Trigger;
+    } else {
+        if (this->TRG_DiMuon)
+            this->RecDecayMode = DiMu;
+        else
+            this->RecDecayMode = MM_Inconsistent_With_Trigger;
+    }
 
 
     //    math::XYZTLorentzVector ll1 = lep1->get4Vector(0);

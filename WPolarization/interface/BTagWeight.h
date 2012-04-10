@@ -33,6 +33,7 @@ public:
     double weight(vector<vector<JetInfo> > jets);
 
     static void GetEffSF_TCHEL(double pt, double eta, double discriminator_value, double& eff, double& sf);
+    static void GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf);
     
 private:
     int taggers;

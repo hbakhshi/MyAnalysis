@@ -16,6 +16,12 @@ namespace TopAnalysis {
     class TTBarDileptonicEvent : public ElectronAnalysis::DiLepton {
     public:
 
+        //PER CHANNEL TRIGGER INFO
+        bool TRG_DiMuon;
+        bool TRG_DiEle;
+        bool TRG_EleMuon;        
+        //
+        
         enum TopDecays {
             NOT_SET = 0,
             ElP_MuM = 1,
@@ -34,7 +40,11 @@ namespace TopAnalysis {
             ZeroBs = 13,
             ExtraBs = 14,
             BadNu = 15,
-            Others = 16
+            Others = 16,
+            
+            EE_Inconsistent_With_Trigger = 17,
+            MM_Inconsistent_With_Trigger = 18,
+            EM_Inconsistent_With_Trigger = 19
         };
 
         TopDecays GenDecayMode;

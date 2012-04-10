@@ -118,3 +118,47 @@ void BTagWeight::GetEffSF_TCHEL(double pt, double eta, double discriminator_valu
         }
     }
 }
+
+void BTagWeight::GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf) {
+    TF1 BTagScaleFactor("fSFB", "0.896462*((1.+(0.00957275*x))/(1.+(0.00837582*x)))", 30, 1000);
+
+    TF1 EffB("EffB", "0.00559749726591*x*x*x*x +  -0.0250942917873*x*x*x +  -0.07343076238*x*x +  0.209954428241*x +  0.587277178178", -100, 100);
+    TF1 EffC("EffC", "0.00143789244176*x*x*x*x +  -0.00186154098096*x*x*x +  -0.0230147611829*x*x +  -0.0497041720896*x +  0.324134245921", -100, 100);
+
+    TF1 MisTag_Eta0_8("MistagEta0_8", "(((0.000547883+(0.00023023*x))+(-7.31792e-07*(x*x)))+(1.15659e-09*(x*(x*x))))+(-7.00641e-13*(x*(x*(x*x))))", 20., 670.);
+    TF1 MisTag_Eta8_16("MistagEta8_16", "(((0.000615562+(0.000240254*x))+(-7.00237e-07*(x*x)))+(1.2566e-09*(x*(x*x))))+(-8.59011e-13*(x*(x*(x*x))))", 20., 670.);
+    TF1 MisTag_Eta16_24("MistagEta16_24", "(((0.000372388+(0.000309735*x))+(-4.35952e-07*(x*x)))+(3.63763e-10*(x*(x*x))))+(-2.11993e-13*(x*(x*(x*x))))", 20., 670.);
+
+    TF1 SFlight_Eta0_8("SFlightEta0_8", "((0.86318+(0.000801639*x))+(-1.64119e-06*(x*x)))+(2.59121e-10*(x*(x*x)))", 20., 670.);
+    TF1 SFlight_Eta8_16("SFlightEta8_16", "((0.958973+(-0.000269555*x))+(1.381e-06*(x*x)))+(-1.87744e-09*(x*(x*x)))", 20., 670.);
+    TF1 SFlight_Eta16_24("SFlightEta16_24", "((0.923033+(-0.000898227*x))+(4.74565e-06*(x*x)))+(-6.11053e-09*(x*(x*x)))", 20., 670.);
+
+
+    sf = 1.0;
+    eff = 1.0;
+    //double eff, sf;
+
+    if (discriminator_value > 1.74)//it is b        
+    {
+        sf = BTagScaleFactor.Eval(pt);
+        eff = EffB.Eval(discriminator_value);
+    }
+        /*else if (discriminator_value > 1.0) //???? is it C????
+        {
+            sf = BTagScaleFactor.Eval(pt);
+            eff = EffC.Eval(disc);
+        }*/
+    else // it is a light quark
+    {
+        if (fabs(eta) < 0.8) {
+            eff = MisTag_Eta0_8.Eval(pt);
+            sf = SFlight_Eta0_8.Eval(pt);
+        } else if (fabs(eta) < 1.6) {
+            eff = MisTag_Eta8_16.Eval(pt);
+            sf = SFlight_Eta8_16.Eval(pt);
+        } else if (fabs(eta) < 2.4) {
+            eff = MisTag_Eta16_24.Eval(pt);
+            sf = SFlight_Eta16_24.Eval(pt);
+        }
+    }
+}

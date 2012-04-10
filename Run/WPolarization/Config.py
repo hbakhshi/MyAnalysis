@@ -144,9 +144,9 @@ process.WPolarization = cms.PSet(
         METCutOF=cms.double(20.0), #20
         METCutSF=cms.double(30.0), #30
         NJets=cms.int32(2), #2
-        btag_algo = cms.string('TrackCountingHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
-        BJetSelectionBTag = cms.double( 1.7 ), #to count the number of bjets
-        NBJets = cms.int32(1),
+        btag_algo = cms.string('simpleSecondaryVertexHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
+        BJetSelectionBTag = cms.double( 1.74 ), #to count the number of bjets
+        NBJets = cms.int32(-1),
         BTag1 = cms.double(-100000.0),
         BTag2 = cms.double(-100000.0),
 
@@ -165,20 +165,20 @@ process.WPolarization = cms.PSet(
         TriggerNames=cms.vstring("HLTEETTBar2011Data", "HLTEMuTTBar2011Data" , "HLTMuMuTTBar2011Data"), #DATA
         
         ##NONE
-        DiElectronTrigger=cms.vstring(), 
+        #DiElectronTrigger=cms.vstring(), 
         DiElectronTrigger_Veto=cms.vstring(), 
-        DiMuonTrigger=cms.vstring(), 
+        #DiMuonTrigger=cms.vstring(), 
         DiMuonTrigger_Veto=cms.vstring(), 
-        ElectronMuonTrigger=cms.vstring(), 
+        #ElectronMuonTrigger=cms.vstring(), 
         ElectronMuonTrigger_Veto=cms.vstring(), 
         ##END_NONE
 
         ##DATA
-        #DiElectronTrigger=cms.vstring("HLTEETTBar2011Data"), 
+        DiElectronTrigger=cms.vstring("HLTEETTBar2011Data"), 
         #DiElectronTrigger_Veto=cms.vstring("HLTEMuTTBar2011Data" , "HLTMuMuTTBar2011Data"), 
-        #DiMuonTrigger=cms.vstring("HLTMuMuTTBar2011Data"), 
+        DiMuonTrigger=cms.vstring("HLTMuMuTTBar2011Data"), 
         #DiMuonTrigger_Veto=cms.vstring("HLTEETTBar2011Data", "HLTEMuTTBar2011Data"), 
-        #ElectronMuonTrigger=cms.vstring("HLTEMuTTBar2011Data"), 
+        ElectronMuonTrigger=cms.vstring("HLTEMuTTBar2011Data"), 
         #ElectronMuonTrigger_Veto=cms.vstring("HLTEETTBar2011Data", "HLTMuMuTTBar2011Data"), 
         ##END_DATA
         

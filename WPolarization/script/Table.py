@@ -14,8 +14,10 @@ class RowObject(dict):
 class Table(object):
     """ represents table and set operations on tables """
 
-    def __init__(self, rows=[]):
+    def __init__(self, __PrintSum=True,__PrintHeader=True, rows=[]):
         self.rows = rows[:]
+        self.PrintSum = __PrintSum
+        self.PrintHeader = __PrintHeader
 
     def append(self, obj):
         self.rows.append(obj)
@@ -40,23 +42,27 @@ class Table(object):
 
     def GetSumRow(self):
         ret = RowObject()
+        ret[ sorted(self.rows[0].keys())[0] ] = ''
         for key in sorted(self.rows[0].keys())[1:]:
             ret[key] = sum([r[key] for r in self.rows])
         return ret
 
     def __str__(self):
         """ quite stupid, just for demonstration purposes """
-        txt = "  |" + "|".join(sorted(self.rows[0].keys())).expandtabs()
-        txt += "\n"
+        txt = ''
+        if self.PrintHeader:
+            txt = "  |" + "|".join(sorted(self.rows[0].keys())).expandtabs()
+            txt += "\n"
         txt += "|-"
         for r in self.rows:
             txt += "\n|"
             txt += "|".join([str(r[key]) for key in sorted(self.rows[0].keys())])
-        txt += "\n"
-        txt += "|-\n"
-        #txt += "| |" + "|".join( [str(sum([r[key] for r in self.rows])) for key in sorted(self.rows[0].keys())[1:]] )
-        sumRow = self.GetSumRow()
-        txt += "| |" + "|".join( [str(sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
+        txt += "\n|-"
+        if self.PrintSum:
+            txt += "\n"
+            sumRow = self.GetSumRow()
+            txt += "| |" + "|".join( [str(sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
+
         return txt
 
 

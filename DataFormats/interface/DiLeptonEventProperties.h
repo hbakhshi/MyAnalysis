@@ -38,7 +38,7 @@ namespace ElectronAnalysis {
                 class InvariantMass : public ObjectProperty<TheEventType> {
         public:
 
-            InvariantMass() : ObjectProperty<TheEventType>("InvariantMass", "Invariant Mass", 0, 200, 200, "DiLeptonEvent", 500 + int(what)) {
+            InvariantMass() : ObjectProperty<TheEventType>("InvariantMass", "Invariant Mass", 0, 500, 50, "DiLeptonEvent", 500 + int(what)) {
                 string s = "";
                 string s2 = "";
                 switch (what) {

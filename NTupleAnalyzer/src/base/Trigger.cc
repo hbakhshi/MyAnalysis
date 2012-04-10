@@ -103,6 +103,13 @@ void TriggerAnalyzer::Write(TDirectory* dir) {
     hPassEfficiency.Write();
 
     dir->cd();
+
+    cout << "TriggerAnalyzer :" << this->TriggerInfo->Name << " reports " << RunsWithoutTrigger.size() << " RUNS NO TRIGGER MATCHES : " << endl;
+
+    if (RunsWithoutTrigger.size() > 0) cout << "\t";
+    for (vector<int>::const_iterator itr = RunsWithoutTrigger.begin(); itr != RunsWithoutTrigger.end(); itr++)
+        cout << *itr << ",\t";
+    if (RunsWithoutTrigger.size() > 0) cout << endl;
 }
 
 void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
@@ -132,9 +139,9 @@ void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
         if (itr == hltNames->end()) {
             stringstream sss;
             sss << "TriggerAnalyzer::OnRunChange ==> " + TriggerInfo->Name << " run " << run << " - Bit with name " + *hltName + " not found!";
-            if (CurrentRunRange->SkipRunsWithInconsistentMenu)
+            if (CurrentRunRange->SkipRunsWithInconsistentMenu && info::TheInfo->Verbosity > 2)
                 cout << sss.str() << endl;
-            else
+            else if(!CurrentRunRange->SkipRunsWithInconsistentMenu)
                 throw TriggerException(sss.str());
         } else
             CurrentBits.push_back(itr->second);
@@ -151,9 +158,9 @@ void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
         if (nmatchedhlts == 0) {
             stringstream sss;
             sss << "TriggerAnalyzer::OnRunChange ==> " + TriggerInfo->Name << " run " << run << " - no hlt matches " + hltREName->str() + " found!";
-            if (CurrentRunRange->SkipRunsWithInconsistentMenu)
+            if (CurrentRunRange->SkipRunsWithInconsistentMenu && info::TheInfo->Verbosity > 2 )
                 cout << sss.str() << endl;
-            else
+            else if(!CurrentRunRange->SkipRunsWithInconsistentMenu)
                 throw TriggerException(sss.str());
         }
     }
@@ -161,15 +168,18 @@ void TriggerAnalyzer::OnRunChange(int run, std::map<string, int>* hltNames) {
     std::vector<int>::iterator it_unique = unique(CurrentBits.begin(), CurrentBits.end());
     CurrentBits.resize(it_unique - CurrentBits.begin());
 
-    if(info::TheInfo->Verbosity> 5){
-        cout << "selected hlts in " << TriggerInfo->Name << " : " ;
-        for(std::vector<int>::iterator it=CurrentBits.begin() ; it != CurrentBits.end() ; it++){
-            for(itr = hltNames->begin() ; itr != hltNames->end() ; itr++)
-                if(itr->second == *it)
+    if (info::TheInfo->Verbosity > 5) {
+        cout << "selected hlts in " << TriggerInfo->Name << " : ";
+        for (std::vector<int>::iterator it = CurrentBits.begin(); it != CurrentBits.end(); it++) {
+            for (itr = hltNames->begin(); itr != hltNames->end(); itr++)
+                if (itr->second == *it)
                     cout << "\t" << itr->first << endl;
         }
     }
-    
+
+    if (CurrentBits.size() == 0)
+        RunsWithoutTrigger.push_back(run);
+
     this->CurrentRunRangeSkip = CurrentRunRange->SkipRunsWithInconsistentMenu;
 }
 

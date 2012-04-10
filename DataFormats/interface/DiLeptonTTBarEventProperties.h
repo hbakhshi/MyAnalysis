@@ -44,6 +44,24 @@ namespace TopAnalysis {
 
         typedef ElectronAnalysis::DiLeptonEventProperties::EventType<TopAnalysis::TTBarDileptonicEvent> EventType;
         typedef ElectronAnalysis::DiLeptonEventProperties::NumberOfJets<TopAnalysis::TTBarDileptonicEvent> NumberOfJets;
+        
+        class NumberOfBJets : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+        public:
+
+            NumberOfBJets() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NumberOfBJets", "# BJets", 0, 15, 15, "DiLeptonEvent", 1505) {
+            };
+
+            virtual ~NumberOfBJets() {
+            };
+
+            virtual void SetAxis(TAxis * axis) {
+            };
+
+            virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
+                return t->BJets.size();
+            };
+        };
+
         typedef ElectronAnalysis::DiLeptonEventProperties::PFMet<TopAnalysis::TTBarDileptonicEvent> PFMet;
 
         template<int iii>
@@ -97,6 +115,7 @@ namespace TopAnalysis {
         template<bool Gen>
         class EffectiveMass : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
+
             EffectiveMass() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("TTBarEffectiveMass", "TTBar Effective Mass", 0, 1000, 1000, "TTBarDileptonicEvent", 1) {
                 if (Gen) {
                     this->PropertyName = ("Gen" + this->PropertyName);
@@ -104,18 +123,19 @@ namespace TopAnalysis {
                     this->PropertyID = 2;
                 }
             };
-            
-            ~EffectiveMass(){};
-            
+
+            ~EffectiveMass() {
+            };
+
             virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
-                if(Gen)
+                if (Gen)
                     return (t->TOP_Gen.getTop() + t->TOPBar_Gen.getTop()).M();
-                else{
+                else {
                     return (t->Top_Rec->getTop() + t->TopBar_Rec->getTop()).M();
                 }
             };
         };
-        
+
         template<bool Gen>
         class TTBarDecayMode : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
@@ -285,10 +305,10 @@ namespace TopAnalysis {
                 double dpt;
                 switch (what) {
                     case 1:
-                        ret = ROOT::Math::VectorUtil::DeltaR<TLorentzVector ,TLorentzVector >(gen,rec);
+                        ret = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (gen, rec);
                         break;
                     case 2:
-                        ret = ROOT::Math::VectorUtil::DeltaPhi<TLorentzVector ,TLorentzVector >(gen,rec);
+                        ret = ROOT::Math::VectorUtil::DeltaPhi<TLorentzVector, TLorentzVector > (gen, rec);
                         break;
                     case 3:
                         ret = fabs(gen.Eta() - rec.Eta());
@@ -301,7 +321,7 @@ namespace TopAnalysis {
                         ret = (gen.Vect() - rec.Vect()).Mag();
                         break;
                     case 6:
-                        ret = (gen.Vect() - rec.Vect()  ).Mag() / gen.Vect().Mag();
+                        ret = (gen.Vect() - rec.Vect()).Mag() / gen.Vect().Mag();
                         break;
                 }
                 return ret;

@@ -108,6 +108,56 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         return NULL;
     }
 
+    for (int __DecayMode = 0; __DecayMode < 3; __DecayMode++) {
+        vector<string>* accept_triggers(NULL);
+        vector<string>* veto_triggers(NULL);
+
+        switch (__DecayMode) {
+            case 0:
+                accept_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger);
+                veto_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger_Veto);
+                break;
+            case 1:
+                accept_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger);
+                veto_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger_Veto);
+                break;
+            case 2:
+                accept_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger);
+                veto_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger_Veto);
+                break;
+        }
+
+        Trigger = (accept_triggers->size() == 0);
+        for (vector<string>::iterator trg = accept_triggers->begin(); trg != accept_triggers->end(); trg++) {
+            map<string, bool>::const_iterator res = TriggerResults->find(*trg);
+            if (res == TriggerResults->end())
+                throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
+
+            Trigger = (Trigger || res->second);
+        }
+
+        if (Trigger) {
+            for (vector<string>::iterator trg = veto_triggers->begin(); trg != veto_triggers->end(); trg++) {
+                map<string, bool>::const_iterator res = TriggerResults->find(*trg);
+                if (res == TriggerResults->end())
+                    throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
+
+                Trigger = (Trigger && !(res->second));
+            }
+        }
+
+        switch (__DecayMode) {
+            case 0:
+                TheEvent.TRG_DiEle = Trigger;
+                break;
+            case 1:
+                TheEvent.TRG_DiMuon = Trigger;
+                break;
+            case 2:
+                TheEvent.TRG_EleMuon = Trigger;
+                break;
+        }
+    }
     TheEvent.AllSolutions.clear();
 
     if (((TTbarSelectorConfig*) BASE::Config)->IsTTBarSample) {
@@ -279,8 +329,17 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             hEventSelectionElectronMuon.Fill(4);
             hEventSelectionElectronMuonW.Fill(4, event_weight);
             break;
+        case TopAnalysis::TTBarDileptonicEvent::EE_Inconsistent_With_Trigger :
+            stat = 15;
+            return NULL;
+        case TopAnalysis::TTBarDileptonicEvent::EM_Inconsistent_With_Trigger :
+            stat = 17;
+            return NULL;
+        case TopAnalysis::TTBarDileptonicEvent::MM_Inconsistent_With_Trigger :
+            stat = 16;
+            return NULL;
     }
-
+    
     this->TheEvent.Jets.clear();
     this->TheEvent.BJets.clear();
     this->TheEvent.Jets_TrackCountingHighEff.clear();
@@ -483,6 +542,13 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
                 BTagWeight::JetInfo jinfo(eff, sf);
                 jInfosToReWeight[iJet].push_back(jinfo);
             }
+        } else if (((TTbarSelectorConfig*)this->Config)->getBTagAlgo() == 2) {
+            double sf, eff;
+            for (int iJet = 0; iJet < TheEvent.Jets.size(); iJet++) {
+                BTagWeight::GetEffSF_SSVHEM(TheEvent.Jets[iJet].Pt(), TheEvent.Jets[iJet].Eta(), TheEvent.Jets_simpleSecondaryVertexHighEff[iJet], eff, sf);
+                BTagWeight::JetInfo jinfo(eff, sf);
+                jInfosToReWeight[iJet].push_back(jinfo);
+            }
         } else
             throw SelectionException("the sf and eff for this btagging is not implemented", __LINE__, __FILE__);
 
@@ -518,62 +584,6 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     if (std::find(CurrentFileAcceptedEventTypes.begin(), CurrentFileAcceptedEventTypes.end(), evtType) == CurrentFileAcceptedEventTypes.end()) {
         stat = 1000;
         return NULL;
-    }
-
-    vector<string>* accept_triggers(NULL);
-    vector<string>* veto_triggers(NULL);
-    int rejecting_status(0);
-    switch (TheEvent.RecDecayMode) {
-        case TopAnalysis::TTBarDileptonicEvent::DiEle:
-            rejecting_status = 0;
-            accept_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger);
-            veto_triggers = &(((TTbarSelectorConfig*) Config)->DiElectronTrigger_Veto);
-            break;
-        case TopAnalysis::TTBarDileptonicEvent::DiMu:
-            rejecting_status = 1;
-            accept_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger);
-            veto_triggers = &(((TTbarSelectorConfig*) Config)->DiMuonTrigger_Veto);
-            break;
-        case TopAnalysis::TTBarDileptonicEvent::ElP_MuM:
-        case TopAnalysis::TTBarDileptonicEvent::ElM_MuP:
-            rejecting_status = 2;
-            accept_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger);
-            veto_triggers = &(((TTbarSelectorConfig*) Config)->ElectronMuonTrigger_Veto);
-            break;
-        default:
-            throw SelectionException("unacceptable value for RecDecayMode", __LINE__, __FILE__);
-            break;
-    }
-
-    Trigger = (accept_triggers->size() == 0);
-    for (vector<string>::iterator trg = accept_triggers->begin(); trg != accept_triggers->end(); trg++) {
-        map<string, bool>::const_iterator res = TriggerResults->find(*trg);
-        if (res == TriggerResults->end())
-            throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
-
-        Trigger = (Trigger || res->second);
-    }
-
-    if (Trigger) {
-        for (vector<string>::iterator trg = veto_triggers->begin(); trg != veto_triggers->end(); trg++) {
-            map<string, bool>::const_iterator res = TriggerResults->find(*trg);
-            if (res == TriggerResults->end())
-                throw SelectionException("TTbarEventSelector::Read ==> Trigger " + *trg + " not found", __LINE__, __FILE__);
-
-            Trigger = (Trigger && !(res->second));
-        }
-    }
-    if (!Trigger) {
-        stat = 15 + rejecting_status;
-        return NULL;
-    } else {
-        if (TheEvent.IsSameFlavour()) {
-            BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_SameFlavours_Triggers));
-            BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_SameFlavours_Triggers - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
-        } else {
-            BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_Triggers));
-            BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_Triggers - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
-        }
     }
 
     BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllSelectedEvents));
@@ -854,17 +864,27 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* Prop_NJets =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::NumberOfJets());
 
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* Prop_NBJets =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::NumberOfBJets());
+
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* Prop_PFMet =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::PFMet());
-    
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 1 > ::type());
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 2 > ::type());
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 1 > ::type());
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 2 > ::type());
 
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 1 > ::type());
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 2 > ::type());
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 3 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep1_eta = 
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 1 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep2_eta = 
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 2 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep1_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 1 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep2_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 2 > ::type());
+
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet1_pt = 
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 1 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet2_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 2 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet3_pt = 
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 3 > ::type());
 
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 1, 1 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 2, 1 > ::type());
@@ -874,10 +894,20 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 2, 2 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 3, 2 > ::type());
 
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll( &(this->EventTypeReader) , Prop_HT );
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll( &(this->EventTypeReader) , Prop_InvMass );
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll( &(this->EventTypeReader) , Prop_PFMet );
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll( &(this->EventTypeReader) , Prop_NJets );
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_HT);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_InvMass);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_PFMet);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_NJets);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_NBJets);
+
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep1_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep1_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep2_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep2_pt);
+    
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet1_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet2_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet3_pt);
 }
 
 void TTbarEventSelector::AddTriggerHistos() {

@@ -76,6 +76,8 @@ public:
     TH1I hAllDifferentRunRanges;
     TH1I hPassedDifferentRunRanges;
 
+    vector<int> RunsWithoutTrigger;
+    
     TriggerAnalyzer(TriggerCutFullRunRange* trgInf);
 
     void SetPointers(int* currentRun, int* HLTRes);

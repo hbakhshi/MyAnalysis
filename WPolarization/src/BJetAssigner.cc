@@ -46,6 +46,9 @@ bool BJetAssigner::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
                     possible_jets[1] = 1;
                 else
                     possible_jets[1] = 0;
+            }else{
+                possible_jets[0] = 0;
+                possible_jets[1] = 1;
             }
             
             if (random_generator.Uniform(0.0, 1.0) > 0.5) {
