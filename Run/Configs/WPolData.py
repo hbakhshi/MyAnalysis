@@ -185,6 +185,34 @@ SingleTopTWSummer2011 = cms.VPSet(
         )
     )
 
+WZSummer2011 = cms.VPSet(
+        cms.PSet(
+            File=cms.string(os.environ['ntpHome'] + '/Samples/WZ.root'),
+                    IsDirectory = cms.untracked.bool(False),
+                    TotalNumberOfEvents = cms.int32(-1),
+                    IsCastor   = cms.bool(False),
+                    XSec=cms.double(-1),
+                    Name=cms.string("WZSummer2011"),
+                    MaxInput=cms.int32(-1),
+                    PreSelEfficiency=cms.double(1.0),
+                    #Note=cms.untracked.string("Just TOP, XSec=7.9, Anti-Top should be added separately")
+                    )
+            )
+
+ZZSummer2011 = cms.VPSet(
+        cms.PSet(
+            File=cms.string(os.environ['ntpHome'] + '/Samples/ZZ.root'),
+                    IsDirectory = cms.untracked.bool(False),
+                    TotalNumberOfEvents = cms.int32(-1),
+                    IsCastor   = cms.bool(False),
+                    XSec=cms.double(-1),
+                    Name=cms.string("ZZSummer2011"),
+                    MaxInput=cms.int32(-1),
+                    PreSelEfficiency=cms.double(1.0),
+                    #Note=cms.untracked.string("Just TOP, XSec=7.9, Anti-Top should be added separately")
+                    )
+            )
+
 WWSummer2011 = cms.VPSet(
     cms.PSet(
         File=cms.string(os.environ['ntpHome'] + '/Samples/WW.root'),
@@ -205,9 +233,10 @@ DoubleEle2011May10 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(9462175),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("May10 Rereco"),
+        Name=cms.string("EE May10 Rereco"),
         MaxInput=cms.int32(-1),
-        PreSelEfficiency=cms.double(1.0)
+        PreSelEfficiency=cms.double(1.0),
+        fileNamePattern=cms.untracked.string(".*\.root")
         )
     )
 DoubleEle2011V4 = cms.VPSet(
@@ -217,7 +246,7 @@ DoubleEle2011V4 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(21613377),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v4"),
+        Name=cms.string("EE PromptReco Run2011A v4"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -241,7 +270,7 @@ DoubleEle2011V6 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(6660401),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v6"),
+        Name=cms.string("EE PromptReco Run2011A v6"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -253,7 +282,7 @@ DoubleEle2011B = cms.VPSet(
         TotalNumberOfEvents = cms.int32(14313686),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011B v1"),
+        Name=cms.string("EE PromptReco Run2011B v1"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -266,7 +295,7 @@ DoubleMuon2011May10 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(7935262),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("May10 Rereco"),
+        Name=cms.string("MM May10 Rereco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -278,7 +307,7 @@ DoubleMuon2011V4 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(15712151),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v4"),
+        Name=cms.string("MM PromptReco Run2011A v4"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -290,7 +319,7 @@ DoubleMuon2011Aug5 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(3421060),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("Aug5 Rereco"),
+        Name=cms.string("MM Aug5 Rereco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -302,7 +331,7 @@ DoubleMuon2011V6 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(6153779),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v6"),
+        Name=cms.string("MM PromptReco Run2011A v6"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -314,7 +343,7 @@ DoubleMuon2011B = cms.VPSet(
         TotalNumberOfEvents = cms.int32(21550089),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011B v1"),
+        Name=cms.string("MM PromptReco Run2011B v1"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -327,7 +356,7 @@ ElectronMuon2011May10 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(5416001),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("May10 Rereco"),
+        Name=cms.string("EM May10 Rereco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -339,7 +368,7 @@ ElectronMuon2011V4 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(13543944),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v4"),
+        Name=cms.string("EM PromptReco Run2011A v4"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -351,7 +380,7 @@ ElectronMuon2011Aug5 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(3501760),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("Aug5 Rereco"),
+        Name=cms.string("EM Aug5 Rereco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -363,7 +392,7 @@ ElectronMuon2011V6 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(6631888),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011A v6"),
+        Name=cms.string("EM PromptReco Run2011A v6"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -375,7 +404,7 @@ ElectronMuon2011B = cms.VPSet(
         TotalNumberOfEvents = cms.int32(20237878),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("PromptReco Run2011B v1"),
+        Name=cms.string("EM PromptReco Run2011B v1"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
