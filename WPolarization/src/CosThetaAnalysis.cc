@@ -28,6 +28,8 @@ GenDecayMode((TopAnalysis::TTBarDileptonicEvent::TopDecays)(ps.getParameter<int 
 
         hCosTheta1stLepton = new TH1D("hCosTheta1stLepton", "cos(#theta) for first Lepton", 100, -1., 1.);
         hCosTheta2ndLepton = new TH1D("hCosTheta2ndLepton", "cos(#theta) for second Lepton", 100, -1., 1.);
+        
+        hCosThetaAllLeptonsUnWeighted = new TH1D("hCosThetaAllLeptonsUnWeighted", "cos(#theta) for all Lepton, No weight", 100, -1., 1.);
     }
 }
 
@@ -66,6 +68,9 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
     double costheta_tbar = ev->TopBar_Rec->CosTheta();
     hCosThetaNegLepton->Fill(costheta_tbar, ev->Weight);
 
+    hCosThetaAllLeptonsUnWeighted->Fill(costheta_top);
+    hCosThetaAllLeptonsUnWeighted->Fill(costheta_tbar);
+    
     if (ev->Top_Rec->W.lepton.Pt() > ev->TopBar_Rec->W.lepton.Pt()) {
         hCosTheta1stLepton->Fill(costheta_top, ev->Weight);
         hCosTheta2ndLepton->Fill(costheta_tbar, ev->Weight);
@@ -104,6 +109,9 @@ void CosThetaAnalysis::End() {
         dGammaFunctin::Fit(hCosTheta2ndLepton, 10)->Write();
         dGammaFunctin::Fit(hCosTheta2ndLepton, 10, true, true)->Write();
 
+        hCosThetaAllLeptonsUnWeighted->Write();
+        dGammaFunctin::Fit(hCosThetaAllLeptonsUnWeighted, 10)->Write();
+        dGammaFunctin::Fit(hCosThetaAllLeptonsUnWeighted, 10, true, true)->Write();
     }
 
     if (FillGen) {

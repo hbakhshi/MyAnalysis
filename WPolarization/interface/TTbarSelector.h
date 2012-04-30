@@ -35,7 +35,7 @@ public:
 
     string btag_algo;
 
-    int getBTagAlgo() const{
+    int getBTagAlgo() const {
         if (btag_algo == "TrackCountingHighEff")
             return 1;
 
@@ -47,13 +47,13 @@ public:
 
     TF1* BTagScaleFactor;
 
-    const TF1* getBTagScaleFactor(){
+    const TF1* getBTagScaleFactor() {
         if (BTagScaleFactor == NULL) {
             if (getBTagAlgo() == 1)
-                BTagScaleFactor = new TF1("fSFB", "0.603913*((1.+(0.286361*x))/(1.+(0.170474*x)))" , 30 , 1000);
+                BTagScaleFactor = new TF1("fSFB", "0.603913*((1.+(0.286361*x))/(1.+(0.170474*x)))", 30, 1000);
             else if (getBTagAlgo() == 2)
-                BTagScaleFactor = new TF1("fSFB", "0.896462*((1.+(0.00957275*x))/(1.+(0.00837582*x)))" , 30 , 1000);
-            }
+                BTagScaleFactor = new TF1("fSFB", "0.896462*((1.+(0.00957275*x))/(1.+(0.00837582*x)))", 30, 1000);
+        }
         return BTagScaleFactor;
     }
     double BJetSelectionBTag;
@@ -116,7 +116,8 @@ public:
 
     TH1F hPileUpWeights;
     BTagWeight BTagWeighter;
-    
+    TH1I hBTagScaleFactors;
+
     virtual TTBarDileptonicEvent* Read(int& stat);
 
     virtual bool CheckElectron(int eleidx, bool fillHisto = true);
@@ -162,13 +163,25 @@ public:
     virtual void OnChangeFile(FileInfo* fi, DataSet* ds);
     virtual void AddSelectionStepsJet();
 private:
-    
+
     TH1D hEventSelectionMuonMuon;
     TH1D hEventSelectionElectronElectron;
     TH1D hEventSelectionElectronMuon;
     TH1D hEventSelectionMuonMuonW;
     TH1D hEventSelectionElectronElectronW;
     TH1D hEventSelectionElectronMuonW;
+
+    TH2Ext<EVENTTYPE>* hInvMassEEvsNBJets;
+    TH2Ext<EVENTTYPE>* hInvMassMMvsNBJets;
+    TH2Ext<EVENTTYPE>* hInvMassEMvsNBJets;
+    
+    TH2Ext<EVENTTYPE>* hInvMassEEvsNBJets_NoW;
+    TH2Ext<EVENTTYPE>* hInvMassMMvsNBJets_NoW;
+    TH2Ext<EVENTTYPE>* hInvMassEMvsNBJets_NoW;
+    
+    TopAnalysis::DiLeptonTTBarEventProperties::InvariantMass< ElectronAnalysis::Electron::_Momentum >::type InvariantMass_Prop;
+    TopAnalysis::DiLeptonTTBarEventProperties::NumberOfBJets NumberOfBJets_Prop;
+
 };
 
 typedef TTbarEventSelector EventSelector;

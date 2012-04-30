@@ -67,10 +67,20 @@ def DrawAndSave( stack , hist , name):
     #hSum.Print("ALL")
     #hist.Print("ALL")
 
+    Errors = {}
+    for nBin in range(1, hist.GetNbinsX()+1):
+        Errors[nBin] = 0.0
+
     for h_MC in stack.GetHists():
         hSum.Add( h_MC )
+        for nBin in range(1, h_MC.GetNbinsX()+1):
+            Errors[nBin] += 0 #(h_MC.GetBinContent(nBin)*h_MC.GetBinContent(nBin))
+
+    for nBin in range(1, hSum.GetNbinsX()+1):
+        hSum.SetBinError( nBin , sqrt(Errors[nBin]) )
 
     hDivision.Divide( hist , hSum )
+    hDivision.GetYaxis().SetRangeUser( 0.5 , 1.5)
     hDivision.SetStats(0)
     hDivision.SetLineWidth(2)
     hDivision.SetLineColor(2)
@@ -84,7 +94,7 @@ def DrawAndSave( stack , hist , name):
         total_difference += (data_in_bin - mc_in_bin)
         
     c.cd()
-    c.SaveAs(WhichChannel + '/' + name + '.gif' )
+    c.SaveAs(WhichChannel + '/' + name + '.pdf' )
     c.Close()
     return total_difference    
 
@@ -140,7 +150,7 @@ for WhichChannel_ in ['EM' , 'MM' , 'EE']:
             files_xsec = files_mm_weights
             DirectoryNameForSteps = ['None', 'None', 'None' , 'None' , 'None' , 'None', 'None', 'None', '_NumberOfBJets']
         #Properties
-    PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}, 'JetsHT':{} }
+    PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} }
 
     t_PropertiesLinks = Table(False)
     PropertiesLinks = {}
@@ -222,6 +232,7 @@ for WhichChannel_ in ['EM' , 'MM' , 'EE']:
                     hProp.SetFillStyle(3004)
                     hProp.SetFillColor(colors[wpol_file])
                     hProp.SetLineColor(colors[wpol_file])
+                    hProp.SetLineStyle(1)
                     hTemp = hProp.Clone()
                     if PropertiesToDraw[property_name].keys().count(cut_folder_name)==0:
                         PropertiesToDraw[property_name][cut_folder_name] = THStack(WhichChannel + '_' + cut_folder_name + '_' + property_name, WhichChannel + '_' + cut_folder_name + '_' + property_name)
@@ -266,7 +277,10 @@ for WhichChannel_ in ['EM' , 'MM' , 'EE']:
 
     t_data = Table(False, False)
 
-    file = TFile( 'WPol_%s.root' % data_file , "READ")
+    if RunOnSelectedEvents:
+        file = TFile( '/home/hbakhshi/Documents/Analysis/Run/WPolarization/WPol_SelectedTTBars_%s.root' % data_file , "READ")
+    else :
+        file = TFile( 'WPol_%s.root' % data_file , "READ")
     r = RowObject()
 
     colName = '%(colIndex)02d-%(step)s' % {'colIndex':0  , 'step': 'DataSet'}    

@@ -5,5 +5,8 @@ external/*/*
 /nbproject/private/
 /data/
 *.pyc
+*.pyo
+Log*2011
+Err*2011
 !/external/*.tar
 *~

@@ -24,6 +24,8 @@ LoopHelper h;
 cpu_set_t mask_t;
 
 int main(int argc, char *argv[]) {
+    TH1::SetDefaultSumw2(true);
+    
     info::AnalyzeArgs(argc, argv , "WPolarization");
     info::TheInfo->Print();
 

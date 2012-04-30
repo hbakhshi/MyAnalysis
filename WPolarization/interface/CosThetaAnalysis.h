@@ -87,7 +87,7 @@ public:
             if(fixNormFactor)
                 f->FixParameter(2 , 1.0);
             
-            TFitResultPtr fitres(hret->Fit(f , "QRS"));
+            TFitResultPtr fitres(hret->Fit(f , "BQRS"));
             cout << hret->GetName() ;
             fitres->Print("ALL");
             
@@ -121,6 +121,8 @@ public:
     TH1* hCosTheta1stLepton;
     TH1* hCosTheta2ndLepton;
 
+    TH1* hCosThetaAllLeptonsUnWeighted;
+    
     CosThetaAnalysis(const edm::ParameterSet& ps);
     virtual ~CosThetaAnalysis();
 
