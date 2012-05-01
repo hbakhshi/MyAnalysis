@@ -109,7 +109,7 @@ public:
 
     bool FillGen;
     bool FillRec;
-    TopAnalysis::TTBarDileptonicEvent::TopDecays GenDecayMode;
+    vector<TopAnalysis::TTBarDileptonicEvent::TopDecays> GenDecayModes;
     
     TH1* hCosThetaPosLepton;
     TH1* hCosThetaNegLepton;

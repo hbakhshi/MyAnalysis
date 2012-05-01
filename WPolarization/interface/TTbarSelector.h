@@ -151,7 +151,11 @@ public:
         TTbarEventSelectionSteps_OppositeFlavours_bTag2 = 17,
         TTbarEventSelectionSteps_OppositeFlavours_NumberOfBJets = 18,
         TTbarEventSelectionSteps_OppositeFlavours_Triggers = 19,
-        TTbarEventSelectionSteps_AllSelectedEvents = 20
+        TTbarEventSelectionSteps_AllFlavours_PairChoose = 20,
+        TTbarEventSelectionSteps_AllFlavours_NJets = 21,
+        TTbarEventSelectionSteps_AllFlavours_MET = 22,
+        TTbarEventSelectionSteps_AllFlavours_NumberOfBJets = 23,
+        TTbarEventSelectionSteps_AllSelectedEvents = 24
     };
     virtual void AddSelectionStepsEvent();
     virtual void AddSelectionPlotsEvent();
@@ -167,18 +171,20 @@ private:
     TH1D hEventSelectionMuonMuon;
     TH1D hEventSelectionElectronElectron;
     TH1D hEventSelectionElectronMuon;
+    TH1D hEventSelectionDiLepton;
     TH1D hEventSelectionMuonMuonW;
     TH1D hEventSelectionElectronElectronW;
     TH1D hEventSelectionElectronMuonW;
+    TH1D hEventSelectionDiLeptonW;
 
     TH2Ext<EVENTTYPE>* hInvMassEEvsNBJets;
     TH2Ext<EVENTTYPE>* hInvMassMMvsNBJets;
     TH2Ext<EVENTTYPE>* hInvMassEMvsNBJets;
-    
+
     TH2Ext<EVENTTYPE>* hInvMassEEvsNBJets_NoW;
     TH2Ext<EVENTTYPE>* hInvMassMMvsNBJets_NoW;
     TH2Ext<EVENTTYPE>* hInvMassEMvsNBJets_NoW;
-    
+
     TopAnalysis::DiLeptonTTBarEventProperties::InvariantMass< ElectronAnalysis::Electron::_Momentum >::type InvariantMass_Prop;
     TopAnalysis::DiLeptonTTBarEventProperties::NumberOfBJets NumberOfBJets_Prop;
 

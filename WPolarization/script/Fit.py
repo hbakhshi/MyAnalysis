@@ -328,7 +328,7 @@ def RunFit():
         print channel
         F = CreateLLFunction(channel)
         RetVals = GetMinimum(F)
-
+        print RetVals
         hAxis.GetXaxis().SetBinLabel( pointID+1 , channel)
         hAxis2.GetXaxis().SetBinLabel( pointID+1 , channel)
         hAxis3.GetXaxis().SetBinLabel( pointID+1 , channel)

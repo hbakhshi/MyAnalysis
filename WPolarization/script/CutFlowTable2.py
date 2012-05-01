@@ -99,6 +99,14 @@ def DrawAndSave( stack , hist , name):
     return total_difference    
 
 
+
+t_mc_com = Table()
+t_mc_w_com = Table()
+
+stack_mc_com = THStack("stackCosThetaComb",'CosTheta for all  Events')
+hCosTheta_com = TH1D("hCosThetaComb" , 'cos(#theta) for all events' , 10 , -1 , 1)
+
+
 for WhichChannel_ in ['EM' , 'MM' , 'EE']:
 
     WhichChannel = WhichChannel_
@@ -373,6 +381,7 @@ for WhichChannel_ in ['EM' , 'MM' , 'EE']:
 
     print >>org_file,'** Control Plots'
     print >>org_file,t_PropertiesLinks
+
 
 
 org_file.close()

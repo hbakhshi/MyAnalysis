@@ -32,13 +32,13 @@ hBTagScaleFactors("hBTagScaleFactors", "hBTagScaleFactors", 1000, 0.0, 2.0) {
             break;
     }
 
-    hInvMassEEvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "EE" , "");
-    hInvMassMMvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "MM" , "");
-    hInvMassEMvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "EM" , "");
+    hInvMassEEvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "EE", "");
+    hInvMassMMvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "MM", "");
+    hInvMassEMvsNBJets = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "EM", "");
 
-    hInvMassEEvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "NoW_EE" , "");
-    hInvMassMMvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "NoW_MM" , "");
-    hInvMassEMvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop , "NoW_EM" , "");
+    hInvMassEEvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "NoW_EE", "");
+    hInvMassMMvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "NoW_MM", "");
+    hInvMassEMvsNBJets_NoW = InvariantMass_Prop.GetH2(&NumberOfBJets_Prop, "NoW_EM", "");
 
     hEventSelectionMuonMuon.SetNameTitle("hEventSelectionMM", "Event Selection #mu #mu");
     hEventSelectionMuonMuon.SetBins(9, 1, 10);
@@ -74,6 +74,12 @@ hBTagScaleFactors("hBTagScaleFactors", "hBTagScaleFactors", 1000, 0.0, 2.0) {
 
     hEventSelectionElectronMuon.Copy(hEventSelectionElectronMuonW);
     hEventSelectionElectronMuonW.SetNameTitle("hEventSelectionEMW", "Event Selection, e #mu, weighted");
+
+    hEventSelectionElectronMuon.Copy(hEventSelectionDiLepton);
+    hEventSelectionDiLepton.SetNameTitle("hEventSelectionDiLepton", "Event Selection, lepton-lepton");
+
+    hEventSelectionElectronMuon.Copy(hEventSelectionDiLeptonW);
+    hEventSelectionDiLeptonW.SetNameTitle("hEventSelectionDiLeptonW", "Event Selection, lepton-lepton, weighted");
 }
 
 TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
@@ -102,6 +108,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     hEventSelectionMuonMuonW.Fill(1, event_weight);
     hEventSelectionElectronMuon.Fill(1);
     hEventSelectionElectronMuonW.Fill(1, event_weight);
+    hEventSelectionDiLepton.Fill(1);
+    hEventSelectionDiLeptonW.Fill(1, event_weight);
 
     bool Trigger = this->Config->TriggerNames.size() == 0;
     for (vector<string>::iterator trg = this->Config->TriggerNames.begin(); trg != Config->TriggerNames.end(); trg++) {
@@ -217,6 +225,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     hEventSelectionMuonMuonW.Fill(2, event_weight);
     hEventSelectionElectronMuon.Fill(2);
     hEventSelectionElectronMuonW.Fill(2, event_weight);
+    hEventSelectionDiLepton.Fill(2);
+    hEventSelectionDiLeptonW.Fill(2, event_weight);
 
     if (((TTbarSelectorConfig*)this->Config)->Data)
         if (TheTree->PrimVtxIsFake == 1 || TheTree->PrimVtxNdof < 5 || fabs(TheTree->PrimVtxz) > 24 || TheTree->PrimVtxRho > 2.0) {
@@ -231,6 +241,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     hEventSelectionMuonMuonW.Fill(3, event_weight);
     hEventSelectionElectronMuon.Fill(3);
     hEventSelectionElectronMuonW.Fill(3, event_weight);
+    hEventSelectionDiLepton.Fill(3);
+    hEventSelectionDiLeptonW.Fill(3, event_weight);
 
     if (!((this->GoodElecs.size() + this->GoodMuons.size()) > 1)) {
         if (GoodElecs.size() == 1)
@@ -474,6 +486,10 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         }
     }
 
+    hEventSelectionDiLepton.Fill(4);
+    hEventSelectionDiLeptonW.Fill(4, event_weight);
+    BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllFlavours_PairChoose));
+    BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_AllFlavours_PairChoose - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
 
     if (TheEvent.NJets < ((TTbarSelectorConfig*) Config)->NJets) {
         stat = 10 + TheEvent.NJets; //10 and 11
@@ -487,6 +503,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_NJets));
         BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_NJets - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
     }
+    BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllFlavours_NJets));
+    BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_AllFlavours_NJets - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
 
     switch (TheEvent.RecDecayMode) {
         case TopAnalysis::TTBarDileptonicEvent::DiEle:
@@ -503,6 +521,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             hEventSelectionElectronMuonW.Fill(5, event_weight);
             break;
     }
+    hEventSelectionDiLepton.Fill(5);
+    hEventSelectionDiLeptonW.Fill(5, event_weight);
 
     if (TheTree->PFMET < METCutValue) {
         stat = 12;
@@ -515,7 +535,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_MET));
         BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_MET - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
     }
-
+    BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllFlavours_MET));
+    BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_AllFlavours_MET - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
 
     switch (TheEvent.RecDecayMode) {
         case TopAnalysis::TTBarDileptonicEvent::DiEle:
@@ -541,6 +562,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             hInvMassEMvsNBJets_NoW->Fill(&TheEvent);
             break;
     }
+    hEventSelectionDiLepton.Fill(6);
+    hEventSelectionDiLeptonW.Fill(6, event_weight);
 
     if (btag_1->ReadValue(&TheEvent) < ((TTbarSelectorConfig*) Config)->BTag1) {
         stat = 7;
@@ -611,6 +634,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
             hEventSelectionElectronMuonW.Fill(7, TheEvent.Weight);
             break;
     }
+    hEventSelectionDiLepton.Fill(7);
+    hEventSelectionDiLeptonW.Fill(7, event_weight);
 
     if (TheEvent.IsSameFlavour()) {
         BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_SameFlavours_NumberOfBJets));
@@ -619,6 +644,8 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_OppositeFlavours_NumberOfBJets));
         BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_OppositeFlavours_NumberOfBJets - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
     }
+    BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelectionSteps_AllFlavours_NumberOfBJets));
+    BASE::EventSelectionHistosAfterObjectCreation.FillAll(&TheEvent, TTbarEventSelectionSteps_AllFlavours_NumberOfBJets - TTbarEventSelectionSteps_SameFlavours, TheEvent.Weight);
 
 
     double evtType = EventTypeReader.ReadValue(&TheEvent);
@@ -648,6 +675,9 @@ void TTbarEventSelector::End(TDirectory * dir) {
 
     hEventSelectionMuonMuon.Write();
     hEventSelectionMuonMuonW.Write();
+
+    hEventSelectionDiLepton.Write();
+    hEventSelectionDiLeptonW.Write();
 
     hBTagScaleFactors.Write();
     //    for(multimap<int, int>::const_iterator event = RunEventNumbers.begin() ; event != RunEventNumbers.end(); event++){
@@ -827,7 +857,12 @@ void TTbarEventSelector::AddSelectionStepsEvent() {
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_bTag2");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_NumberOfBJets");
     BASE::EventSelectionHistos.CreateHistos("OppositeFlavours_Triggers");
-    BASE::EventSelectionHistos.CreateHistos("AllSelectedEvents");
+
+    BASE::EventSelectionHistos.CreateHistos("AllFlavours_PairChoose");
+    BASE::EventSelectionHistos.CreateHistos("AllFlavours_NJets");
+    BASE::EventSelectionHistos.CreateHistos("AllFlavours_MET");
+    BASE::EventSelectionHistos.CreateHistos("AllFlavours_NumberOfBJets");
+    BASE::EventSelectionHistos.CreateHistos("AllSelctedEvents");
 
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("SameFlavours_InvMass12");
@@ -845,7 +880,12 @@ void TTbarEventSelector::AddSelectionStepsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_bTag2");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_NumberOfBJets");
     BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("OppositeFlavours_Triggers");
-    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllSelectedEvents");
+
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllFlavours_PairChoose");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllFlavours_NJets");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllFlavours_MET");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllFlavours_NumberOfBJets");
+    BASE::EventSelectionHistosAfterObjectCreation.CreateHistos("AllSelctedEvents");
 }
 
 void TTbarEventSelector::AddSelectionPlotsEvent() {

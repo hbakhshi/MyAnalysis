@@ -75,6 +75,9 @@ process.SelectedEvents = cms.VPSet(
         )
     )
 
+IsTTBar = False
+if INPUT.find( 'TTBarSummer2011' ) >= 0:
+    IsTTBar = True
 if INPUT.find( 'SELECTED' ) >= 0:
     INPUT = 'SelectedEvents'
 INPUTPSet = process.vpsets[INPUT][0]
@@ -160,7 +163,7 @@ process.WPolarization = cms.PSet(
             RejectElectronsInGapAfterJetSelection=cms.bool(False),
             DrMuon=cms.double(-1.0), #0.4
         ),
-        TTBarSample = cms.untracked.bool(False),
+        TTBarSample = cms.untracked.bool( IsTTBar ),
         MCStudy = cms.untracked.bool(False),
         RejectInvMassLessThan12=cms.bool(True), #True
         RejectZRegion=cms.bool(True), #True #This rejects the event if after all cuts, the two leptons inv-mass lies between 76 and 106
@@ -248,13 +251,32 @@ process.WPolarization = cms.PSet(
                 )
             ),
         cms.PSet(
+            Name=cms.string("neutrino_solver_all"),
+            Type=cms.string("neutrino_solver"),
+            EventTypes=cms.vdouble( 2.25 , 3.25 , 1.25 , 0.25),
+            bJetAssigner = cms.PSet (
+                method = cms.string("ranodm_firstbs"),
+                Name=cms.string("random_bAssigner")
+                )
+            ),
+        cms.PSet(
+            Name=cms.string("costheta_DiLep"),
+            Type=cms.string("costheta"),
+            EventTypes=cms.vdouble( 2.25 , 3.25 , 1.25 , 0.25 ),
+            SolverName = cms.string("neutrino_solver_all"),
+            SolverSolution = cms.int32(0),
+            FillGen=cms.bool(IsTTBar),
+            GenDecayModes=cms.vint32(1,2,3,4),
+            FillRec=cms.bool(True)
+            ),
+        cms.PSet(
             Name=cms.string("costheta_ee"),
             Type=cms.string("costheta"),
             EventTypes=cms.vdouble( 0.25 ),
             SolverName = cms.string("neutrino_solver_ee"),
             SolverSolution = cms.int32(0),
-            FillGen=cms.bool(False),
-            GenDecayMode=cms.int32(3),
+            FillGen=cms.bool(IsTTBar),
+            GenDecayModes=cms.vint32(3),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -263,8 +285,8 @@ process.WPolarization = cms.PSet(
             EventTypes=cms.vdouble( 1.25 ),
             SolverName = cms.string("neutrino_solver_mm"),
             SolverSolution = cms.int32(0),
-            FillGen=cms.bool(False),
-            GenDecayMode=cms.int32(4),
+            FillGen=cms.bool(IsTTBar),
+            GenDecayModes=cms.vint32(4),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -273,8 +295,8 @@ process.WPolarization = cms.PSet(
             EventTypes=cms.vdouble( 2.25 , 3.25 ),
             SolverName = cms.string("neutrino_solver_em"),
             SolverSolution = cms.int32(0),
-            FillGen=cms.bool(False),
-            GenDecayMode=cms.int32(1), #is hard-coded as em==me
+            FillGen=cms.bool(IsTTBar),
+            GenDecayModes=cms.vint32(1 , 2), #is hard-coded as em==me
             FillRec=cms.bool(True)
             )
 #       cms.PSet(
