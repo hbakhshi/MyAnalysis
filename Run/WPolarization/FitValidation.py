@@ -1,1 +1,1 @@
-/home/hbakhshi/Documents/Analysis/WPolarization/script/FitValidation.py
+../../WPolarization/script/FitValidation.py

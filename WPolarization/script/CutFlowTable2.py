@@ -100,11 +100,19 @@ def DrawAndSave( stack , hist , name):
 
 
 
-t_mc_com = Table()
-t_mc_w_com = Table()
+t_mc_combine = Table()
+t_mc_w_combine = Table()
 
-stack_mc_com = THStack("stackCosThetaComb",'CosTheta for all  Events')
-hCosTheta_com = TH1D("hCosThetaComb" , 'cos(#theta) for all events' , 10 , -1 , 1)
+        
+        
+#array of each sample contains :
+# 0 : weighted sum of the cos(\theta) for each channel 
+# 1 : [ pair choose sum( pair choose for each channel) , {sum of the control plots ...} ]
+# 2 : [ NJets , {sum of the control plots ...} ]
+# 3 : [ MET , {sum of the control plots ...} ]
+# 4 : [ NBJets , {sum of the control plots ...} ]
+SampleCombinedInformation = {'TTBarSummer2011':[], 'DYSummer2011':[] ,'SingleTopTWSummer2011':[], 'WJetsSummer2011':[] , 'WWSummer2011':[] , 'SingleTopSummer2011':[] , 'WZSummer2011':[], 'ZZSummer2011':[] }
+hCosThetaData_combine = TH1D("hCosThetaComb" , 'cos(#theta) for all events' , 10 , -1 , 1)
 
 
 for WhichChannel_ in ['EM' , 'MM' , 'EE']:

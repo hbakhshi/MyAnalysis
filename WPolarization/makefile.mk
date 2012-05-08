@@ -8,6 +8,13 @@ WPOLOBJS = \
 	GenRecComparison.o \
 	BTagWeight.o
 
+JES_OBJS = \
+	Utilities.o \
+	JetCorrectorParameters.o \
+	SimpleJetCorrectionUncertainty.o \
+	JetCorrectionUncertainty.o \
+	typelookup.o
+
 WPolarizationUSERLIBS = \
 	-L$(PYTHONLIB) $(python_lib) \
 	-L$(BOOSTLIB) -lboost_python \
@@ -31,7 +38,7 @@ $(PWD)/obj/$(MACHINE)/WPolarization_deps.mk: $(WPOLOBJS:.o=.cc)
 		echo `$(CXX) -MM $(CXXFLAGS) $(INCLUDEDIRS) $$p | grep $(PWD)/ | grep -v $$p | grep -v external | grep -v CMSSW/src/ | tr '\n' ' ' | tr -d '\\'`  >> $@ ; \
 	done
 
-$(TARGETDIR)/WPolarization :  $(WPOLOBJS:%=$(PWD)/obj/$(MACHINE)/%)
+$(TARGETDIR)/WPolarization :  $(WPOLOBJS:%=$(PWD)/obj/$(MACHINE)/%) $(JES_OBJS:%=$(PWD)/obj/$(MACHINE)/%)
 	@echo $@ :
 	#@echo $^
 	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS) $(WPolarizationUSERLIBS)

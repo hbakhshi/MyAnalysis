@@ -56,12 +56,12 @@ class Table(object):
         txt += "|-"
         for r in self.rows:
             txt += "\n|"
-            txt += "|".join([str(r[key]) for key in sorted(self.rows[0].keys())])
+            txt += "|".join([str(round(r[key] , 2)  if isinstance(r[key], (int, long, float, complex)) else r[key]) for key in sorted(self.rows[0].keys())])
         txt += "\n|-"
         if self.PrintSum:
             txt += "\n"
             sumRow = self.GetSumRow()
-            txt += "| |" + "|".join( [str(sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
+            txt += "| |" + "|".join( [str(round(sumRow[key] , 2)  if isinstance(sumRow[key], (int, long, float, complex)) else sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
 
         return txt
 

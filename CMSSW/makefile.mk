@@ -13,3 +13,6 @@ GetCMSSWDir:
 	cp -r 	$(CMSSWREALEASEBASE)/src/DataFormats/Math/ \
 		$(CMSSWREALEASEBASE)/src/DataFormats/BeamSpot/ \
 		$(PWD)/CMSSW/src/DataFormats/
+	mkdir -p $(PWD)/CMSSW/src/CondFormats/
+	cp -r $(CMSSWREALEASEBASE)/src/CondFormats/JetMETObjects $(PWD)/CMSSW/src/CondFormats/
+	rm -rf $(PWD)/CMSSW/src/CondFormats/data/

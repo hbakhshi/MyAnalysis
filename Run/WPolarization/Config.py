@@ -141,12 +141,12 @@ process.WPolarization = cms.PSet(
         RejectInvMassLessThan12=cms.bool(True), #True
         RejectZRegion=cms.bool(True), #True #This rejects the event if after all cuts, the two leptons inv-mass lies between 76 and 106
         RejectLeptonsFromZ=cms.bool(False), #True #This removes all of the leptons from the same flavour that their inv-mass lies between 76 and 106
-        METCutOF=cms.double(20.0), #20
-        METCutSF=cms.double(30.0), #30
+        METCutOF=cms.double(0.0), #20
+        METCutSF=cms.double(0.0), #30
         NJets=cms.int32(2), #2
         btag_algo = cms.string('simpleSecondaryVertexHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
         BJetSelectionBTag = cms.double( 1.74 ), #to count the number of bjets
-        NBJets = cms.int32(-1),
+        NBJets = cms.int32(1),
         BTag1 = cms.double(-100000.0),
         BTag2 = cms.double(-100000.0),
 

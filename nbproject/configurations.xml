@@ -48,6 +48,36 @@
           </df>
         </df>
         <df name="src">
+          <df name="CondFormats">
+            <df name="JetMETObjects">
+              <df name="doc">
+                <df name="html">
+                </df>
+              </df>
+              <df name="interface">
+                <in>FactorizedJetCorrector.h</in>
+                <in>JetCorrectionUncertainty.h</in>
+                <in>JetCorrectorParameters.h</in>
+                <in>JetResolution.h</in>
+                <in>Linkdef.h</in>
+                <in>SimpleJetCorrectionUncertainty.h</in>
+                <in>SimpleJetCorrector.h</in>
+              </df>
+              <df name="src">
+                <in>FactorizedJetCorrector.cc</in>
+                <in>JetCorrectionUncertainty.cc</in>
+                <in>JetCorrectorParameters.cc</in>
+                <in>JetResolution.cc</in>
+                <in>SimpleJetCorrectionUncertainty.cc</in>
+                <in>SimpleJetCorrector.cc</in>
+                <in>Utilities.cc</in>
+                <in>classes.h</in>
+              </df>
+              <df name="test">
+                <in>TestCorrections.C</in>
+              </df>
+            </df>
+          </df>
           <df name="DataFormats">
             <df name="BeamSpot">
               <df name="doc">
