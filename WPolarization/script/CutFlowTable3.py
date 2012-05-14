@@ -26,7 +26,9 @@ print >>org_file,'#+STYLE: <script type="text/javascript" src="highslide/highsli
 WhichChannel = ''
 
 sorted_samples = ['TTBarSummer2011', 'DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
+systematic_samples = ['SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
 SamplesInfo = {}
+SysSamplesInfo = {}
 
 stack_costheta_ee = THStack("stackCosTheta",'CosTheta for ee Events')
 stack_costheta_mm = THStack("stackCosTheta",'CosTheta for mm Events')
@@ -38,6 +40,9 @@ PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}
 
 for sample in sorted_samples:
     SamplesInfo[sample] = SampleInfo(sample)
+
+for sample in systematic_samples:
+    SysSamplesInfo[sample] = SampleInfo(sample)
 
 Data = DataInfo()
 
@@ -53,6 +58,7 @@ hAxis2 = hAxis.Clone('hAxis_0')
 hAxis3 = hAxis.Clone('hAxis_p')
 
 for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
+     continue
      WhichChannel = WhichChannel_
      
      t_mc = Table()
@@ -216,5 +222,7 @@ print >>org_file, '   [[[' +DrawAndCompStandardVal(hAxis3 , gFPos , 0.0 , 0.02 ,
 fOut = TFile('AllCombined.root' , 'RECREATE')
 for sample in SamplesInfo:
     SamplesInfo[sample].Combined.hCosTheta.Write()
+for sample in SysSamplesInfo:
+    SysSamplesInfo[sample].Combined.hCosTheta.Write()
 Data.Combined.hCosTheta.Write()
 fOut.Close()

@@ -258,7 +258,7 @@ DoubleEle2011Aug = cms.VPSet(
         TotalNumberOfEvents = cms.int32(3940010),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("Aug5 ReReco"),
+        Name=cms.string("EE Aug5 ReReco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
