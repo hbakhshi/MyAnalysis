@@ -258,7 +258,7 @@ DoubleEle2011Aug = cms.VPSet(
         TotalNumberOfEvents = cms.int32(3940010),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("Aug5 ReReco"),
+        Name=cms.string("EE Aug5 ReReco"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -419,7 +419,7 @@ SysTTM175 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTM175")
+        Name=cms.string("SysTTM175"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -431,7 +431,7 @@ SysTTM169 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTM169")
+        Name=cms.string("SysTTM169"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -443,7 +443,7 @@ SysTTQD = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTQD")
+        Name=cms.string("SysTTQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -455,7 +455,7 @@ SysTTQU = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTQU")
+        Name=cms.string("SysTTQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -468,7 +468,7 @@ SysWJetsQD = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysWJetsQD")
+        Name=cms.string("SysWJetsQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -480,7 +480,7 @@ SysWJetsQU = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysWJetsQU")
+        Name=cms.string("SysWJetsQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -492,7 +492,7 @@ SysZJetsQD = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysZJetsQD")
+        Name=cms.string("SysZJetsQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -504,7 +504,7 @@ SysZJetsQU = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysZJetsQU")
+        Name=cms.string("SysZJetsQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )

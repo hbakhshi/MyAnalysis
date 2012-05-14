@@ -11,9 +11,9 @@ PropertiesHistoPathFormat = 'Selection/EventSelectionHistosAfterObjectCreation/%
 SelectionPlotName = 'Selection/hEventSelection%(channel)s'
 CosThetaPlotName = 'costheta_%(channel)s/hCosThetaAllLepton'
 
-XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':3048.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65 }
+XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':3048.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65 , 'SysWJetsQU':31314.0 , 'SysTTQU':157.5 , 'SysTTQD':157.5 , 'SysZJetsQD':3048.0 , 'SysZJetsQU':3048.0 , 'SysTTM175':157.5 , 'SysWJetsQD':31314.0 , 'SysTTM169':157.5 }
 
-Colors = {'TTBarSummer2011':41, 'DYSummer2011':46 ,'WJetsSummer2011':31 , 'WWSummer2011':29 , 'SingleTopSummer2011':4 , 'SingleTopTWSummer2011':7 , 'WZSummer2011':90 , 'ZZSummer2011':66 ,  'Data':1 }
+Colors = {'TTBarSummer2011':41, 'DYSummer2011':46 ,'WJetsSummer2011':31 , 'WWSummer2011':29 , 'SingleTopSummer2011':4 , 'SingleTopTWSummer2011':7 , 'WZSummer2011':90 , 'ZZSummer2011':66 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
 
 IntLumis = {'EE':4529.518 , 'MM':4459.007 , 'EM':4631.724}
 
