@@ -419,43 +419,43 @@ SysTTM175 = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTM175")
+        Name=cms.string("SysTTM175"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
     )
 SysTTM169 = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/TTJets_TuneZ2_mass169_5_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/TTJets_TuneZ2_mass169_5_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTM169")
+        Name=cms.string("SysTTM169"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
     )
 SysTTQD = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/TTjets_TuneZ2_scaledown_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/TTjets_TuneZ2_scaledown_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTQD")
+        Name=cms.string("SysTTQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
     )
 SysTTQU = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/TTjets_TuneZ2_scaleup_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysTTQU")
+        Name=cms.string("SysTTQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -463,36 +463,36 @@ SysTTQU = cms.VPSet(
 
 SysWJetsQD = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/WJetsToLNu_TuneZ2_scaledown_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysWJetsQD")
+        Name=cms.string("SysWJetsQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
     )
 SysWJetsQU = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/WJetsToLNu_TuneZ2_scaleup_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysWJetsQU")
+        Name=cms.string("SysWJetsQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
     )
 SysZJetsQD = cms.VPSet(
     cms.PSet(
-        File=cms.string('/public/wpolar/SYS/V02-05-01/ZJetsToLL_TuneZ2_scaledown_7TeV-madgraph-tauola'),
+        File=cms.string('/public/wpolar/SYS/V02-05-01/ZJetsToLL_TuneZ2_scaledown_7TeV-madgraph-tauola/'),
         IsDirectory = cms.untracked.bool(True),
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysZJetsQD")
+        Name=cms.string("SysZJetsQD"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
@@ -504,7 +504,7 @@ SysZJetsQU = cms.VPSet(
         TotalNumberOfEvents = cms.int32(-1),
         IsCastor   = cms.bool(False),
         XSec=cms.double(-1),
-        Name=cms.string("SysZJetsQU")
+        Name=cms.string("SysZJetsQU"),
         MaxInput=cms.int32(-1),
         PreSelEfficiency=cms.double(1.0)
         )
