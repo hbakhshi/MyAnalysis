@@ -241,7 +241,7 @@ class DataInfo(SampleInfo):
             self.DataSelectedFiles[filename].Close()
 
 class SamplesStack:
-    def DrawAndSave(self, stack , hist , name):
+    def DrawAndSave(self, stack , hist , name , LogY = 0):
 
         if not os.access( self.Channel , os.F_OK) :
             os.mkdir( self.Channel )
@@ -263,6 +263,7 @@ class SamplesStack:
         c.Divide(1,2)
 
         c1 = c.cd(1)
+        c1.SetLogy(LogY)
         if stack.GetMaximum() < hist.GetBinContent(hist.GetMaximumBin()):
             stack.SetMaximum( 1.01*hist.GetBinContent(hist.GetMaximumBin() ) )
 
@@ -313,6 +314,7 @@ class SamplesStack:
 
         c.cd()
         c.SaveAs(self.Channel + '/' + name + '.gif' )
+        c.SaveAs(self.Channel + '/' + name + '.C' )
         c.Close()
         return total_difference    
 
@@ -351,7 +353,7 @@ class SamplesStack:
                     
                 ImgFileName = 'aaa'+ str(CutID)+ "_" +Cut+  "_"  + Property
                 ImgFileName = ImgFileName.replace("_", 'z')
-                TotalDiff = self.DrawAndSave(stack_prop, hPropd, ImgFileName)
+                TotalDiff = self.DrawAndSave(stack_prop, hPropd, ImgFileName , 1)
                                
                 PropertiesLinks[Property]['%(ID)d-%(Name)s'%{'ID':CutID+1 , 'Name':Cut}] = '@<a id="%(id)s" href="%(file)s" class="highslide" onclick="return hs.expand(this)">%(Diff)d@</a>' % {'file':self.Channel + '/' + ImgFileName + '.gif' , 'id':(Cut+'_'+Property).replace('_', 'x') , 'Diff':TotalDiff}
                 CutID = CutID+1
@@ -361,21 +363,24 @@ class SamplesStack:
 
         
 
-    def __init__(self , ArrayOfAllSamples):
-        self.Channel = ArrayOfAllSamples[0].Channel
-        self.AllSortedDirectories = ArrayOfAllSamples[0].AllSortedDirectories
-
+    def __init__(self , ArrayOfAllSamples, sortedSamples):
         self.Row  = RowObject()
         self.RowW = RowObject()
         
-        self.stack_costheta =  THStack("stackCosTheta_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-        self.stack_costheta_preselected =  THStack("preselected_stackCosTheta_" + self.Channel ,'CosTheta for preselected ' + self.Channel +' Events')
-        self.PropertiesToDraw = {}
-
         sample_id = 0
-        for sample in ArrayOfAllSamples:
+        for sampleName in sortedSamples:
+            if ArrayOfAllSamples.keys().count(sampleName) == 0:
+                continue
+            sample = ArrayOfAllSamples[sampleName]
             #print sample.Sample
             if sample_id == 0:
+                self.Channel = sample.Channel
+                self.AllSortedDirectories = sample.AllSortedDirectories
+
+                self.stack_costheta =  THStack("stackCosTheta_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta_preselected =  THStack("preselected_stackCosTheta_" + self.Channel ,'CosTheta for preselected ' + self.Channel +' Events')
+                self.PropertiesToDraw = {}
+
                 for column in sample.Row:
                     self.Row[column] = sample.Row[column]
                 self.Row[ sorted(self.Row.keys())[0] ] = ''

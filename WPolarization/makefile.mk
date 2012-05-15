@@ -15,6 +15,9 @@ JES_OBJS = \
 	JetCorrectionUncertainty.o \
 	typelookup.o
 
+FitValidation_OBJS = \
+	ToyFitter.o
+
 WPolarizationUSERLIBS = \
 	-L$(PYTHONLIB) $(python_lib) \
 	-L$(BOOSTLIB) -lboost_python \
@@ -43,9 +46,13 @@ $(TARGETDIR)/WPolarization :  $(WPOLOBJS:%=$(PWD)/obj/$(MACHINE)/%) $(JES_OBJS:%
 	#@echo $^
 	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS) $(WPolarizationUSERLIBS)
 
-WPolarization : $(TARGETDIR)/WPolarization
+WPolarization : $(TARGETDIR)/WPolarization $(TARGETDIR)/FitValidation
 	@echo $@
 
+$(TARGETDIR)/FitValidation : $(FitValidation_OBJS:%=$(PWD)/obj/$(MACHINE)/%)
+	@echo $@ :
+	#@echo $^
+	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS)
 # Enable dependency checking
 .KEEP_STATE:
 .KEEP_STATE_FILE:.make.state.GNU-i386-Linux

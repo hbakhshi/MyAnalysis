@@ -14,7 +14,7 @@ org_file = open("TablesDataMC.org" , 'w')
 print >>org_file,'#+INFOJS_OPT: view:content toc:nil' #http://orgmode.org/manual/JavaScript-support.html#JavaScript-support
 print >>org_file,'#+TITLE: WPolarization, data/mc comparison'
 #needed lines for hs.expand command works
-print >>org_file,'#+STYLE: <script type="text/javascript" src="highslide/highslide.js"></script>\n\
+print >>org_file,'#+STYLE: <script type="text/javascript" src="../highslide/highslide.js"></script>\n\
 #+STYLE: <link rel="stylesheet" type="text/css" href="../highslide/highslide.css" /> \n\
 #+STYLE: <script type="text/javascript">\n\
 #+STYLE:    hs.graphicsDir = "./";\n\
@@ -26,6 +26,7 @@ print >>org_file,'#+STYLE: <script type="text/javascript" src="highslide/highsli
 WhichChannel = ''
 
 sorted_samples = ['TTBarSummer2011', 'DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
+sorted_samples.reverse()
 systematic_samples = ['SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
 SamplesInfo = {}
 SysSamplesInfo = {}
@@ -58,21 +59,22 @@ hAxis2 = hAxis.Clone('hAxis_0')
 hAxis3 = hAxis.Clone('hAxis_p')
 
 for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
-     continue
      WhichChannel = WhichChannel_
      
      t_mc = Table()
      t_mc_w = Table()
 
-     AllSamples = [ SampleInfoType. __getattribute__( SamplesInfo[sample] , WhichChannel) for sample in SamplesInfo ]
- 
+     #AllSamples = [ SampleInfoType. __getattribute__( SamplesInfo[sample] , WhichChannel) for sample in SamplesInfo ]
+     AllSamples = dict( ( sample , SampleInfoType. __getattribute__( SamplesInfo[sample] , WhichChannel) ) for sample in SamplesInfo  )
+     print AllSamples
      print >>org_file,'* ' + WhichChannel
      print >>org_file,"** Wights"
 
      last_column_name = ''
      last_column_name_w = ''
 
-     for sample in AllSamples:
+     for sampleName in sorted_samples:
+         sample = AllSamples[sampleName]
          if not WhichChannel == 'Combined':
              print >>org_file, '  |%(file)s | %(weight)f' % {'file': sample.Sample , 'weight' :sample.Lumi_Weight}
          t_mc.append( sample.Row )
@@ -80,7 +82,7 @@ for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
          last_column_name_w = sample.LastColumnW
          last_column_name = sample.LastColumn
      
-     stack = SamplesStack( AllSamples )     
+     stack = SamplesStack( AllSamples , sorted_samples )     
      print >>org_file,"** CutFlow table"
      print >>org_file,t_mc
      sumRow = stack.Row
@@ -133,8 +135,8 @@ for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
      print >>org_file, '** Fit Results'
      tableRowFormat =  '    |%(FitName)s|%(FL)f ± %(FLErr)f | %(F0)f ± %(F0Err)f | %(FR)f ± %(FRErr)f | %(FRecGen)f ± %(FRecGenErr)f |'
      print >>org_file, '    |Method|F_{L} | F_{0} | F_{R} | F_{Rec/Gen} |'
-     AllSamplesButTTBar =  [ theSample for theSample in AllSamples if theSample.Sample.find('TTBar') < 0 ]
-     stackAllButTTBar =  SamplesStack( AllSamplesButTTBar ).stack_costheta
+     AllSamplesButTTBar =  dict( (sampleName , AllSamples[sampleName] ) for sampleName in AllSamples if sampleName.find('TTBar') < 0 )
+     stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples ).stack_costheta
      ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta
      dataH = Data.AllPlots[WhichChannel_].hCosTheta
      llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7)[0]
@@ -175,8 +177,8 @@ def DrawAndCompStandardVal( haxis  , graph , std , stdErr , name , title):
     c = TCanvas(name)
     c.cd()
 
-    xMin = std - 3.0*stdErr
-    xMax = std + 3.0*stdErr 
+    xMin = std - 5*stdErr
+    xMax = std + 5*stdErr 
     hAxisNeg = TH1F('hAxisxL'  , "" , 100 , xMin , xMax)
     allHorizontalHistos[ hAxisNeg.GetName() ] = hAxisNeg
 
@@ -211,10 +213,10 @@ print >>org_file, '** F_{L}'
 #flStd = 0.3
 #flStdErr = 0.02
 
-print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis , gFNeg , 0.3 , 0.02 , 'FL' , 'F_{L}')  +']]]'
+print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis , gFNeg , 0.29 , 0.02  , 'FL' , 'F_{L}')  +']]]'
 
 print >>org_file, '** F_{0}'
-print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis2 , gF0 , 0.7 , 0.02 , 'F0' , 'F_{0}')  +']]]'
+print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis2 , gF0 , 0.71 , 0.02 , 'F0' , 'F_{0}')  +']]]'
 
 print >>org_file, '** F_{R}'
 print >>org_file, '   [[[' +DrawAndCompStandardVal(hAxis3 , gFPos , 0.0 , 0.02 , 'FR' , 'F_{R}')+ ']]]'
