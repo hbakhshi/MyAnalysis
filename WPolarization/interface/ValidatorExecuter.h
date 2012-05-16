@@ -27,16 +27,24 @@ using namespace std;
 #include <map>
 #include <vector>
 
-void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  string Channel , string AllEventsHistogramDirectory ) {
+void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, string Channel, string AllEventsHistogramDirectory) {
     stringstream outName;
-    outName << "Linearity_start-" << StartPEX << "-length-" << LPEX << "_Pull_start-" << StartPEXPull <<
+    outName << "FitValidation/Linearity_start-" << StartPEX << "-length-" << LPEX << "_Pull_start-" << StartPEXPull <<
             "-length-" << LPEXPull << ".root";
 
-    double FposFixed = 0.0009;
+    double FposFixed = 0.03;
     std::pair<TF1, WeightFunctionCreator*> WtbWeightor = WeightFunctionCreator::getWeightFunction("WtbWeightor");
     SamplesInfo mySampleInfo(AllEventsHistogramDirectory);
-    double Lumi = mySampleInfo.Channels[Channel];
+    double Lumi_ee = mySampleInfo.Channels["EE"];
+    double Lumi_em = mySampleInfo.Channels["EM"];
+    double Lumi_mm = mySampleInfo.Channels["MM"];
+    std::map<string, DistributionProducerFromSelected*> bkg_samples_ee;
+    std::map<string, DistributionProducerFromSelected*> bkg_samples_mm;
+    std::map<string, DistributionProducerFromSelected*> bkg_samples_em;
     std::map<string, DistributionProducerFromSelected*> bkg_samples;
+    std::map<string, DistributionProducerFromSelected*> signal_samples_ee;
+    std::map<string, DistributionProducerFromSelected*> signal_samples_mm;
+    std::map<string, DistributionProducerFromSelected*> signal_samples_em;
     std::map<string, DistributionProducerFromSelected*> signal_samples;
     std::map<string, double>::iterator sampleItr = mySampleInfo.files_xsec.begin();
 
@@ -44,38 +52,115 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  s
     TH1* bkg = 0;
     for (; sampleItr != mySampleInfo.files_xsec.end(); sampleItr++) {
 
-        bool isBkg = (sampleItr->first.find("TTBarSummer2011") == string::npos) ;
-        
-        TH1* hist = mySampleInfo.GetCosThetaPlot(Channel , sampleItr->first, 10);
-        hist->Sumw2();
-        DistributionProducerFromSelected *myDist = new DistributionProducerFromSelected(hist, sampleItr->first, Channel ,mySampleInfo );
+        bool isBkg = (sampleItr->first.find("TTBarSummer2011") == string::npos);
+
+        TH1* hist_ee = mySampleInfo.GetCosThetaPlot("EE", sampleItr->first, 10);
+        hist_ee->Sumw2();
+        DistributionProducerFromSelected *myDist_ee = new DistributionProducerFromSelected(hist_ee, sampleItr->first, "EE", mySampleInfo);
+        TH1* hist_mm = mySampleInfo.GetCosThetaPlot("MM", sampleItr->first, 10);
+        hist_mm->Sumw2();
+        DistributionProducerFromSelected *myDist_mm = new DistributionProducerFromSelected(hist_mm, sampleItr->first, "MM", mySampleInfo);
+        TH1* hist_em = mySampleInfo.GetCosThetaPlot("EM", sampleItr->first, 10);
+        hist_em->Sumw2();
+        DistributionProducerFromSelected *myDist_em = new DistributionProducerFromSelected(hist_em, sampleItr->first, "EM", mySampleInfo);
 
         if (isBkg) {
             //            cout<<sampleItr->first<<endl;
-            bkg_samples[sampleItr->first] = myDist;
-            hist->Scale(float(Lumi * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first , Channel)) );
+            bkg_samples_ee[sampleItr->first] = myDist_ee;
+            bkg_samples_mm[sampleItr->first] = myDist_mm;
+            bkg_samples_em[sampleItr->first] = myDist_em;
+
+            if (Channel == "EE")
+                bkg_samples[sampleItr->first] = myDist_ee;
+            else if (Channel == "EM")
+                bkg_samples[sampleItr->first] = myDist_em;
+            else if (Channel == "MM")
+                bkg_samples[sampleItr->first] = myDist_mm;
+            else if (Channel == "Combined") {
+                bkg_samples[sampleItr->first + "mm"] = myDist_mm;
+                bkg_samples[sampleItr->first + "ee"] = myDist_ee;
+                bkg_samples[sampleItr->first + "em"] = myDist_em;
+            }
+
+            hist_ee->Scale(float(Lumi_ee * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EE")));
+            hist_mm->Scale(float(Lumi_mm * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "MM")));
+            hist_em->Scale(float(Lumi_em * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EM")));
             //           if(sampleItr == mySampleInfo.Xsections.begin())
-            if (bkg == 0)
-                bkg = ((TH1*) hist->Clone(string("bkg_" + string(hist->GetName())).c_str()));
-            else {
-                bkg->Add(hist);
-                //                cout<<"Adding bkg with nbins = "<<bkg->GetXaxis()->GetNbins()<<
-                //                        " and hist with nbins = "<<hist->GetXaxis()->GetNbins()<<endl;
+            if (bkg == 0) {
+                if (Channel == "EE")
+                    bkg = ((TH1*) hist_ee->Clone(string("bkg_" + string(hist_ee->GetName())).c_str()));
+                else if (Channel == "EM")
+                    bkg = ((TH1*) hist_em->Clone(string("bkg_" + string(hist_em->GetName())).c_str()));
+                else if (Channel == "MM")
+                    bkg = ((TH1*) hist_mm->Clone(string("bkg_" + string(hist_mm->GetName())).c_str()));
+                else if (Channel == "Combined") {
+                    bkg = ((TH1*) hist_ee->Clone(string("bkg_" + string(hist_ee->GetName())).c_str()));
+                    bkg->Add(hist_mm);
+                    bkg->Add(hist_em);
+                }
+            } else {
+                if (Channel == "EE")
+                    bkg->Add(hist_ee);
+                else if (Channel == "EM")
+                    bkg->Add(hist_em);
+                else if (Channel == "MM")
+                    bkg->Add(hist_mm);
+                else if (Channel == "Combined") {
+                    bkg->Add(hist_ee);
+                    bkg->Add(hist_mm);
+                    bkg->Add(hist_em);
+                }
             }
         } else {
             //            cout<<sampleItr->first<<endl;
-            signal_samples[sampleItr->first] = myDist;
-            hist->Scale(float(Lumi * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first , Channel)) );
+            signal_samples_ee[sampleItr->first] = myDist_ee;
+            signal_samples_em[sampleItr->first] = myDist_em;
+            signal_samples_mm[sampleItr->first] = myDist_mm;
+
+            if (Channel == "EE")
+                signal_samples[sampleItr->first] = myDist_ee;
+            else if (Channel == "EM")
+                signal_samples[sampleItr->first] = myDist_em;
+            else if (Channel == "MM")
+                signal_samples[sampleItr->first] = myDist_mm;
+            else if (Channel == "Combined") {
+                signal_samples[sampleItr->first + "mm"] = myDist_mm;
+                signal_samples[sampleItr->first + "ee"] = myDist_ee;
+                signal_samples[sampleItr->first + "em"] = myDist_em;
+            }
+
+            hist_ee->Scale(float(Lumi_ee * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EE")));
+            hist_mm->Scale(float(Lumi_mm * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "MM")));
+            hist_em->Scale(float(Lumi_em * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EM")));
             //            if(sampleItr == mySampleInfo.Xsections.begin())
-            if (signalMC == 0)
-                signalMC = ((TH1*) hist->Clone(string("signal_" + string(hist->GetName())).c_str()));
-            else {
-                signalMC->Add(hist);
-                //                cout<<"Adding signal with nbins = "<<signalMC->GetXaxis()->GetNbins()<<
-                //                " and hist with nbins = "<<hist->GetXaxis()->GetNbins()<<endl;
+            if (signalMC == 0) {
+                if (Channel == "EE")
+                    signalMC = ((TH1*) hist_ee->Clone(string("signal_" + string(hist_ee->GetName())).c_str()));
+                else if (Channel == "EM")
+                    signalMC = ((TH1*) hist_em->Clone(string("signal_" + string(hist_em->GetName())).c_str()));
+                else if (Channel == "MM")
+                    signalMC = ((TH1*) hist_mm->Clone(string("signal_" + string(hist_mm->GetName())).c_str()));
+                else if (Channel == "Combined") {
+                    signalMC = ((TH1*) hist_ee->Clone(string("signal_" + string(hist_ee->GetName())).c_str()));
+                    signalMC->Add(hist_mm);
+                    signalMC->Add(hist_em);
+                }
+            } else {
+                if (Channel == "EE")
+                    signalMC->Add(hist_ee);
+                else if (Channel == "EM")
+                    signalMC->Add(hist_em);
+                else if (Channel == "MM")
+                    signalMC->Add(hist_mm);
+                else if (Channel == "Combined") {
+                    signalMC->Add(hist_ee);
+                    signalMC->Add(hist_mm);
+                    signalMC->Add(hist_em);
+                }
             }
         }
     }
+    double correlation = 0.0;
     gROOT->cd();
     TH2D hFinalFNeg("hFinalFNeg", "Linearirty Check for F_{-};F_{-} input;F_{-} output", 300, 0., 1., 300, 0., 1.);
     TH2D hFinalF0("hFinalF0", "Linearirty Check for F_{0};F_{0} input;F_{0} output", 300, 0., 1., 300, 0., 1.);
@@ -180,7 +265,7 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  s
 
             double x[3] = {-1., -1., -1.};
             double xerr[3] = {-1., -1., -1.};
-            GetMinimum(LLinPEXforFNegValue, x, xerr, false);
+            GetMinimum(LLinPEXforFNegValue, x, xerr,correlation, false);
             hFinalFNeg.Fill(FNegValueSteps[i], x[1]);
             hFinalF0.Fill(F0Value, x[0]);
             //            hFinalFNeg.Fill(FNegValueSteps[i],x[0]);
@@ -247,7 +332,9 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  s
         TF3 LLinPEXforFNegValue = LLinPEXforFNegValueArray.first;
         double x[3] = {-1., -1., -1.};
         double xerr[3] = {-1., -1., -1.};
-        GetMinimum(LLinPEXforFNegValue, x, xerr);
+        int fitres = GetMinimum(LLinPEXforFNegValue, x, xerr , correlation);
+        if (fitres != 0)
+            continue;
         double fneg = x[1];
         double f0 = x[0];
         double fpos = 1.0 - x[1] - x[0];
@@ -261,11 +348,11 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  s
 
         double errfneg = xerr[1];
         double errf0 = xerr[0];
-        double errfpos = sqrt(errf0 * errf0 + errfneg * errfneg);
+        double errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2*correlation));
 
-        double resneg = fneg - (3.03734e-01);
+        double resneg = fneg - 0.3;
         double respos = fpos - FposFixed;
-        double resf0 = f0 - (6.64263e-01);
+        double resf0 = f0 - (0.7-FposFixed);
 
         hPullFNeg.Fill((double) resneg / (double) errfneg);
         hPullF0.Fill((double) resf0 / (double) errf0);
@@ -292,6 +379,10 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull,  s
     hResF0.Write();
     hResFPos.Write();
     hResFResp.Write();
+    
+    signalMC->Write();
+    bkg->Write();
+    
     outFile->Close();
 }
 #endif	/* VALIDATOREXECUTER_H */

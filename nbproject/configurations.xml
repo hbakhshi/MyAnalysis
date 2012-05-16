@@ -735,6 +735,8 @@
           </df>
         </df>
         <df name="WPolarization">
+          <df name="FitValidation">
+          </df>
         </df>
       </df>
       <df name="WPolarization">
@@ -743,9 +745,12 @@
           <in>BTagWeight.h</in>
           <in>CosThetaAnalysis.h</in>
           <in>DileptonAnalyticalSolver.h</in>
+          <in>FitValidator.h</in>
           <in>GenRecComparison.h</in>
           <in>NeutrinoSolver.h</in>
           <in>TTbarSelector.h</in>
+          <in>ToyFitter.h</in>
+          <in>ValidatorExecuter.h</in>
         </df>
         <df name="script">
         </df>
@@ -757,6 +762,7 @@
           <in>GenRecComparison.cc</in>
           <in>NeutrinoSolver.cc</in>
           <in>TTbarSelector.cc</in>
+          <in>ToyFitter.cc</in>
           <in>WPolarization.cc</in>
         </df>
       </df>
