@@ -32,7 +32,7 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
     outName << "FitValidation/Linearity_start-" << StartPEX << "-length-" << LPEX << "_Pull_start-" << StartPEXPull <<
             "-length-" << LPEXPull << ".root";
 
-    double FposFixed = 0.03;
+    double FposFixed = 0.0009;
     std::pair<TF1, WeightFunctionCreator*> WtbWeightor = WeightFunctionCreator::getWeightFunction("WtbWeightor");
     SamplesInfo mySampleInfo(AllEventsHistogramDirectory);
     double Lumi_ee = mySampleInfo.Channels["EE"];
