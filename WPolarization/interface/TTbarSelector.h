@@ -10,6 +10,9 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "WPolarization/interface/BTagWeight.h"
 
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+
 using namespace std;
 using namespace ElectronAnalysis;
 using namespace TopAnalysis;
@@ -34,7 +37,11 @@ public:
     bool MCStudy;
 
     string btag_algo;
+    int BTagScaleFactorSystematics;
 
+    int ApplyJES;
+    string JESFileName;
+    
     int getBTagAlgo() const {
         if (btag_algo == "TrackCountingHighEff")
             return 1;
@@ -76,10 +83,13 @@ public:
     METCutOF(ps.getParameter<double>("METCutOF")),
     METCutSF(ps.getParameter<double>("METCutSF")),
     NJets(ps.getParameter<int>("NJets")),
+    ApplyJES(ps.getParameter<int>("ApplyJES")),
+    JESFileName(ps.getUntrackedParameter<string>("JESFileName", "")),
     SelectedEventTypesByDSName(ps.getParameter<edm::ParameterSet>("SelectedEventTypesByDSName")),
     btag_algo(ps.getParameter<string>("btag_algo")),
     BTag1(ps.getParameter<double>("BTag1")),
     BTag2(ps.getParameter<double>("BTag2")),
+    BTagScaleFactorSystematics(ps.getParameter<int>("BTagScaleFactorSystematics")),
     DRJetsLeptons(ps.getParameter<double>("DRJetsLeptons")),
     NBJets(ps.getParameter<int>("NBJets")),
     BJetSelectionBTag(ps.getParameter<double>("BJetSelectionBTag")),
@@ -155,7 +165,8 @@ public:
         TTbarEventSelectionSteps_AllFlavours_NJets = 21,
         TTbarEventSelectionSteps_AllFlavours_MET = 22,
         TTbarEventSelectionSteps_AllFlavours_NumberOfBJets = 23,
-        TTbarEventSelectionSteps_AllSelectedEvents = 24
+        TTbarEventSelectionSteps_AllSelectedEvents = 24,
+        TTbarEventSelectionSteps_AllSelectedEventsNoW = 25
     };
     virtual void AddSelectionStepsEvent();
     virtual void AddSelectionPlotsEvent();
@@ -185,9 +196,20 @@ private:
     TH2Ext<EVENTTYPE>* hInvMassMMvsNBJets_NoW;
     TH2Ext<EVENTTYPE>* hInvMassEMvsNBJets_NoW;
 
+    TH2Ext<EVENTTYPE>* hInvMassEEvsMET;
+    TH2Ext<EVENTTYPE>* hInvMassMMvsMET;
+    TH2Ext<EVENTTYPE>* hInvMassEMvsMET;
+
+    TH2Ext<EVENTTYPE>* hInvMassEEvsMET_NoW;
+    TH2Ext<EVENTTYPE>* hInvMassMMvsMET_NoW;
+    TH2Ext<EVENTTYPE>* hInvMassEMvsMET_NoW;
+
     TopAnalysis::DiLeptonTTBarEventProperties::InvariantMass< ElectronAnalysis::Electron::_Momentum >::type InvariantMass_Prop;
     TopAnalysis::DiLeptonTTBarEventProperties::NumberOfBJets NumberOfBJets_Prop;
+    TopAnalysis::DiLeptonTTBarEventProperties::PFMet  MET_Prop;
 
+    void ApplyJES(int);
+    JetCorrectionUncertainty *JUnc;
 };
 
 typedef TTbarEventSelector EventSelector;

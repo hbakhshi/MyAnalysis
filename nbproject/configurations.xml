@@ -735,8 +735,61 @@
           </df>
         </df>
         <df name="WPolarization">
+          <df name="EM">
+            <in>EM_cos_theta.C</in>
+            <in>EM_cos_theta_preselected.C</in>
+            <in>aaa0zzElectronszInvariantMass.C</in>
+            <in>aaa0zzFirstJetPt.C</in>
+            <in>aaa0zzFirstLeptonEta.C</in>
+            <in>aaa0zzFirstLeptonPt.C</in>
+            <in>aaa0zzJetsHT.C</in>
+            <in>aaa0zzNumberOfBJets.C</in>
+            <in>aaa0zzNumberOfJets.C</in>
+            <in>aaa0zzPFMET.C</in>
+            <in>aaa0zzSecondJetPt.C</in>
+            <in>aaa0zzSecondLeptonEta.C</in>
+            <in>aaa0zzSecondLeptonPt.C</in>
+            <in>aaa0zzThirdJetPt.C</in>
+            <in>aaa1zzNJetszElectronszInvariantMass.C</in>
+            <in>aaa1zzNJetszFirstJetPt.C</in>
+            <in>aaa1zzNJetszFirstLeptonEta.C</in>
+            <in>aaa1zzNJetszFirstLeptonPt.C</in>
+            <in>aaa1zzNJetszJetsHT.C</in>
+            <in>aaa1zzNJetszNumberOfBJets.C</in>
+            <in>aaa1zzNJetszNumberOfJets.C</in>
+            <in>aaa1zzNJetszPFMET.C</in>
+            <in>aaa1zzNJetszSecondJetPt.C</in>
+            <in>aaa1zzNJetszSecondLeptonEta.C</in>
+            <in>aaa1zzNJetszSecondLeptonPt.C</in>
+            <in>aaa1zzNJetszThirdJetPt.C</in>
+            <in>aaa2zzMETzElectronszInvariantMass.C</in>
+            <in>aaa2zzMETzFirstJetPt.C</in>
+            <in>aaa2zzMETzFirstLeptonEta.C</in>
+            <in>aaa2zzMETzFirstLeptonPt.C</in>
+            <in>aaa2zzMETzJetsHT.C</in>
+            <in>aaa2zzMETzNumberOfBJets.C</in>
+            <in>aaa2zzMETzNumberOfJets.C</in>
+            <in>aaa2zzMETzPFMET.C</in>
+            <in>aaa2zzMETzSecondJetPt.C</in>
+            <in>aaa2zzMETzSecondLeptonEta.C</in>
+            <in>aaa2zzMETzSecondLeptonPt.C</in>
+            <in>aaa2zzMETzThirdJetPt.C</in>
+            <in>aaa3zzNumberOfBJetszElectronszInvariantMass.C</in>
+            <in>aaa3zzNumberOfBJetszFirstJetPt.C</in>
+            <in>aaa3zzNumberOfBJetszFirstLeptonEta.C</in>
+            <in>aaa3zzNumberOfBJetszFirstLeptonPt.C</in>
+            <in>aaa3zzNumberOfBJetszJetsHT.C</in>
+            <in>aaa3zzNumberOfBJetszNumberOfBJets.C</in>
+            <in>aaa3zzNumberOfBJetszNumberOfJets.C</in>
+            <in>aaa3zzNumberOfBJetszPFMET.C</in>
+            <in>aaa3zzNumberOfBJetszSecondJetPt.C</in>
+            <in>aaa3zzNumberOfBJetszSecondLeptonEta.C</in>
+            <in>aaa3zzNumberOfBJetszSecondLeptonPt.C</in>
+            <in>aaa3zzNumberOfBJetszThirdJetPt.C</in>
+          </df>
           <df name="FitValidation">
           </df>
+          <in>tdrstyle.C</in>
         </df>
       </df>
       <df name="WPolarization">
@@ -753,6 +806,7 @@
           <in>ValidatorExecuter.h</in>
         </df>
         <df name="script">
+          <in>tdrstyle.C</in>
         </df>
         <df name="src">
           <in>BJetAssigner.cc</in>

@@ -44,7 +44,7 @@ namespace TopAnalysis {
 
         typedef ElectronAnalysis::DiLeptonEventProperties::EventType<TopAnalysis::TTBarDileptonicEvent> EventType;
         typedef ElectronAnalysis::DiLeptonEventProperties::NumberOfJets<TopAnalysis::TTBarDileptonicEvent> NumberOfJets;
-        
+
         class NumberOfBJets : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
 
@@ -133,6 +133,20 @@ namespace TopAnalysis {
                 else {
                     return (t->Top_Rec->getTop() + t->TopBar_Rec->getTop()).M();
                 }
+            };
+        };
+
+        class NumInteractions : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+        public:
+
+            NumInteractions() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NumInteractions", "#Interaction points", 0, 50, 50, "TTBarDileptonicEvent", 45522) {
+            };
+
+            ~NumInteractions() {
+            };
+
+            virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
+                return t->PUnumInteractions ;
             };
         };
 
