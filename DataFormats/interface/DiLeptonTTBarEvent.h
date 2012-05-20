@@ -15,7 +15,7 @@ namespace TopAnalysis {
 
     class TTBarDileptonicEvent : public ElectronAnalysis::DiLepton {
     public:
-
+        int PUnumInteractions;
         //PER CHANNEL TRIGGER INFO
         bool TRG_DiMuon;
         bool TRG_DiEle;

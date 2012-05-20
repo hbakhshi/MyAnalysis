@@ -4,6 +4,10 @@ from Table import *
 import copy,os
 from math import sqrt
 
+gROOT.LoadMacro('tdrstyle.C')
+from ROOT import setTDRStyle
+setTDRStyle()
+
 FileAddressPattern_Selected = '/home/hbakhshi/Documents/Analysis/Run/WPolarization/WPol_SelectedTTBars_%s.root'
 FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root'
 
@@ -292,8 +296,9 @@ class SamplesStack:
 
         for h_MC in stack.GetHists():
             hSum.Add( h_MC )
-            for nBin in range(1, h_MC.GetNbinsX()+1):
-                Errors[nBin] += 0 #(h_MC.GetBinContent(nBin)*h_MC.GetBinContent(nBin))
+        
+        for nBin in range(1, hSum.GetNbinsX()+1):
+            Errors[nBin] = hSum.GetBinError(nBin)
 
         for nBin in range(1, hSum.GetNbinsX()+1):
             hSum.SetBinError( nBin , sqrt(Errors[nBin]) )
@@ -315,6 +320,7 @@ class SamplesStack:
         c.cd()
         c.SaveAs(self.Channel + '/' + name + '.gif' )
         c.SaveAs(self.Channel + '/' + name + '.C' )
+        c.SaveAs(self.Channel + '/' + name + '.pdf' )
         c.Close()
         return total_difference    
 

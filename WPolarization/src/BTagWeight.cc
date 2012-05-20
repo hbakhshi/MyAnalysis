@@ -72,7 +72,7 @@ bool BTagWeight::filter(std::vector<int> t) {
     // return (t >= minTags && t <= maxTags);
 }
 
-void BTagWeight::GetEffSF_TCHEL(double pt, double eta, double discriminator_value, double& eff, double& sf) {
+void BTagWeight::GetEffSF_TCHEL(double pt, double eta, double discriminator_value, double& eff, double& sf,int Systematics) {
     TF1 BTagScaleFactor("fSFB", "0.603913*((1.+(0.286361*x))/(1.+(0.170474*x)))", 30, 1000);
 
     TF1 EffB("EffB", "3.90732786802e-06*x*x*x*x +  -0.000239934437355*x*x*x +  0.00664986827287*x*x +  -0.112578996016*x +  1.00775721404", -100, 100);
@@ -94,9 +94,16 @@ void BTagWeight::GetEffSF_TCHEL(double pt, double eta, double discriminator_valu
     if (discriminator_value > 1.7)//it is b        
     {
         sf = BTagScaleFactor.Eval(pt);
+        //systematics : 0=the exact bsf values ; 1 = 4%B -4%E ; -1 = -4%B 4%
+        double four_percent = (((Systematics > 0) ? 1.0 : -1.0) * 4.0 * sf / 100.0);
+        if (Systematics != 0) {
+            if (fabs(eta) < 1.2)
+                sf += four_percent;
+            else
+                sf -= four_percent;
+        }
         eff = EffB.Eval(discriminator_value);
-    }
-        /*else if (discriminator_value > 1.0) //???? is it C????
+    }        /*else if (discriminator_value > 1.0) //???? is it C????
         {
             sf = BTagScaleFactor.Eval(pt);
             eff = EffC.Eval(disc);
@@ -119,7 +126,7 @@ void BTagWeight::GetEffSF_TCHEL(double pt, double eta, double discriminator_valu
     }
 }
 
-void BTagWeight::GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf) {
+void BTagWeight::GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf,int Systematics) {
     TF1 BTagScaleFactor("fSFB", "0.896462*((1.+(0.00957275*x))/(1.+(0.00837582*x)))", 30, 1000);
 
     TF1 EffB("EffB", "0.00559749726591*x*x*x*x +  -0.0250942917873*x*x*x +  -0.07343076238*x*x +  0.209954428241*x +  0.587277178178", -100, 100);
@@ -141,9 +148,16 @@ void BTagWeight::GetEffSF_SSVHEM(double pt, double eta, double discriminator_val
     if (discriminator_value > 1.74)//it is b        
     {
         sf = BTagScaleFactor.Eval(pt);
+        //systematics : 0=the exact bsf values ; 1 = 4%B -4%E ; -1 = -4%B 4%
+        double four_percent = (((Systematics > 0) ? 1.0 : -1.0) * 4.0 * sf / 100.0);
+        if (Systematics != 0) {
+            if (fabs(eta) < 1.2)
+                sf += four_percent;
+            else
+                sf -= four_percent;
+        }
         eff = EffB.Eval(discriminator_value);
-    }
-        /*else if (discriminator_value > 1.0) //???? is it C????
+    }        /*else if (discriminator_value > 1.0) //???? is it C????
         {
             sf = BTagScaleFactor.Eval(pt);
             eff = EffC.Eval(disc);

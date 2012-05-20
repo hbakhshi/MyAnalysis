@@ -26,17 +26,21 @@ public:
         int tag;
     };
 
-    BTagWeight(int nTaggers = 1) : taggers(nTaggers) {
+    BTagWeight(int systematics = 0.0, int nTaggers = 1) : //systematics : 0=the exact bsf values ; 1 = 4%B -4%E ; -1 = -4%B 4%
+    taggers(nTaggers),
+    Systematics(systematics) {
     }
 
     virtual bool filter(vector<int> tags);
     double weight(vector<vector<JetInfo> > jets);
 
-    static void GetEffSF_TCHEL(double pt, double eta, double discriminator_value, double& eff, double& sf);
-    static void GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf);
-    
+    static void GetEffSF_TCHEL(double pt, double eta, double discriminator_value, double& eff, double& sf, int Systematics);
+    static void GetEffSF_SSVHEM(double pt, double eta, double discriminator_value, double& eff, double& sf, int Systematics);
+
+    int Systematics;
 private:
     int taggers;
+
 
 };
 #endif	/* BTAGWEIGHT_H */
