@@ -1,6 +1,6 @@
 #! /usr/bin/python -i
 
-from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph
+from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph, TF2
 import array
 from math import sqrt, exp, pi, pow, factorial, log
 import os
@@ -240,140 +240,84 @@ def GetMinimum(F,CalcError = True):
 
 
 
+def GetMin2D(F , CalcError = True ):
+    x_m = Double(0.0)
+    y_m = Double(0.0)
 
-# def GetCosThetaPlot(WhichChannel , wpol_file, weighted = True, gen = False):
-#     file = TFile( '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root' % wpol_file , "READ")
-#     cosThetaPlotName = 'costheta_%(channel)s/hCosThetaAllLepton' % {'channel':WhichChannel.lower()}
-#     if gen:
-#         cosThetaPlotName = 'costheta_%(channel)s/hCosThetaNegLepton_Gen_Fitted_Nins10' % {'channel':WhichChannel.lower()}
-#     if not weighted:
-#         cosThetaPlotName = 'costheta_%(channel)s/hCosThetaAllLeptonsUnWeighted' % {'channel':WhichChannel.lower()}
-
-#     hCosTheta = (file.Get(cosThetaPlotName))
-#     gROOT.cd()
+    F.GetMinimumXY(x_m , y_m)
+    if not CalcError:
+        return [x_m.real , y_m.real]    
     
-#     hret = None
-#     if gen:
-#         hret = hCosTheta.Clone("costheta_gen_"+wpol_file)
-#     else:
-#         hret = hCosTheta.Rebin(10, "costheta_"+wpol_file)
-#     file.Close()
+    xl = Double(0.0)
+    xu = Double(0.0)
+    yl = Double(0.0)
+    yu = Double(0.0)
 
-#     return hret
+    minuit = TVirtualFitter.Fitter(F,2)
+    minuit.Clear()
 
+    minuit.SetFitMethod("F2Minimizer")
 
-# files_ee_weights = { 'TTBarSummer2011':0.192709, 'DYSummer2011':0.475306 ,'WJetsSummer2011':1.896160 , 'WWSummer2011':0.017588 , 'SingleTopSummer2011':0.077388 , 'SingleTopTWSummer2011':0.090660 , 'ZZSummer2011':0.005090 ,'WZSummer2011':0.002272  }
-# files_mm_weights = { 'TTBarSummer2011':0.189709, 'DYSummer2011':0.467907 ,'WJetsSummer2011':1.866643 , 'WWSummer2011':0.017314 , 'SingleTopSummer2011':0.076184 , 'SingleTopTWSummer2011':0.089249 , 'ZZSummer2011':0.005011 ,'WZSummer2011':0.002237 }
-# files_em_weights = { 'TTBarSummer2011':0.197058, 'DYSummer2011':0.486031 ,'WJetsSummer2011':1.938946 , 'WWSummer2011':0.017985 , 'SingleTopSummer2011':0.079134 , 'SingleTopTWSummer2011':0.092706 , 'ZZSummer2011':0.005205 ,'WZSummer2011':0.002323  }
+    arg_list = array.array('d', [Double(-1.0)] )
+    nNargs = int(1)
 
-# files_weights = {'EM':files_em_weights , 'EE':files_ee_weights , 'MM':files_mm_weights }
-# files_data = {'EM':'ElectronMuon2011' , 'EE':'DoubleEle2011' , 'MM':'DoubleMuon2011'}
-
-# def MakeStack(WhichChannel):
-#     sorted_samples = ['DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
-#     sorted_samples.reverse()
-
-#     files_xsec = files_weights[WhichChannel]
-
-#     stack_costheta = THStack("stackCosTheta",'CosTheta for ' + WhichChannel +' Events')
-
-#     colors = {'TTBarSummer2011':41, 'DYSummer2011':46 ,'WJetsSummer2011':31 , 'WWSummer2011':29 , 'SingleTopSummer2011':4 , 'SingleTopTWSummer2011':7 , 'WZSummer2011':90 , 'ZZSummer2011':66 }
-
-#     for wpol_file in sorted_samples:
-#         lumi_weight = files_xsec[ wpol_file ]
-#         hCosTheta = GetCosThetaPlot(WhichChannel , wpol_file)
-#         hCosTheta.Scale(lumi_weight)
-#         hCosTheta.SetTitle(wpol_file)
-#         hCosTheta.SetFillStyle(3004)
-#         hCosTheta.SetFillColor(colors[wpol_file])
-#         hCosTheta.SetLineColor(colors[wpol_file])
-#         stack_costheta.Add(hCosTheta)
-
-#     return stack_costheta
-
-
-# def CreateLLFunction(WhichChannel):
-#     stack = MakeStack(WhichChannel)
-
-#     hTTBar = GetCosThetaPlot(WhichChannel , 'TTBarSummer2011')
-
-#     hTTBarGen = GetCosThetaPlot(WhichChannel , 'TTBarSummer2011', True)
-#     fFitGen = hTTBarGen.GetListOfFunctions().At(0)
-#     fneg_std = 0.3 #fFitGen.GetParameter("FNeg")
-#     f0_std = 0.7 #fFitGen.GetParameter("F0")
-#     print "%F, %F" % (fneg_std , f0_std)
+    minuit.ExecuteCommand("SET PRINT" , arg_list, nNargs)
     
-#     lumi_weight = files_weights[WhichChannel]['TTBarSummer2011']
-#     hTTBar.Scale(lumi_weight)
+    minuit.SetParameter(0, "x", x_m, 0.1, xl , xu )
+    minuit.SetParameter(1, "y", y_m, 0.1, yl , yu )
 
-#     hData = GetCosThetaPlot(WhichChannel , files_data[WhichChannel])
+    arg_list = array.array('d', [Double(1.0)] )
+    fitResult = minuit.ExecuteCommand("MIGRAD", arg_list, 0)
 
-#     return LLFunction.GetLLFunction(WhichChannel , stack , hData , hTTBar , PoissonDistribution , fneg_std, f0_std)[0]
+    if not fitResult == 0 :
+        print "Abnormal termination of minimization"
+        return [-1.0 , -1.0]
 
-# gFNeg = TGraphErrors()
-# gF0 = TGraphErrors()
-# gFPos = TGraphErrors()
-# gFNegstandard = TGraph()
-# hAxis = TH1D('hAxis' , 'Axis' , 3 , 0.5 ,3.5 )
-# hAxis.SetStats(0)
-# hAxis2 = hAxis.Clone('hAxis_0')
-# hAxis3 = hAxis.Clone('hAxis_p')
-# cNeg = TCanvas("cFNEG")
-# c0 = TCanvas("cF0")
-# cPos = TCanvas("cFPos")
+    x_m = minuit.GetParameter(0)
+    y_m = minuit.GetParameter(1)
 
-# mgFNeg = TMultiGraph("mgFNeg", "F_{-}")
-# def RunFit():
-#     pointID = 0
-#     for channel in ['MM' , 'EE' , 'EM']:
-#         print channel
-#         F = CreateLLFunction(channel)
-#         RetVals = GetMinimum(F)
-#         print RetVals
-#         hAxis.GetXaxis().SetBinLabel( pointID+1 , channel)
-#         hAxis2.GetXaxis().SetBinLabel( pointID+1 , channel)
-#         hAxis3.GetXaxis().SetBinLabel( pointID+1 , channel)
+    parabolicx = Double(0.0)
+    parabolicy = Double(0.0)
 
-#         gFNeg.SetPoint( pointID , RetVals[0] , pointID + 1 )
-#         gFNeg.SetPointError( pointID , RetVals[3] , 0.0 )
-
-#         gF0.SetPoint( pointID , RetVals[1] , pointID + 1 )
-#         gF0.SetPointError( pointID , RetVals[4] , 0.0 )
-
-#         gFPos.SetPoint( pointID , 1.0 - RetVals[0] - RetVals[1] , pointID + 1 )
-#         gFPos.SetPointError( pointID ,  sqrt( RetVals[3]*RetVals[3] + RetVals[4]*RetVals[4] ) , 0.0 )
-
-#         pointID = pointID + 1
-
-#     #prepare graph+shade
-#     for point in range(0,10 ,1 ):
-#         gFNegstandard.SetPoint( 2*point , 0.3 + 0.02 , 0.5+point*0.3)
-#     for point in range(1,10 ,1):
-#         gFNegstandard.SetPoint( 1+2*point , 0.3 - 0.02 , 0.5+point*0.3)
-
-
-#     cNeg.cd()
-#     hAxis.SetTitle('F_{-}')
-#     hAxis.Draw('HBAR')
-#     #mgFNeg.Add( gFNeg )
-#     #mgFNeg.Add(gFNegstandard)
-#     gFNeg.Draw('P')
-#     gFNegstandard.Draw('L')
-#     #mgFNeg.Draw('P')
-#     c0.cd()
-
-#     hAxis2.SetTitle('F_{0}')
-#     hAxis2.Draw('HBAR')
-#     gF0.Draw('P')
-    
-#     cPos.cd()
-
-#     hAxis3.SetTitle('F_{+}')
-#     hAxis3.Draw('HBAR')
-#     gFPos.Draw('P')
+    globcc = Double(0.0)
+    minuit.GetErrors( 0 , xu , xl , parabolicx , globcc )
+    minuit.GetErrors( 1 , yu , yl , parabolicy , globcc )
+    return [x_m.real , y_m.real ,parabolicx.real , parabolicy.real]
     
 
-    
-# RunFit()
+class F32F2:
+    def __init__(self , F3 , VarToFix , Value):
+        self.F3 = F3
+        self.VarToFix = VarToFix 
+        self.Value = Value
 
-        
+    def __call__(self , x , p = 0):
+
+        if not p == 0:
+            self.F3.SetParameters( p )
+
+        X = x[0]
+        Y = x[1]
+        Z = self.Value
+
+        if self.VarToFix == 1:
+            return self.F3.Eval( Z , X , Y)
+        elif self.VarToFix == 2:
+            return self.F3.Eval( X , Z , Y)
+        elif self.VarToFix == 3:
+            return self.F3.Eval( X , Y , Z)
+
+    @staticmethod
+    def GetFunction(name ,F3 , VarToFix , Value ):
+        functor = F32F2(F3 , VarToFix , Value)
+        gROOT.cd()
+        ret = None
+
+        if VarToFix == 1:
+            ret = TF2( name , functor , F3.GetYmin() , F3.GetYmax() , F3.GetZmin() , F3.GetZmax() , F3.GetNpar() )
+        elif VarToFix == 2:
+            ret = TF2( name , functor , F3.GetXmin() , F3.GetXmax() , F3.GetZmin() , F3.GetZmax() , F3.GetNpar() )
+        elif VarToFix == 3:
+            ret = TF2( name , functor , F3.GetXmin() , F3.GetXmax() , F3.GetYmin() , F3.GetYmax() , F3.GetNpar() )
+
+        return [ret , functor]

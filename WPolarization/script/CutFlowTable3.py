@@ -27,7 +27,7 @@ WhichChannel = ''
 
 sorted_samples = ['TTBarSummer2011', 'DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
 sorted_samples.reverse()
-systematic_samples = ['SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
+systematic_samples = [] #'SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
 SamplesInfo = {}
 SysSamplesInfo = {}
 
