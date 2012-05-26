@@ -18,7 +18,8 @@ top_mass(172.9), top_width(1.5), w_mass(80.398), w_width(2.08),
 FixMasses(ps.getUntrackedParameter<bool>("FixMasses", false)),
 SwapBJetsIfNoSolution(ps.getUntrackedParameter<bool>("SwapBJetsIfNoSolution", true)),
 MaxLoopNumberToSolve(ps.getUntrackedParameter<int>("MaxLoopNumberToSolve", 1000)),
-AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")) {
+AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")),
+allHistograms("MinEffectiveMassResults") {
 
     if (FixMasses)
         MaxLoopNumberToSolve = 0;
@@ -39,6 +40,20 @@ AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")) {
     this->hT1Mass_Wrongs = new TH1D("hT1Mass_Wrong", "T1Mass for Wrong answers", 500, 0., 500.);
     this->hT2Mass_Wrongs = new TH1D("hT2Mass_Wrong", "T2Mass for Wrong answers", 500, 0., 500.);
     this->hEffMass_Wrongs = new TH1D("hEffMass_Wrong", "Effective mass for the Wrong answers", 1000, 0., 1000.);
+
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 1, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 1, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 2, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 2, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 3, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 1, 3, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 1, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 1, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 2, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 2, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 3, 1 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::TopRecRestuls < 2, 3, 2 > >();
+    allHistograms.AddHisto1< TopAnalysis::DiLeptonTTBarEventProperties::EffectiveMass<false> >();
 }
 
 NeutrinoSolver::~NeutrinoSolver() {
@@ -122,6 +137,9 @@ bool NeutrinoSolver::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
     //find the best answer with minimizing the effective mass of ttbar
     if (results->NumberOfSolutions > 0) {
 
+        ev->SelectASolution(this->Name, TopAnalysis::TTBarDileptonicEvent::SolverResults::MinEffMass);
+        this->allHistograms.Fill(ev ,ev->Weight );
+
         bool isFirst(true);
         for (std::map<double, int>::const_iterator itr = results->SolEffMass.begin(); itr != results->SolEffMass.end(); itr++) {
             if (!results->GetTops((TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions) (100 + itr->second)))
@@ -153,7 +171,8 @@ bool NeutrinoSolver::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
 void NeutrinoSolver::End() {
     TFile* file = info::TheInfo->OutFile;
     file->cd();
-    file->mkdir(this->Name.c_str())->cd();
+    TDirectory* dir = file->mkdir(this->Name.c_str());
+    dir->cd();
 
     this->hNLoopsToSolve->Write();
     this->hNSolutions->Write();
@@ -170,6 +189,7 @@ void NeutrinoSolver::End() {
     this->hT2Mass_Wrongs->Write();
     this->hEffMass_Wrongs->Write();
 
+    this->allHistograms.Write(dir);
     //cout << this->Name << " ended" << endl;
     file->cd();
 }

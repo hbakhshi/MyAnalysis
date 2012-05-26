@@ -13,7 +13,7 @@ FRCalcOBJ = $(FRCalcObjsDep) \
 
 
 FRUSERLIBS = \
-	$(PYTHONLIB)/libpython2.6.so \
+	-L $(PYTHONLIB)/ $(python_lib) \
 	$(BOOSTLIB)/libboost_python.so \
 	$(BOOSTLIB)/libboost_thread.so \
 	$(BOOSTLIB)/libboost_signals.so \

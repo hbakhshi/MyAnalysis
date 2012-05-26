@@ -88,6 +88,45 @@ namespace TopAnalysis {
             typedef ElectronAnalysis::DiLeptonEventProperties::JetBTag<JetNumber, btag_alg, TopAnalysis::TTBarDileptonicEvent> type;
         };
 
+        template<int JetNumber >
+        class BJetPt : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+        public:
+
+            BJetPt() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("BJetPt", "BJet P_t", 20, 220, 50, "DiLeptonEvent", 10) {
+                string s = "";
+                string s2 = "";
+                if (JetNumber == 1) {
+                    s = "First ";
+                    s2 = "First";
+                } else if (JetNumber == 2) {
+                    s = "Second ";
+                    s2 = "Second";
+                } else if (JetNumber == 3) {
+                    s = "Third ";
+                    s2 = "Third";
+                } else
+                    throw Exception(this->PropertyTitle);
+
+                this->PropertyTitle = s + this->PropertyTitle;
+                this->PropertyName = s2 + this->PropertyName;
+
+                this->PropertyID += (JetNumber - 1);
+            };
+
+            virtual ~BJetPt() {
+            };
+
+            virtual void SetAxis(TAxis * axis) {
+            };
+
+            virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
+                if (JetNumber < t->BJets.size())
+                    return t->Jets[ t->BJets[JetNumber] ].Pt();
+                else
+                    return -100.0;
+            };
+        };
+
         template<int JetNumber>
         struct JetPt {
         public:
@@ -136,17 +175,17 @@ namespace TopAnalysis {
             };
         };
 
-        class NumInteractions : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+        class NPrimaryVertices : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
 
-            NumInteractions() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NumInteractions", "#Interaction points", 0, 50, 50, "TTBarDileptonicEvent", 45522) {
+            NPrimaryVertices() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NPrVtx", "#Primary vertices", 0, 50, 50, "TTBarDileptonicEvent", 45522) {
             };
 
-            ~NumInteractions() {
+            ~NPrimaryVertices() {
             };
 
             virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
-                return t->PUnumInteractions ;
+                return t->NPrimaryVertices;
             };
         };
 
@@ -336,6 +375,88 @@ namespace TopAnalysis {
                         break;
                     case 6:
                         ret = (gen.Vect() - rec.Vect()).Mag() / gen.Vect().Mag();
+                        break;
+                }
+                return ret;
+            }
+        };
+        
+        //TopAntiTop==1 means top 2 antitop
+        //obj : 1 Top
+        //      2 W
+        //      3 neutrino
+        //what: 1 pt
+        //      2 eta
+        //      3 phi
+        template<int TopAntiTop, int obj, int what >
+        class TopRecRestuls : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+        public:
+
+            TopRecRestuls() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("", "", 0, 6.0, 120, "TTBarDileptonicEvent", 100) {
+                string part1 = TopAntiTop == 1 ? "Top" : "Antitop";
+                string part2 = "";
+                string part2_title = "";
+                switch (obj) {
+                    case 1:
+                        part2 = part2_title = part1;
+                        break;
+                    case 2:
+                        part2 = part2_title = "W";
+                        break;
+                    case 3:
+                        part2 = "neutrinos";
+                        part2_title = "#nu";
+                        break;
+                }
+                string part3 = "";
+                string part3_title = "";
+                switch (what) {
+                    case 1:
+                        part3 = "pt";
+                        part3_title = "p_{t}";
+                        this->MinValue = 0.0;
+                        this->MaxValue = 200.0;
+                        this->NumberOfBins = 200;
+                        break;
+                    case 2:
+                        part3 = "Eta";
+                        part3_title = "#eta";
+                        this->MinValue = -3.0;
+                        this->MaxValue = 3.0;
+                        this->NumberOfBins = 60;
+                        break;
+                }
+
+                this->PropertyName = part1 + part2 + part3;
+                this->PropertyTitle = part3_title + " of " + part2_title + "'s in " + part1 + " reconstruction";
+
+                this->PropertyID = 100 * TopAntiTop + 10 * obj + what;
+            };
+
+            virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
+                TLorentzVector rec;
+
+                const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t_rec = (TopAntiTop == 1 ? (t->Top_Rec) : (t->TopBar_Rec));
+
+                switch (obj) {
+                    case 1:
+                        rec = t_rec->getTop();
+                        break;
+                    case 2:
+                        rec = t_rec->getW();
+                        break;
+                    case 3:
+                        rec = t_rec->W.neutrino;
+                        break;
+                }
+
+                double ret = -100000.0;
+                switch (what) {
+                    case 1:
+                        ret = rec.Pt();
+                        break;
+                    case 2:
+                        ret = rec.Eta();
                         break;
                 }
                 return ret;

@@ -5,10 +5,14 @@
 #include "WPolarization/interface/TTbarSelector.h"
 #include "base/Configuration.h"
 #include "boost/detail/container_fwd.hpp"
+#include "../interface/setTDRStyle.h"
 
 TTbarEventSelector::TTbarEventSelector(TreeReader* tree, TTbarSelectorConfig* config, map<string, bool>* triggerResults) : BASE(tree, config, triggerResults),
 hBTagScaleFactors("hBTagScaleFactors", "hBTagScaleFactors", 1000, 0.0, 2.0),
 BTagWeighter(config->BTagScaleFactorSystematics) {
+    
+    setTDRStyle();
+    
     TheEvent.FirstElectron = NULL;
     TheEvent.SecondElectron = NULL;
 
@@ -115,6 +119,7 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         event_weight = this->hPileUpWeights.GetBinContent(nBin);
     }
     this->TheEvent.PUnumInteractions = this->TheTree->PUnumInteractions;
+    this->TheEvent.NPrimaryVertices = this->TheTree->NVrtx;
 
     BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelector::TTbarEventSelectionSteps_All));
 
@@ -1004,10 +1009,25 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 1 > ::type());
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep2_eta =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 2 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep3_eta =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 3 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep4_eta =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonEta < 4 > ::type());
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep1_pt =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 1 > ::type());
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep2_pt =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 2 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep3_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 3 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* lep4_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonPt < 4 > ::type());
+
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* bjet1_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::BJetPt < 1 >() );
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* bjet2_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::BJetPt < 2 >() );
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* bjet3_pt =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::BJetPt < 3 >() );
 
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet1_pt =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 1 > ::type());
@@ -1016,7 +1036,17 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet3_pt =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetPt < 3 > ::type());
 
-    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::NumInteractions());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet1_eta =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetEta < 1 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet2_eta =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetEta < 2 > ::type());
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* jet3_eta =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetEta < 3 > ::type());
+
+    ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* nprvtx =
+            BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::NPrimaryVertices());
+
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(nprvtx);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 1, 1 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 2, 1 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 3, 1 > ::type());
@@ -1025,6 +1055,8 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 2, 2 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 3, 2 > ::type());
 
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), nprvtx);
+    
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_HT);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_InvMass);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_PFMet);
@@ -1035,10 +1067,22 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep1_pt);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep2_eta);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep2_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep3_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep3_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep4_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), lep4_pt);
 
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), bjet1_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), bjet2_pt);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), bjet3_pt);
+    
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet1_pt);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet2_pt);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet3_pt);
+    
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet1_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet2_eta);
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), jet3_eta);
 }
 
 void TTbarEventSelector::AddTriggerHistos() {

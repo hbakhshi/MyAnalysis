@@ -20,6 +20,8 @@ class NeutrinoSolver : public Analyzer<TopAnalysis::TTBarDileptonicEvent> {
 public:
     typedef Analyzer<TopAnalysis::TTBarDileptonicEvent> BASE;
 
+    Histograms<TopAnalysis::TTBarDileptonicEvent> allHistograms;
+    
     BJetAssigner bjetAssigner;
     llsolver::DileptonAnalyticalSolver theSolver;
 

@@ -108,8 +108,11 @@ void TopAnalysis::TTBarDileptonicEvent::SolverResults::SetSolverResultsAndAnalyz
             top_barG = TopBar_Gen->getTop();
 
             double effMass = (top + top_bar).M();
-            SolEffMass[effMass] = i;
-
+            if(effMass > 340.0)
+                SolEffMass[effMass] = i;
+            else
+                SolEffMass[1000.0 + i] = i;
+            
             double topDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top, topG);
             double topBDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top_bar, top_barG);
 

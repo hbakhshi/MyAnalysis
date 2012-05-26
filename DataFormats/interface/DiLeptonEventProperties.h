@@ -43,8 +43,8 @@ namespace ElectronAnalysis {
                 string s2 = "";
                 switch (what) {
                     case Electron::_Momentum:
-                        s = "Electrons ";
-                        s2 = "Electrons_";
+                        s = "Dilepton ";
+                        s2 = "Dilepton_";
                         break;
                     case Electron::_BestMatch1:
                         s = "BM1 ";
@@ -139,6 +139,12 @@ namespace ElectronAnalysis {
                 } else if (LeptonNumber == 2) {
                     s = "Second ";
                     s2 = "Second";
+                } else if (LeptonNumber == 3) {
+                    s = "Positive ";
+                    s2 = "Positive";
+                } else if (LeptonNumber == 4) {
+                    s = "Negative ";
+                    s2 = "Negative";
                 } else
                     throw Exception(this->PropertyTitle);
 
@@ -159,6 +165,16 @@ namespace ElectronAnalysis {
                     return t->FirstElectron->Pt;
                 } else if (LeptonNumber == 2) {
                     return t->SecondElectron->Pt;
+                } else if (LeptonNumber == 3) {
+                    if (t->SecondElectron->Charge > 0)
+                        return t->SecondElectron->Pt;
+                    else
+                        return t->FirstElectron->Pt;
+                } else if (LeptonNumber == 4) {
+                    if (t->SecondElectron->Charge < 0)
+                        return t->SecondElectron->Pt;
+                    else
+                        return t->FirstElectron->Pt;
                 }
             };
         };
@@ -176,7 +192,14 @@ namespace ElectronAnalysis {
                 } else if (LeptonNumber == 2) {
                     s = "Second ";
                     s2 = "Second";
-                } else
+                } else if (LeptonNumber == 3) {
+                    s = "Positive ";
+                    s2 = "Positive";
+                } else if (LeptonNumber == 4) {
+                    s = "Negative ";
+                    s2 = "Negative";
+                }
+                else
                     throw Exception(this->PropertyTitle);
 
                 this->PropertyTitle = s + this->PropertyTitle;
@@ -196,6 +219,16 @@ namespace ElectronAnalysis {
                     return t->FirstElectron->Eta;
                 } else if (LeptonNumber == 2) {
                     return t->SecondElectron->Eta;
+                } else if (LeptonNumber == 3) {
+                    if (t->SecondElectron->Charge > 0)
+                        return t->SecondElectron->Eta;
+                    else
+                        return t->FirstElectron->Eta;
+                } else if (LeptonNumber == 4) {
+                    if (t->SecondElectron->Charge < 0)
+                        return t->SecondElectron->Eta;
+                    else
+                        return t->FirstElectron->Eta;
                 }
             };
         };
