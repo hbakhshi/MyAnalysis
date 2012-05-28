@@ -133,23 +133,33 @@ for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
 
      #start fitting 
      print >>org_file, '** Fit Results'
-     tableRowFormat =  '    |%(FitName)s|%(FL)f ± %(FLErr)f | %(F0)f ± %(F0Err)f | %(FR)f ± %(FRErr)f | %(FRecGen)f ± %(FRecGenErr)f |'
-     print >>org_file, '    |Method|F_{L} | F_{0} | F_{R} | F_{Rec/Gen} |'
+     tableRowFormat =  '    |%(FitName)s|%(nBins)s|%(FL)f ± %(FLErr)f | %(F0)f ± %(F0Err)f | %(FR)f ± %(FRErr)f | %(FRecGen)f ± %(FRecGenErr)f |'
+     print >>org_file, '    |Method|nBins|F_{L} | F_{0} | F_{R} | F_{Rec/Gen} |'
      AllSamplesButTTBar =  dict( (sampleName , AllSamples[sampleName] ) for sampleName in AllSamples if sampleName.find('TTBar') < 0 )
-     stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples ).stack_costheta
-     ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta
-     dataH = Data.AllPlots[WhichChannel_].hCosTheta
-     llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7)[0]
-     fitVals = GetMinimum( llFunction )
-     FL = fitVals[0]
-     FLErr = fitVals[3]
-     F0 = fitVals[1]
-     F0Err = fitVals[4]
-     FRecGen = fitVals[2]
-     FRecGenErr = fitVals[5]
-     FR = 1.0 - FL - F0
-     FRErr = sqrt( FLErr*FLErr + F0Err*F0Err )
-     print >>org_file, tableRowFormat % {'FitName':'3D Fitting' , 'FL':FL , 'FLErr':FLErr , 'F0':F0 , 'F0Err':F0Err , 'FR':FR , 'FRErr':FRErr , 'FRecGen':FRecGen , 'FRecGenErr':FRecGenErr }
+
+     FL = 0
+     FLErr = 0
+     F0 = 0
+     F0Err = 0
+     FRecGenErr = 0
+     FRecGen = 0
+     FR = 0
+     FRErr = 0
+     for nBins in ['05' , '10' , '20' , '25' , '50' , '100']:
+         stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples ).stack_costheta[nBins]
+         ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta[nBins]
+         dataH = Data.AllPlots[WhichChannel_].hCosTheta[nBins]
+         llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7)[0]
+         fitVals = GetMinimum( llFunction )
+         FL = fitVals[0]
+         FLErr = fitVals[3]
+         F0 = fitVals[1]
+         F0Err = fitVals[4]
+         FRecGen = fitVals[2]
+         FRecGenErr = fitVals[5]
+         FR = 1.0 - FL - F0
+         FRErr = sqrt( FLErr*FLErr + F0Err*F0Err )
+         print >>org_file, tableRowFormat % {'nBins':nBins ,'FitName':'3D Fitting' , 'FL':FL , 'FLErr':FLErr , 'F0':F0 , 'F0Err':F0Err , 'FR':FR , 'FRErr':FRErr , 'FRecGen':FRecGen , 'FRecGenErr':FRecGenErr }
 
      pointID = gFNeg.GetN()
      

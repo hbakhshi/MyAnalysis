@@ -120,8 +120,14 @@ class SampleChannelInfo:
         CosTheta.SetFillStyle(3004)
         CosTheta.SetFillColor(Colors[Sample])
         CosTheta.SetLineColor(Colors[Sample])
+        self.hCosTheta = {}
         gROOT.cd()
-        self.hCosTheta = CosTheta.Rebin(10, "costheta_"+channel+"_" + Sample)
+        self.hCosTheta['05'] = CosTheta.Rebin(20 , "costheta05_"+channel+"_" + Sample)
+        self.hCosTheta['10'] = CosTheta.Rebin(10 , "costheta10_"+channel+"_" + Sample)
+        self.hCosTheta['20'] = CosTheta.Rebin(5 , "costheta20_"+channel+"_" + Sample)
+        self.hCosTheta['25'] = CosTheta.Rebin(4 , "costheta25_"+channel+"_" + Sample)
+        self.hCosTheta['50'] = CosTheta.Rebin(2 , "costheta50_"+channel+"_" + Sample)
+        self.hCosTheta['100'] = CosTheta.Rebin(1 , "costheta100_"+channel+"_" + Sample)
 
         CosTheta = FileFull.Get( CosThetaPlotName % {'channel':channel.lower()} )
         CosTheta.Scale(self.Lumi_Weight)
@@ -131,7 +137,7 @@ class SampleChannelInfo:
         CosTheta.SetFillColor(Colors[Sample])
         CosTheta.SetLineColor(Colors[Sample])
         gROOT.cd()
-        self.hCosThetaPreselected = CosTheta.Rebin(10, "preselected_costheta_"+channel+"_" + Sample)
+        self.hCosThetaPreselected = CosTheta.Rebin(4, "preselected_costheta_"+channel+"_" + Sample)
 
         self.LastColumn = last_column_name
         self.LastColumnW = last_column_name_w
@@ -167,9 +173,30 @@ class SampleCombinedInfo:
             self.RowW[cut] = EM.RowW[cut] + EE.RowW[NameForOF] + MM.RowW[NameForOF]
             self.LastColumnW = cut
 
-        self.hCosTheta = EE.hCosTheta.Clone('costheta_combined_' + Sample)
-        self.hCosTheta.Add( MM.hCosTheta )
-        self.hCosTheta.Add( EM.hCosTheta )
+        self.hCosTheta = {}
+        self.hCosTheta['05'] = EE.hCosTheta['05'].Clone('costheta05_combined_' + Sample)
+        self.hCosTheta['05'].Add( MM.hCosTheta['05'] )
+        self.hCosTheta['05'].Add( EM.hCosTheta['05'] )
+        
+        self.hCosTheta['10'] = EE.hCosTheta['10'].Clone('costheta10_combined_' + Sample)
+        self.hCosTheta['10'].Add( MM.hCosTheta['10'] )
+        self.hCosTheta['10'].Add( EM.hCosTheta['10'] )
+        
+        self.hCosTheta['20'] = EE.hCosTheta['20'].Clone('costheta20_combined_' + Sample)
+        self.hCosTheta['20'].Add( MM.hCosTheta['20'] )
+        self.hCosTheta['20'].Add( EM.hCosTheta['20'] )
+        
+        self.hCosTheta['25'] = EE.hCosTheta['25'].Clone('costheta25_combined_' + Sample)
+        self.hCosTheta['25'].Add( MM.hCosTheta['25'] )
+        self.hCosTheta['25'].Add( EM.hCosTheta['25'] )
+        
+        self.hCosTheta['50'] = EE.hCosTheta['50'].Clone('costheta50_combined_' + Sample)
+        self.hCosTheta['50'].Add( MM.hCosTheta['50'] )
+        self.hCosTheta['50'].Add( EM.hCosTheta['50'] )
+        
+        self.hCosTheta['100'] = EE.hCosTheta['100'].Clone('costheta100_combined_' + Sample)
+        self.hCosTheta['100'].Add( MM.hCosTheta['100'] )
+        self.hCosTheta['100'].Add( EM.hCosTheta['100'] )
         
         self.hCosThetaPreselected = EE.hCosThetaPreselected.Clone('prescaled_costheta_combined_' + Sample)
         self.hCosThetaPreselected.Add( MM.hCosThetaPreselected )
@@ -332,7 +359,7 @@ class SamplesStack:
         dataType = type( Data )
         data = dataType. __getattribute__(Data , self.Channel)
         
-        deltaMC_Data_CosTheta = self.DrawAndSave( self.stack_costheta ,  data.hCosTheta , self.Channel + '_cos_theta')
+        deltaMC_Data_CosTheta = self.DrawAndSave( self.stack_costheta['10'] ,  data.hCosTheta['10'] , self.Channel + '_cos_theta')
         deltaMC_Data_CosThetaPreselected = self.DrawAndSave( self.stack_costheta_preselected ,  data.hCosThetaPreselected , self.Channel + '_cos_theta_preselected')
         ret = '*** Plot of Cos(\\theta) for selected events \n'
         ret = ret + '    - Difference is : 2*' + str(deltaMC_Data_CosTheta/2) + '\n'
@@ -386,8 +413,15 @@ class SamplesStack:
             if sample_id == 0:
                 self.Channel = sample.Channel
                 self.AllSortedDirectories = sample.AllSortedDirectories
+                
+                self.stack_costheta = {}
+                self.stack_costheta['05'] =  THStack("stackCosTheta05_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta['10'] =  THStack("stackCosTheta10_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta['20'] =  THStack("stackCosTheta20_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta['25'] =  THStack("stackCosTheta25_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta['50'] =  THStack("stackCosTheta50_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                self.stack_costheta['100'] =  THStack("stackCosTheta100_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
 
-                self.stack_costheta =  THStack("stackCosTheta_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
                 self.stack_costheta_preselected =  THStack("preselected_stackCosTheta_" + self.Channel ,'CosTheta for preselected ' + self.Channel +' Events')
                 self.PropertiesToDraw = {}
 
@@ -417,5 +451,11 @@ class SamplesStack:
                     for Cut in sample.PropertiesToDraw[Property].keys():
                         self.PropertiesToDraw[Property][Cut].Add( sample.PropertiesToDraw[Property][Cut] )
 
-            self.stack_costheta.Add( sample.hCosTheta )
+            self.stack_costheta['05'].Add( sample.hCosTheta['05'] )
+            self.stack_costheta['10'].Add( sample.hCosTheta['10'] )
+            self.stack_costheta['20'].Add( sample.hCosTheta['20'] )
+            self.stack_costheta['25'].Add( sample.hCosTheta['25'] )
+            self.stack_costheta['50'].Add( sample.hCosTheta['50'] )
+            self.stack_costheta['100'].Add( sample.hCosTheta['100'] )
+
             self.stack_costheta_preselected.Add( sample.hCosThetaPreselected )
