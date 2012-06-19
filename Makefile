@@ -66,6 +66,7 @@ all:    $(TARGETDIR) \
 	$(TARGETDIR)/Pmm \
 	$(TARGETDIR)/SusySelection \
 	$(TARGETDIR)/FRCalculator \
+	$(TARGETDIR)/FitValidation \
 	$(PWD)/external/$(MACHINE).tar
 	@echo $(python_lib)
 	@echo $(LDLIBS)

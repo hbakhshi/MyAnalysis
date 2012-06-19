@@ -70,7 +70,7 @@ public:
         //cout << "./WPol_SelectedTTBars_" + name + ".root" << endl;
 
         boost::algorithm::to_lower(Channel);
-        TH1* h = (TH1*) files[name]->Get(("costheta_" + Channel +"/hCosThetaAllLepton").c_str());
+        TH1* h = (TH1*) files[name]->Get(("costheta_" + Channel + "/hCosThetaAllLepton").c_str());
         cout << ("costheta_" + Channel + "/hCosThetaAllLepton") << endl;
         if ((h->GetXaxis()->GetNbins()) == nFinalBin)
             return h;
@@ -90,6 +90,38 @@ public:
         return h;
     }
 
+    TH2* GetCosTheta2DPlot(string Channel, int nFinalBin = 10) {
+        //cout << name << endl;
+        string name = "TTBarSummer2011";
+        if (files.count(name) == 0)
+            files[name] = TFile::Open(("./WPol_SelectedTTBars_" + name + ".root").c_str(), "READ");
+
+        //cout << "./WPol_SelectedTTBars_" + name + ".root" << endl;
+
+        boost::algorithm::to_lower(Channel);
+        TH2* h = (TH2*) files[name]->Get(("costheta_" + Channel + "/hCosThetaAllGenVsREC").c_str());
+        cout << ("costheta_" + Channel + "/hCosThetaAllGenVsREC") << endl;
+        if ((h->GetXaxis()->GetNbins()) == nFinalBin)
+            return h;
+        if ((h->GetXaxis()->GetNbins() % nFinalBin) == 0) {
+            h->RebinX(((h->GetXaxis()->GetNbins()) / nFinalBin));
+        } else {
+            std::cout << nFinalBin << " does not count " << h->GetXaxis()->GetNbins() << std::endl;
+            std::cout << "I will take the biggest number less than " << nFinalBin << "that counts it .." << std::endl;
+            int n = 1;
+            for (int i = 2; i < nFinalBin; i++) {
+                if ((h->GetXaxis()->GetNbins() % i) == 0)
+                    n = i;
+            }
+            h->RebinX(((h->GetXaxis()->GetNbins()) / n));
+        }
+        //    cout<<"Nbins after rebinning: "<<h->GetXaxis()->GetNbins()<<endl;
+
+        h->RebinY(10);
+
+        return h;
+    }
+
     string Wpol_all_location;
     std::map<std::string, double> files_xsec;
     std::map<std::string, TFile*> files;
@@ -101,24 +133,43 @@ public:
 class DistributionProducerFromSelected {
 public:
 
-    DistributionProducerFromSelected(TH1* hSelected, string MCName, string channel, SamplesInfo& mySampleInfo) :
-    hInput(hSelected), mcName(MCName) {
+    DistributionProducerFromSelected(TH1* hSelected, string MCName, string channel, SamplesInfo& mySampleInfo, bool isTwoD = false) :
+    hInput(hSelected), mcName(MCName), isTWOD(isTwoD) {
 
-        TRandom RandomGenerator(SeedGenerator.Integer(10000000));
-        for (int iBin = 0; iBin < hSelected->GetXaxis()->GetNbins(); iBin++) {
-            double cosTheta = hSelected->GetBinCenter(iBin + 1);
-            //            double cosTheta = hSelected->GetBinCenter(iBin);
-            //            cout<<"cosTheta is "<<cosTheta<<endl;
-            //            cout<<"BinContents of "<<iBin<<" is "<<hSelected->GetBinContent( iBin+1 )<<endl;
-            for (int eventID = 0; eventID < hSelected->GetBinContent(iBin + 1); eventID++) {
-                int evtRndId = RandomGenerator.Integer(1000000000);
-                while (sampleContent.count(evtRndId) > 0) {
-                    evtRndId = RandomGenerator.Integer(1000000000);
+        if (isTWOD) {
+            TRandom RandomGenerator(SeedGenerator.Integer(10000000));
+            for (int iBin = 0; iBin < hSelected->GetXaxis()->GetNbins(); iBin++)
+                for (int jBin = 0; jBin < hSelected->GetYaxis()->GetNbins(); jBin++) {
+                    double cosTheta = hSelected->GetXaxis()->GetBinCenter(iBin + 1);
+                    double cosThetaGen = hSelected->GetYaxis()->GetBinCenter(jBin + 1);
+                    //            double cosTheta = hSelected->GetBinCenter(iBin);
+                    //            cout<<"cosTheta is "<<cosTheta<<endl;
+                    //            cout<<"BinContents of "<<iBin<<" is "<<hSelected->GetBinContent( iBin+1 )<<endl;
+                    for (int eventID = 0; eventID < hSelected->GetBinContent(iBin + 1, jBin + 1); eventID++) {
+                        int evtRndId = RandomGenerator.Integer(1000000000);
+                        while (sampleContent.count(evtRndId) > 0) {
+                            evtRndId = RandomGenerator.Integer(1000000000);
+                        }
+                        sampleContent[evtRndId] = cosTheta;
+                        sampleContentGen[evtRndId] = cosThetaGen;
+                    }
                 }
-                sampleContent[evtRndId] = cosTheta;
+        } else {
+            TRandom RandomGenerator(SeedGenerator.Integer(10000000));
+            for (int iBin = 0; iBin < hSelected->GetXaxis()->GetNbins(); iBin++) {
+                double cosTheta = hSelected->GetBinCenter(iBin + 1);
+                //            double cosTheta = hSelected->GetBinCenter(iBin);
+                //            cout<<"cosTheta is "<<cosTheta<<endl;
+                //            cout<<"BinContents of "<<iBin<<" is "<<hSelected->GetBinContent( iBin+1 )<<endl;
+                for (int eventID = 0; eventID < hSelected->GetBinContent(iBin + 1); eventID++) {
+                    int evtRndId = RandomGenerator.Integer(1000000000);
+                    while (sampleContent.count(evtRndId) > 0) {
+                        evtRndId = RandomGenerator.Integer(1000000000);
+                    }
+                    sampleContent[evtRndId] = cosTheta;
+                }
             }
         }
-
         Lumi = mySampleInfo.Channels[channel];
         Xsec = mySampleInfo.files_xsec[MCName];
         N0 = mySampleInfo.ReadN0(MCName, channel);
@@ -130,11 +181,11 @@ public:
 
     TH1* GeneratePartialSample(double fraction, int nPEX) {
         TRandom RandomGenerator(SeedGenerator.Integer(10000000));
-        std::vector<double> selectedValues;
+        std::vector<int> selectedValues;
         std::map<int, double>::iterator evtIter = sampleContent.begin();
         for (; evtIter != sampleContent.end(); evtIter++) {
             if (RandomGenerator.Uniform() < fraction)
-                selectedValues.push_back(evtIter->second);
+                selectedValues.push_back(evtIter->first);
         }
         //        cout<<"------------ "<<selectedValues.size()<<endl;
         //        cout<<"------------ "<<selectedValues.at(0)<<endl;
@@ -151,12 +202,22 @@ public:
         s << mcName << "_" << hInput->GetTitle() << "_" << nPEX;
         string hTitle = s.str();
         gROOT->cd();
-        TH1* hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
-                , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());
-        hRet->Sumw2();
-        for (unsigned int i = 0; i < selectedValues.size(); i++)
-            hRet->Fill(selectedValues.at(i), Weight);
+        TH1* hRet;
 
+        if (this->isTWOD) {
+            hRet = new TH2D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
+                    , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax(), hInput->GetYaxis()->GetNbins()
+                    , hInput->GetYaxis()->GetXmin(), hInput->GetYaxis()->GetXmax());
+            hRet->Sumw2();
+            for (unsigned int i = 0; i < selectedValues.size(); i++)
+                ((TH2*)hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)], Weight);
+        } else {
+            hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
+                    , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());
+            hRet->Sumw2();
+            for (unsigned int i = 0; i < selectedValues.size(); i++)
+                hRet->Fill(sampleContent[selectedValues.at(i)], Weight);
+        }
         return hRet;
     }
 
@@ -165,7 +226,7 @@ public:
         double nSelectedEventsInLumi_ = Lumi * Xsec*selEff;
         double nSelectedEventsInLumi = RandomGenerator.Gaus(nSelectedEventsInLumi_, sqrt(nSelectedEventsInLumi_));
         unsigned int EventIndices = sampleContent.size();
-        std::vector<double> selectedValues;
+        std::vector<int> selectedValues;
         std::map<int, double>::iterator evtIter = sampleContent.begin();
 
         for (int nEvt = 0; nEvt < int(nSelectedEventsInLumi); nEvt++) {
@@ -173,7 +234,7 @@ public:
             evtIter = sampleContent.begin();
             for (int i = 0; i < EvtID; i++)
                 evtIter++;
-            selectedValues.push_back(evtIter->second);
+            selectedValues.push_back(evtIter->first);
         }
 
         stringstream s;
@@ -183,19 +244,32 @@ public:
         s << mcName << "_" << hInput->GetTitle() << "_" << nPEX;
         string hTitle = s.str();
         gROOT->cd();
-        TH1* hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
-                , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());
-        hRet->Sumw2();
-        for (unsigned int i = 0; i < selectedValues.size(); i++)
-            hRet->Fill(selectedValues.at(i));
-
+        TH1 * hRet;
+        if (this->isTWOD) {
+            hRet = new TH2D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
+                    , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax(), hInput->GetYaxis()->GetNbins()
+                    , hInput->GetYaxis()->GetXmin(), hInput->GetYaxis()->GetXmax());
+            hRet->Sumw2();
+            for (unsigned int i = 0; i < selectedValues.size(); i++)
+                ((TH2*)hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)]);
+        } else {
+            hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
+                    , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());
+            hRet->Sumw2();
+            for (unsigned int i = 0; i < selectedValues.size(); i++)
+                hRet->Fill(sampleContent[selectedValues.at(i)]);
+        }
         return hRet;
     }
+
+    bool isTWOD;
+
 private:
     TH1* hInput;
     string mcName;
     double Lumi;
     std::map<int, double> sampleContent;
+    std::map<int, double> sampleContentGen;
     double Xsec;
     int N0;
     double selEff;

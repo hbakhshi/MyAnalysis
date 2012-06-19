@@ -40,10 +40,10 @@ PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}
 
 
 for sample in sorted_samples:
-    SamplesInfo[sample] = SampleInfo(sample)
+    SamplesInfo[sample] = SampleInfo(sample, True)
 
 for sample in systematic_samples:
-    SysSamplesInfo[sample] = SampleInfo(sample)
+    SysSamplesInfo[sample] = SampleInfo(sample , True)
 
 Data = DataInfo()
 
@@ -58,7 +58,15 @@ hAxis.SetStats(0)
 hAxis2 = hAxis.Clone('hAxis_0')
 hAxis3 = hAxis.Clone('hAxis_p')
 
-for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
+PrintCutFlowTables = False
+DrawCosThetaPlots = True
+DrawOtherPlots = False
+DrawControlPlots = False
+DoFit = True
+DrawFitComparisons = False
+WriteAllCombinedFile = False
+
+for  WhichChannel_ in ['Combined'] : # ,'EM' , 'MM' , 'EE' ]:
      WhichChannel = WhichChannel_
      
      t_mc = Table()
@@ -66,121 +74,129 @@ for  WhichChannel_ in ['EM' , 'MM' , 'EE', 'Combined']:
 
      #AllSamples = [ SampleInfoType. __getattribute__( SamplesInfo[sample] , WhichChannel) for sample in SamplesInfo ]
      AllSamples = dict( ( sample , SampleInfoType. __getattribute__( SamplesInfo[sample] , WhichChannel) ) for sample in SamplesInfo  )
-     print AllSamples
+
      print >>org_file,'* ' + WhichChannel
-     print >>org_file,"** Wights"
+     if PrintCutFlowTables:
+         print AllSamples
+         print >>org_file,"** Wights"
 
-     last_column_name = ''
-     last_column_name_w = ''
+         last_column_name = ''
+         last_column_name_w = ''
 
-     for sampleName in sorted_samples:
-         sample = AllSamples[sampleName]
-         if not WhichChannel == 'Combined':
-             print >>org_file, '  |%(file)s | %(weight)f' % {'file': sample.Sample , 'weight' :sample.Lumi_Weight}
-         t_mc.append( sample.Row )
-         t_mc_w.append( sample.RowW )
-         last_column_name_w = sample.LastColumnW
-         last_column_name = sample.LastColumn
+         for sampleName in sorted_samples:
+             sample = AllSamples[sampleName]
+             if not WhichChannel == 'Combined':
+                 print >>org_file, '  |%(file)s | %(weight)f' % {'file': sample.Sample , 'weight' :sample.Lumi_Weight}
+             t_mc.append( sample.Row )
+             t_mc_w.append( sample.RowW )
+             last_column_name_w = sample.LastColumnW
+             last_column_name = sample.LastColumn
+
+         stack = SamplesStack( AllSamples , sorted_samples , DrawCosThetaPlots , DrawControlPlots , DrawOtherPlots )
+         print >>org_file,"** CutFlow table"
+         print >>org_file,t_mc
+         sumRow = stack.Row
+         last_sum = sumRow[ last_column_name ]
+         nCols = len(t_mc.rows[0])
+
+         print >>org_file,"    #+TBLFM: $%(newColIndex)d=100-( %(lastSum).8f - $%(lastColIndex)d )*100/ %(lastSum).8f" % {'newColIndex':nCols+1 ,'lastSum':last_sum , 'lastColIndex':nCols }
+
+         print >>org_file,"** CutFlow table, Weighted"
+         print >>org_file,t_mc_w
+         sumRow_w = stack.RowW
+         #print sumRow_w
+         last_sum = sumRow_w[last_column_name_w]
+         nCols = len(t_mc_w.rows[0])
+
+         tbl_mc_weighted_formula_str = "    #+TBLFM: $%(newColIndex)d=100-( %(lastSum).8f - $%(lastColIndex)d )*100/ %(lastSum).8f" % {'newColIndex':nCols+1 ,'lastSum':last_sum , 'lastColIndex':nCols }
+
+         tbl_data_tmp = Table(False, False)
+         tbl_data_tmp.append( Data.AllPlots[WhichChannel_].RowW )
+
+         # r_data_mc_diff = RowObject()        
+         # for column in Data.AllPlots[WhichChannel_].RowW.keys():
+         #     if column.find( 'DataSet' ) > -1:
+         #         r_data_mc_diff[column] = 'Data-MC'
+         #     else:
+         #         r_data_mc_diff[column] = Data.AllPlots[WhichChannel_].RowW[column] - sumRow_w[column]
+         # tbl_data_tmp.append( r_data_mc_diff )
+
+         r_weight_effect = RowObject()      
+         for column in sumRow.keys():
+             if column.find( 'DataSet' ) > -1:
+                 r_weight_effect[column] = 'Weight-Effect'
+             else:
+                 r_weight_effect[column] = sumRow_w[column]/sumRow[column]
+
+
+         r_weight_effect[Data.AllPlots[WhichChannel_].LastColumnW] = 0.0
+         tbl_data_tmp.append(r_weight_effect)
+
+         #print >> org_file, tbl_data_tmp
+         print >> org_file, tbl_mc_weighted_formula_str
+
+     if DrawControlPlots:
+         print >>org_file, '** Plot of Cos(\\theta)'
+         print >> org_file, stack.DrawCosTheta( Data )
+
+     if DrawControlPlots:
+         print >>org_file,'** Control Plots'
+         print >>org_file, stack.DrawAllProperties(Data)
+
+     if DrawOtherPlots:
+         print >>org_file,'** Other Plots'
+         print >>org_file, stack.DrawTopRecPlots(Data)
+
+
+     if DoFit:
+         #start fitting 
+         print >>org_file, '** Fit Results'
+         tableRowFormat =  '    |%(FitName)s|%(nBins)s|%(FL)f ± %(FLErr)f | %(F0)f ± %(F0Err)f | %(FR)f ± %(FRErr)f | %(FRecGen)f ± %(FRecGenErr)f|%(Correlation)s |'
+         print >>org_file, '    |Method|Note|F_{L} | F_{0} | F_{R} | F_{Rec/Gen} |Correlation|'
+         AllSamplesButTTBar =  dict( (sampleName , AllSamples[sampleName] ) for sampleName in AllSamples ) #if sampleName.find('TTBar') < 0 )
+
+         FL = 0
+         FLErr = 0
+         F0 = 0
+         F0Err = 0
+         FRecGenErr = 0
+         FRecGen = 0
+         FR = 0
+         FRErr = 0
+         for nBins in ['10']: # 'Pt20', 'Pt25', 'Pt30', 'Pt35', 'Pt40', 'Pt45' ,  'DR40' , 'DR50' , 'DR60' , 'DR70' , 'DR80' , 'DR90' , 'DR100' , 'DR150' , 'DR200' , 'DR250' ,  'IsoAll' ,'Iso18' , 'Iso16' , 'Iso14' , 'Iso12' , 'Iso10' , 'Iso08' , 'Iso06' , 'Iso04' , 'Iso02' ]: # , '20' , '25' , '50' , '100']:
+             stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples , True , False , False ).stack_costheta[nBins]
+             #ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta[nBins]
+             ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).CosTheta2D
+             dataH = Data.AllPlots[WhichChannel_].hCosTheta[nBins]
+             llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7 , True)
+             fitVals = GetMinimum( llFunction, True , 0 )
+             FL = fitVals[0]
+             FLErr = fitVals[3]
+             F0 = fitVals[1]
+             F0Err = fitVals[4]
+             FRecGen = fitVals[2]
+             FRecGenErr = fitVals[5]
+             FR = 1.0 - FL - F0
+             FRErr = sqrt( FLErr*FLErr + F0Err*F0Err )
+             print >>org_file, tableRowFormat % {'nBins':nBins ,'FitName':'3D Fitting' , 'FL':FL , 'FLErr':FLErr , 'F0':F0 , 'F0Err':F0Err , 'FR':FR , 'FRErr':FRErr , 'FRecGen':FRecGen , 'FRecGenErr':FRecGenErr , 'Correlation':str( fitVals[6] ) }
+
+             llFunction[1].SaveCanvas( 'fitRes'+ WhichChannel  + nBins  , FL , F0 )
+
+         pointID = gFNeg.GetN()
+
+         hAxis.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
+         hAxis2.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
+         hAxis3.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
+
+         gFNeg.SetPoint( pointID , FL , pointID + 1 )
+         gFNeg.SetPointError( pointID ,FLErr , 0.0 )
+
+         gF0.SetPoint( pointID , F0 , pointID + 1 )
+         gF0.SetPointError( pointID , F0Err , 0.0 )
+
+         gFPos.SetPoint( pointID , FR , pointID + 1 )
+         gFPos.SetPointError( pointID ,  FRErr , 0.0 )
      
-     stack = SamplesStack( AllSamples , sorted_samples )     
-     print >>org_file,"** CutFlow table"
-     print >>org_file,t_mc
-     sumRow = stack.Row
-     last_sum = sumRow[ last_column_name ]
-     nCols = len(t_mc.rows[0])
-         
-     print >>org_file,"    #+TBLFM: $%(newColIndex)d=100-( %(lastSum).8f - $%(lastColIndex)d )*100/ %(lastSum).8f" % {'newColIndex':nCols+1 ,'lastSum':last_sum , 'lastColIndex':nCols }
-
-     print >>org_file,"** CutFlow table, Weighted"
-     print >>org_file,t_mc_w
-     sumRow_w = stack.RowW
-     #print sumRow_w
-     last_sum = sumRow_w[last_column_name_w]
-     nCols = len(t_mc_w.rows[0])
-         
-     tbl_mc_weighted_formula_str = "    #+TBLFM: $%(newColIndex)d=100-( %(lastSum).8f - $%(lastColIndex)d )*100/ %(lastSum).8f" % {'newColIndex':nCols+1 ,'lastSum':last_sum , 'lastColIndex':nCols }
-
-     tbl_data_tmp = Table(False, False)
-     tbl_data_tmp.append( Data.AllPlots[WhichChannel_].RowW )
-     
-     r_data_mc_diff = RowObject()        
-     for column in Data.AllPlots[WhichChannel_].RowW.keys():
-         if column.find( 'DataSet' ) > -1:
-             r_data_mc_diff[column] = 'Data-MC'
-         else:
-             r_data_mc_diff[column] = Data.AllPlots[WhichChannel_].RowW[column] - sumRow_w[column]
-     tbl_data_tmp.append( r_data_mc_diff )
-
-     r_weight_effect = RowObject()      
-     for column in sumRow.keys():
-         if column.find( 'DataSet' ) > -1:
-             r_weight_effect[column] = 'Weight-Effect'
-         else:
-             r_weight_effect[column] = sumRow_w[column]/sumRow[column]
-
-     
-     r_weight_effect[Data.AllPlots[WhichChannel_].LastColumnW] = 0.0
-     tbl_data_tmp.append(r_weight_effect)
-
-     print >> org_file, tbl_data_tmp
-     print >> org_file, tbl_mc_weighted_formula_str
-
-     print >>org_file, '** Plot of Cos(\\theta)'
-     print >> org_file, stack.DrawCosTheta( Data )
-
-     print >>org_file,'** Control Plots'
-     print >>org_file, stack.DrawAllProperties(Data)
-
-     #start fitting 
-     print >>org_file, '** Fit Results'
-     tableRowFormat =  '    |%(FitName)s|%(nBins)s|%(FL)f ± %(FLErr)f | %(F0)f ± %(F0Err)f | %(FR)f ± %(FRErr)f | %(FRecGen)f ± %(FRecGenErr)f |'
-     print >>org_file, '    |Method|nBins|F_{L} | F_{0} | F_{R} | F_{Rec/Gen} |'
-     AllSamplesButTTBar =  dict( (sampleName , AllSamples[sampleName] ) for sampleName in AllSamples if sampleName.find('TTBar') < 0 )
-
-     FL = 0
-     FLErr = 0
-     F0 = 0
-     F0Err = 0
-     FRecGenErr = 0
-     FRecGen = 0
-     FR = 0
-     FRErr = 0
-     for nBins in ['05' , '10' , '20' , '25' , '50' , '100']:
-         stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples ).stack_costheta[nBins]
-         ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta[nBins]
-         dataH = Data.AllPlots[WhichChannel_].hCosTheta[nBins]
-         llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7)[0]
-         fitVals = GetMinimum( llFunction )
-         FL = fitVals[0]
-         FLErr = fitVals[3]
-         F0 = fitVals[1]
-         F0Err = fitVals[4]
-         FRecGen = fitVals[2]
-         FRecGenErr = fitVals[5]
-         FR = 1.0 - FL - F0
-         FRErr = sqrt( FLErr*FLErr + F0Err*F0Err )
-         print >>org_file, tableRowFormat % {'nBins':nBins ,'FitName':'3D Fitting' , 'FL':FL , 'FLErr':FLErr , 'F0':F0 , 'F0Err':F0Err , 'FR':FR , 'FRErr':FRErr , 'FRecGen':FRecGen , 'FRecGenErr':FRecGenErr }
-
-     pointID = gFNeg.GetN()
-     
-     hAxis.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
-     hAxis2.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
-     hAxis3.GetXaxis().SetBinLabel( pointID+1 , WhichChannel_)
-
-     gFNeg.SetPoint( pointID , FL , pointID + 1 )
-     gFNeg.SetPointError( pointID ,FLErr , 0.0 )
-     
-     gF0.SetPoint( pointID , F0 , pointID + 1 )
-     gF0.SetPointError( pointID , F0Err , 0.0 )
-
-     gFPos.SetPoint( pointID , FR , pointID + 1 )
-     gFPos.SetPointError( pointID ,  FRErr , 0.0 )
-     
-
-print >>org_file, '* Fit Comparison'
-if not os.access( 'FitResults' , os.F_OK) :
-    os.mkdir( 'FitResults' )
-
 
 allHorizontalHistos = {}
 def DrawAndCompStandardVal( haxis  , graph , std , stdErr , name , title):  
@@ -219,22 +235,34 @@ def DrawAndCompStandardVal( haxis  , graph , std , stdErr , name , title):
     c.SaveAs('FitResults/'+name+'.gif')
     return 'FitResults/'+name+'.gif'
 
-print >>org_file, '** F_{L}'
-#flStd = 0.3
-#flStdErr = 0.02
+if DrawFitComparisons:
+    print >>org_file, '* Fit Comparison'
+    if not os.access( 'FitResults' , os.F_OK) :
+        os.mkdir( 'FitResults' )
 
-print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis , gFNeg , 0.29 , 0.02  , 'FL' , 'F_{L}')  +']]]'
 
-print >>org_file, '** F_{0}'
-print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis2 , gF0 , 0.71 , 0.02 , 'F0' , 'F_{0}')  +']]]'
+    print >>org_file, '** F_{L}'
+    #flStd = 0.3
+    #flStdErr = 0.02
 
-print >>org_file, '** F_{R}'
-print >>org_file, '   [[[' +DrawAndCompStandardVal(hAxis3 , gFPos , 0.0 , 0.02 , 'FR' , 'F_{R}')+ ']]]'
+    print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis , gFNeg , 0.29 , 0.02  , 'FL' , 'F_{L}')  +']]]'
 
-fOut = TFile('AllCombined.root' , 'RECREATE')
-for sample in SamplesInfo:
-    SamplesInfo[sample].Combined.hCosTheta.Write()
-for sample in SysSamplesInfo:
-    SysSamplesInfo[sample].Combined.hCosTheta.Write()
-Data.Combined.hCosTheta.Write()
-fOut.Close()
+    print >>org_file, '** F_{0}'
+    print >>org_file, '   [[['+ DrawAndCompStandardVal(hAxis2 , gF0 , 0.71 , 0.02 , 'F0' , 'F_{0}')  +']]]'
+
+    print >>org_file, '** F_{R}'
+    print >>org_file, '   [[[' +DrawAndCompStandardVal(hAxis3 , gFPos , 0.0 , 0.02 , 'FR' , 'F_{R}')+ ']]]'
+
+if WriteAllCombinedFile:
+    fDGamma1 = dGammaFunctin.GetFunction('fnc1')
+    fOut = TFile('AllCombined.root' , 'RECREATE')
+    for sample in SamplesInfo:
+        hCosTheta = SamplesInfo[sample].Combined.hCosTheta['10']
+
+        hCosTheta.Fit(fDGamma1)
+
+        hCosTheta.Write()
+    for sample in SysSamplesInfo:
+        SysSamplesInfo[sample].Combined.hCosTheta['10'].Write()
+    Data.Combined.hCosTheta['10'].Write()
+    fOut.Close()

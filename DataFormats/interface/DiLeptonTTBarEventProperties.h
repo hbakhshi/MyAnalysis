@@ -48,7 +48,7 @@ namespace TopAnalysis {
         class NumberOfBJets : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
 
-            NumberOfBJets() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NumberOfBJets", "# BJets", 0, 15, 15, "DiLeptonEvent", 1505) {
+            NumberOfBJets() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("NumberOfBJets", "Number of b-jets", 0, 6, 6, "DiLeptonEvent", 1505) {
             };
 
             virtual ~NumberOfBJets() {
@@ -155,7 +155,7 @@ namespace TopAnalysis {
         class EffectiveMass : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
         public:
 
-            EffectiveMass() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("TTBarEffectiveMass", "TTBar Effective Mass", 0, 1000, 1000, "TTBarDileptonicEvent", 1) {
+            EffectiveMass() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("TTBarEffectiveMass", "TTBar Effective Mass", 330, 1330, 1000, "TTBarDileptonicEvent", 1) {
                 if (Gen) {
                     this->PropertyName = ("Gen" + this->PropertyName);
                     this->PropertyTitle = ("Gen " + this->PropertyTitle);

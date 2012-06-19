@@ -10,6 +10,8 @@
 #include "TF1.h"
 #include "TF3.h"
 #include "TH1.h"
+#include "TH2.h"
+#include "TROOT.h"
 #include "TMath.h"
 #include "TCanvas.h"
 #include "TRandom1.h"
@@ -87,6 +89,15 @@ public:
         signal->Sumw2();
     }
 
+    LLBase(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum, string sss_tmp , double std_f0 = 0.7, double std_fneg = 0.3)
+    : Name(name), bkg(nonWtbSum), data(hData), signal2D(WtbSum),
+    weightor(WeightFunctionCreator::getWeightFunction("wieghtor" + name, std_f0, std_fneg)) {
+        data->Sumw2();
+        bkg->Sumw2();
+        signal2D->Sumw2();
+        signal = NULL;
+    }
+
     virtual ~LLBase() {
         //        delete bkg;
         //        delete signal;
@@ -128,6 +139,7 @@ protected:
     TH1* bkg;
     TH1* data;
     TH1* signal;
+    TH2* signal2D;
     std::pair<TF1, WeightFunctionCreator*> weightor;
 
     virtual vector<double> getNdataNmc(int bin, double f0, double f_, double rec_gen) = 0;
@@ -147,11 +159,19 @@ public:
 
     };
 
+    LikelihoodFunction(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum , string sss_tmp) : LLBase(name, nonWtbSum, hData, WtbSum , sss_tmp) {
+
+    };
+
     ~LikelihoodFunction() {
     }
 
-    static std::pair<TF3, LikelihoodFunction*> getLLFunction(string name, TH1* nonWtbSum, TH1* hData, TH1* WtbSum) {
-        LikelihoodFunction * functor = new LikelihoodFunction(name, nonWtbSum, hData, WtbSum);
+    static std::pair<TF3, LikelihoodFunction*> getLLFunction(string name, TH1* nonWtbSum, TH1* hData, TH1* WtbSum , bool castTOH2) {
+        LikelihoodFunction * functor ;
+        if(!castTOH2)
+            functor = new LikelihoodFunction(name, nonWtbSum, hData, WtbSum);
+        else
+            functor = new LikelihoodFunction( name, nonWtbSum, hData, (TH2*)WtbSum , "" );
         TF3 ret(name.c_str(), functor, 0.0, 1.0, 0.0, 0.1, 0.0, 2.0, 0, "LikelihoodFunction");
         ret.SetRange(0.0, 0.0, 0.000001, 1.0, 1.0, 2.0);
         return make_pair(ret, functor);
@@ -169,8 +189,19 @@ protected:
         }
         double nData = data->GetBinContent(bin);
         double costheta = data->GetBinCenter(bin);
-        double weight = getWeight(costheta, f0, f_) * rec_gen;
-        double nSignal = weight * signal->GetBinContent(bin);
+
+        double nSignal = 0.0;
+
+        if (this->signal != NULL) {
+            double weight = getWeight(costheta, f0, f_) * rec_gen;
+            nSignal = weight * signal->GetBinContent(bin);
+        }else{
+            weightor.first.SetParameters(f0, f_);
+            gROOT->cd();
+            TH1* hithrecbin = this->signal2D->ProjectionY("_py" , bin , bin , "o");
+            hithrecbin->Multiply( &(weightor.first) , rec_gen);
+            nSignal = hithrecbin->Integral();
+        }
         double nMC = bkg->GetBinContent(bin) + nSignal;
         //        cout<<"****** "<<nData<<"\t"<<nMC<<endl;
         vector<double> ret;

@@ -1010,6 +1010,7 @@
           <in>TTbarSelector.h</in>
           <in>ToyFitter.h</in>
           <in>ValidatorExecuter.h</in>
+          <in>setTDRStyle.h</in>
         </df>
         <df name="script">
           <in>tdrstyle.C</in>

@@ -122,6 +122,11 @@ public:
     TH1* hCosTheta2ndLepton;
 
     TH1* hCosThetaAllLeptonsUnWeighted;
+        
+    TH2* hCosThetaAllLeptonsVsLeptonIsolation;
+    TH2* hCosThetaAllLeptonsVsLeptonJetDR;
+    TH2* hCosThetaAllLeptonsVsLeptonPt;
+    TH2* hCosThetaAllGenVsREC;
     
     CosThetaAnalysis(const edm::ParameterSet& ps);
     virtual ~CosThetaAnalysis();

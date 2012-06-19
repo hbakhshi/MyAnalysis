@@ -62,11 +62,17 @@ namespace ElectronAnalysis {
         int MuIsTMLastStationAngTight; //[NMus]
         int MuIsTMOneStationAngTight; //[NMus]
         int MuIsTMOneStationAngLoose; //[NMus]
-        
 
         virtual bool isMuon() {
             return true;
         };
+
+        virtual double IsolationValue() {
+            double iso = (MuIso03SumPt + MuIso03EmEt + MuIso03HadEt);
+            iso /= std::max(Pt, 20.0f);
+            return iso;
+        };
+
     };
 
 }

@@ -3,7 +3,7 @@
 #include "../interface/ToyFitter.h"
 #include "../interface/FitValidator.h"
 #include "../interface/ValidatorExecuter.h"
-
+#include "TROOT.h"
 #include <sched.h>
 cpu_set_t mask_t;
 

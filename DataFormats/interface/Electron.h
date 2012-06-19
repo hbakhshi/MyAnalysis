@@ -112,6 +112,11 @@ namespace ElectronAnalysis {
         virtual bool isElectron() {
             return true;
         };
+        virtual double IsolationValue() {
+	  if(this->ElRelIso03 < 0.0)
+	    cout << "NEGATIVE RELISO : " << this->ElRelIso03 << endl;
+	  return this->ElRelIso03 ;
+        };
 
         virtual ~Electron() {
         };

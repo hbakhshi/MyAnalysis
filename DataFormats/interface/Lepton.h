@@ -62,6 +62,7 @@ public:
 
     virtual bool isMuon() {return false;};
     virtual bool isElectron() {return false;};
+  virtual double IsolationValue()  = 0;
     
     int index_in_tree;
 };

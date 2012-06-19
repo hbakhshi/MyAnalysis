@@ -65,7 +65,7 @@ if os.environ.has_key( 'ApplyBTSFUnc' ):
 UncertPartFileName = ''
 if ApplyJES > 0:
     UncertPartFileName = '_JESUP'
-else if ApplyJES < 0:
+elif ApplyJES < 0:
     UncertPartFileName = '_JESDN'
 
 if ApplyBTSFUnc > 0:
@@ -189,12 +189,12 @@ process.WPolarization = cms.PSet(
         RejectLeptonsFromZ=cms.bool(False), #True #This removes all of the leptons from the same flavour that their inv-mass lies between 76 and 106
         METCutOF=cms.double(20.0), #20
         METCutSF=cms.double(30.0), #30
-        ApplyJES = cms.int(ApplyJES), 
+        ApplyJES = cms.int32(ApplyJES), 
         JESFileName = cms.untracked.string('./JES.txt'),
         NJets=cms.int32(2), #2
         btag_algo = cms.string('simpleSecondaryVertexHighEff'), #TrackCountingHighEff , simpleSecondaryVertexHighEff
         BJetSelectionBTag = cms.double( 1.74 ), #to count the number of bjets
-        BTagScaleFactorSystematics = cms.int(ApplyBTSFUnc), #0, 1 , -1
+        BTagScaleFactorSystematics = cms.int32(ApplyBTSFUnc), #0, 1 , -1
         NBJets = cms.int32(1),
         BTag1 = cms.double(-100000.0),
         BTag2 = cms.double(-100000.0),

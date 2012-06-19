@@ -1,12 +1,13 @@
 #! /usr/bin/python -i
 
-from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph, TF2
+from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph, TF2, TRandom, kBlue, kRed, kAzure
 import array
 from math import sqrt, exp, pi, pow, factorial, log
 import os
 
 class dGammaFunctin:
-    def __init__(self):
+    def __init__(self , justOne = -2):
+        self.JustOne = justOne
         pass
 
     def __call__(self, x , p):
@@ -23,15 +24,22 @@ class dGammaFunctin:
         bb = (1.0 - costheta*costheta)
         cc = (1.0 + costheta )*(1.0 + costheta )
     
-        ret = (FNeg*3.0*aa / 8.0)
-        ret += (F0*3.0*bb / 4.0 )
-        ret += (FPos*3.0*cc / 8.0)
+        retL = (FNeg*3.0*aa / 8.0)
+        ret0 = (F0*3.0*bb / 4.0 )
+        retR = (FPos*3.0*cc / 8.0)
 
-        return norm_factor*ret
+        if self.JustOne == -2:
+            return norm_factor*(retL+ret0+retR)
+        elif self.JustOne == -1:
+            return norm_factor*retL
+        elif self.JustOne == 0:
+            return norm_factor*ret0
+        elif self.JustOne == 1:
+            return norm_factor*retR
 
     @staticmethod
-    def GetFunction(name):
-        functor = dGammaFunctin()
+    def GetFunction(name , justOne = -2):
+        functor = dGammaFunctin(justOne)
         gROOT.cd()
         ret = TF1(name , functor , -1.0 , 1.0 , 3)
 
@@ -84,7 +92,9 @@ class LLFunction:
     def CosThetaRange(self):
         return range(1, self.hData.GetNbinsX()+1)
 
-    def __init__(self , stack , hData , hTTBar , distribution_function, std_fneg, std_f0):
+    def __init__(self , stack , hData , hTTBar , distribution_function, std_fneg, std_f0 , name , TwoD = False):
+        self.BKGStack = stack
+        self.TwoD = TwoD
         self.hData = hData
         #SET DATA ERROR
         for nBin in self.CosThetaRange():
@@ -92,7 +102,7 @@ class LLFunction:
             self.hData.SetBinError(nBin, err)
 
         #MAKE A TH OUT OF THE STACK, and calc errors
-        self.hSum = TH1D('hSum' , 'SUM_MC' , self.NCosThetaBins() , -1 , 1)
+        self.hSum = TH1D('hSum'+name , 'All Backgrounds' , self.NCosThetaBins() , -1 , 1)
 
         Errors = {}
         for nBin in self.CosThetaRange():
@@ -111,6 +121,112 @@ class LLFunction:
         self.WF1 = WeightFunction.GetWeightFunction('W', std_fneg , std_f0)
         self.DistributionFunction = distribution_function
 
+        self.ErrorVariations = {}
+        self.ErrorRandomGenerators = {}
+        self.SeedGenerator = TRandom(65458782)
+
+
+    def SetErrorVariations(self):
+        for nBin in self.CosThetaRange():
+            if not self.ErrorRandomGenerators.has_key( nBin ):
+                self.ErrorRandomGenerators[nBin] = TRandom( self.SeedGenerator.Integer( 10000000000 ) )
+
+            self.ErrorVariations[ nBin ] = self.ErrorRandomGenerators[nBin].Uniform( -1.0 , 1.0 )
+
+
+    def SaveCanvas(self, fileName , fL , f0 ):
+        c = TCanvas(fileName)
+        c.cd()
+
+        stack1 = self.BKGStack
+        
+
+        TTBar2 = None
+        if not self.TwoD :
+            TTBar2 = self.TTBar.Clone("TTBar1")
+        else:
+            TTBar2  = self.TTBar.ProjectionX('TTBar1_px' , 0 , -1 , 'o')
+
+        TTBar2.SetFillStyle(1001)
+        TTBar2.SetFillColor(8)
+        stack1.Add(TTBar2)
+
+        stack1.Draw()
+        
+        self.hData.Draw('SAMES')
+        c.SaveAs(fileName + '.C')
+
+        fileName = 'ttbar_' + fileName
+        c2 = TCanvas(fileName)
+        c2.cd()
+        
+
+        gROOT.cd()
+
+        FinalDGammaFunction = dGammaFunctin.GetFunction('FinalDGammaFunction')
+        FinalDGammaFunction.SetParameters(fL, f0, 0.2)
+        FinalDGammaFunction.Draw()
+
+
+        hTTBarNorm = None
+
+        if not self.TwoD :
+            hTTBarNorm = self.TTBar.Clone('hTTBarNorm')
+        else :
+            hTTBarNorm = self.TTBar.ProjectionX('hTTBarNorm' , 0 , -1 , 'o')
+        hTTBarNorm.Scale( 1.0 / self.TTBar.Integral() )
+        hTTBarNorm.SetLineStyle(0)
+        hTTBarNorm.SetFillStyle(3005)        
+
+        stackTTBar = THStack('Stack' , 'TTBar')
+        FinalDGammaFunctionR = dGammaFunctin.GetFunction('FinalDGammaFunctionR' , 1)
+        FinalDGammaFunctionR.SetParameters(fL, f0, 0.2)
+        #FinalDGammaFunctionR.Draw('SAME')        
+        hTTBarR = hTTBarNorm.Clone('hTTBarNormR')
+        hTTBarR.Multiply(FinalDGammaFunctionR)
+        hTTBarR.SetTitle('TTbar R')
+        hTTBarR.Divide(FinalDGammaFunction)
+        hTTBarR.SetFillColor(kRed)
+        stackTTBar.Add(hTTBarR)
+
+        FinalDGammaFunctionL = dGammaFunctin.GetFunction('FinalDGammaFunctionL' , -1)
+        FinalDGammaFunctionL.SetParameters(fL, f0, 0.2)
+        #FinalDGammaFunctionL.Draw('SAME')
+        hTTBarL = hTTBarNorm.Clone('hTTBarNormL')
+        hTTBarL.Multiply(FinalDGammaFunctionL)
+        hTTBarL.Divide(FinalDGammaFunction)
+        hTTBarL.SetTitle('TTbar L')
+        hTTBarL.SetFillColor(kAzure)
+        hTTBarL.SetFillStyle(3003)
+        stackTTBar.Add(hTTBarL)
+
+        FinalDGammaFunction0 = dGammaFunctin.GetFunction('FinalDGammaFunction0' , 0)
+        FinalDGammaFunction0.SetParameters(fL, f0, 0.2)
+        #FinalDGammaFunction0.Draw('SAME')
+        hTTBar0 = hTTBarNorm.Clone('hTTBarNorm0')
+        hTTBar0.Multiply(FinalDGammaFunction0)
+        hTTBar0.Divide(FinalDGammaFunction)
+        hTTBar0.SetTitle('TTbar 0')
+        hTTBar0.SetFillColor(kBlue)
+        hTTBar0.SetFillStyle(3001)
+        stackTTBar.Add(hTTBar0)
+
+
+        stackTTBar.Draw('hist same')
+
+
+        hTTBarFromData = TH1D('hTTBarFromData' , 'data - background' , 10 , -1 , 1)
+        hTTBarFromData.Add( self.hData , self.hSum , 1.0 , -1.0)
+        print self.hData.Integral() 
+        print self.hSum.Integral()
+        scale1 = self.hData.Integral() - self.hSum.Integral()
+        print scale1
+        hTTBarFromData.Scale( 1.0 / scale1 )
+        hTTBarFromData.Draw('SAME')
+        
+
+        c2.SaveAs(fileName + '.C')
+        
     def __call__(self , x , p=0):
         #x[0] = f_Neg
         #x[1] = f_0
@@ -124,12 +240,25 @@ class LLFunction:
 
             CosTheta = self.hSum.GetBinCenter(nBin)
             self.WF1.SetParameters(x[0] , x[1])
-            WeightVal = self.WF1.Eval(CosTheta)
-            N_TT = x[2]*WeightVal*self.TTBar.GetBinContent(nBin)
+            N_TT = 0.0
 
-            N_MC = N_BKG + N_TT
+            if not self.TwoD :
+                WeightVal = self.WF1.Eval(CosTheta)
+                N_TT = WeightVal*self.TTBar.GetBinContent(nBin)
+            else:
+                gROOT.cd()
+                hGenInfo = self.TTBar.ProjectionY( '_py' , nBin , nBin  , 'o')
+                hGenInfo.Multiply( self.WF1 )
+                N_TT = hGenInfo.Integral()
+                #for binGen in range(1 , hGenInfo.GetNbinsX() + 1):
+                #    N_TT += (self.WF1.Eval( hGenInfo.GetBinCenter(binGen) ) * hGenInfo.GetBinContent(binGen))
+
+            N_MC = N_BKG + x[2]*N_TT
 
             N_Data = self.hData.GetBinContent(nBin)
+            if not len(self.ErrorVariations) == 0:
+                variation = self.ErrorVariations[nBin]
+                N_Data += variation*sqrt(N_Data)
 
             LL += self.DistributionFunction( N_MC , N_Data )
         
@@ -137,9 +266,9 @@ class LLFunction:
 
 
     @staticmethod
-    def GetLLFunction(name , stack , hData , hTTBar , distribution_function,std_fneg ,std_f0):
+    def GetLLFunction(name , stack , hData , hTTBar , distribution_function,std_fneg ,std_f0 , isTwoD = False):
         
-        functor = LLFunction( stack , hData , hTTBar , distribution_function, std_fneg, std_f0)
+        functor = LLFunction( stack , hData , hTTBar , distribution_function, std_fneg, std_f0 , name , isTwoD)
 
         #functor.hData.Print('ALL')
         #functor.hSum.Print('ALL')
@@ -181,9 +310,12 @@ def PoissonDistribution(n_mc , n_data):
 
     return log_factoral - log_exp_1 - log_pow_1 #pow_1*exp_1/factorial_1
 
-def GetMinimum(F,CalcError = True):
+def GetMinimum(F_,CalcError = True , LoopsForMCErrors = 0):
     # based on the documentation of TF3::GetMinimumXYZ from
     # http://root.cern.ch/root/html532/src/TF3.cxx.html#QUjxjE
+
+    F = F_[0]
+
     x_m = Double(0.0)
     y_m = Double(0.0)
     z_m = Double(0.0)
@@ -191,52 +323,91 @@ def GetMinimum(F,CalcError = True):
     F.GetMinimumXYZ(x_m , y_m , z_m)
     if not CalcError:
         return [x_m.real , y_m.real , z_m.real]
-    #print "%(x)F ; %(y)F ; %(z)F" % {'x':x_m.real , 'y':y_m.real , 'z':z_m.real}
 
-    xl = Double(0.0)
-    xu = Double(0.0)
-    yl = Double(0.0)
-    yu = Double(0.0)
-    zl = Double(0.0)
-    zu = Double(0.0)
-    #F.GetRange(xl , yl , zl , xu , yu , zu )
+    if not LoopsForMCErrors == 0:
+        #MC ERROR CALC GOES HERE
+        AllF0 = []
+        AllFP = []
+        AllFN = []
+        AllFRatio = []
 
-    #I assume that the TVirtualFitter::GetFitter is set to MINUTE
-    minuit = TVirtualFitter.Fitter(F,3)
+        x_m_tmp = Double(0.0)
+        y_m_tmp = Double(0.0)
+        z_m_tmp = Double(0.0)
+        for MC in range(0 , LoopsForMCErrors):
+            if MC % 5 ==0:
+                print MC
+            F_[1].SetErrorVariations()
+            F.GetMinimumXYZ(x_m_tmp , y_m_tmp , z_m_tmp)
 
-    minuit.Clear()
+            AllFN.append( x_m_tmp.real )
+            AllF0.append( y_m_tmp.real )
+            AllFP.append( 1.0 - y_m_tmp.real  - x_m_tmp.real )
+            AllFRatio.append( z_m_tmp.real)
+            #print AllFN
+
+
+        FRatioMin = min(AllFRatio)
+        FRatioMax = max(AllFRatio)
+        FRatioErr = (FRatioMax - FRatioMin)/2.0
+
+        FNMin = min(AllFN)
+        FNMax = max(AllFN)
+        FNErr = (FNMax - FNMin)/2.0
+
+        F0Min = min(AllF0)
+        F0Max = max(AllF0)
+        F0Err = (F0Max - F0Min)/2.0
+
+        FPMin = min(AllFP)
+        FPMax = max(AllFP)
+        FPErr = (FPMax - FPMin)/2.0
+        ret = [x_m.real , y_m.real , z_m.real, FNErr , F0Err , FRatioErr]
+        print FPErr
+        print ret
+        return ret
+    else:
+        xl = Double(0.0)
+        xu = Double(0.0)
+        yl = Double(0.0)
+        yu = Double(0.0)
+        zl = Double(0.0)
+        zu = Double(0.0)
+
+        #I assume that the TVirtualFitter::GetFitter is set to MINUTE
+        minuit = TVirtualFitter.Fitter(F,3)
+
+        minuit.Clear()
     
-    minuit.SetFitMethod("F3Minimizer")
-    arg_list = array.array('d', [Double(-1.0)] )
-    nNargs = int(1)
-    minuit.ExecuteCommand("SET PRINT" , arg_list, nNargs)
+        minuit.SetFitMethod("F3Minimizer")
+        arg_list = array.array('d', [Double(-1.0)] )
+        nNargs = int(1)
+        minuit.ExecuteCommand("SET PRINT" , arg_list, nNargs)
 
-    minuit.SetParameter(0, "x", x_m, 0.1, xl , xu )
-    minuit.SetParameter(1, "y", y_m, 0.1, yl , yu )
-    minuit.SetParameter(2, "z", z_m, 0.1, zl , zu )
+        minuit.SetParameter(0, "x", x_m, 0.1, xl , xu )
+        minuit.SetParameter(1, "y", y_m, 0.1, yl , yu )
+        minuit.SetParameter(2, "z", z_m, 0.1, zl , zu )
+        
+        arg_list = array.array('d', [Double(1.0)] )
+        fitResult = minuit.ExecuteCommand("MIGRAD", arg_list, 0)
+        if not fitResult == 0 :
+            print "Abnormal termination of minimization"
+            return [-1.0 , -1.0 , -1.0]
 
-    arg_list = array.array('d', [Double(1.0)] )
-    fitResult = minuit.ExecuteCommand("MIGRAD", arg_list, 0)
-    if not fitResult == 0 :
-        print "Abnormal termination of minimization"
-        return [-1.0 , -1.0 , -1.0]
+        x_m = minuit.GetParameter(0)
+        y_m = minuit.GetParameter(1)
+        z_m = minuit.GetParameter(2)
 
-    x_m = minuit.GetParameter(0)
-    y_m = minuit.GetParameter(1)
-    z_m = minuit.GetParameter(2)
-
-    parabolicx = Double(0.0)
-    parabolicy = Double(0.0)
-    parabolicz = Double(0.0)
-    globcc = Double(0.0)
-    minuit.GetErrors( 0 , xu , xl , parabolicx , globcc )
-    #print '%F , %F' % (parabolic , globcc)
-    minuit.GetErrors( 1 , yu , yl , parabolicy , globcc )
-    #print '%F , %F' % (parabolic , globcc)
-    minuit.GetErrors( 2 , zu , zl , parabolicz , globcc )
-    #print '%F , %F' % (parabolic , globcc)
-    #print "%(x)F + %(xu)F - %(xl)F ; %(y)F  + %(yu)F - %(yl)F; %(z)F  + %(zu)F - %(zl)F" % {'x':x_m.real , 'xu':xu.real , 'xl':xl.real , 'yl':yl.real , 'yu':yu.real , 'zu':zu.real , 'zl':zl.real , 'y':y_m.real , 'z':z_m.real}
-    return [x_m.real , y_m.real , z_m.real ,parabolicx.real , parabolicy.real , parabolicz.real ]
+        parabolicx = Double(0.0)
+        parabolicy = Double(0.0)
+        parabolicz = Double(0.0)
+        globcc = Double(0.0)
+        minuit.GetErrors( 0 , xu , xl , parabolicx , globcc )
+        minuit.GetErrors( 1 , yu , yl , parabolicy , globcc )
+        minuit.GetErrors( 2 , zu , zl , parabolicz , globcc )
+        covarianceM = minuit.GetCovarianceMatrix()
+        covariance = [ covarianceM[i] for i in range( 0 , 9) ]
+        return [x_m.real , y_m.real , z_m.real ,parabolicx.real , parabolicy.real , parabolicz.real , covariance ]
 
 
 

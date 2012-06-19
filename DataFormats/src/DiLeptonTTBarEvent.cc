@@ -60,6 +60,9 @@ TopAnalysis::TTBarDileptonicEvent::SolverResults* TopAnalysis::TTBarDileptonicEv
     TopAnalysis::TTBarDileptonicEvent::SolverResults results(name, Jets[the_b_index], Jets[the_bbar_index],
             GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
 
+    results.Top_Rec.W.leptonIsolationValue = GetLepton(+1)->IsolationValue();
+    results.TopBar_Rec.W.leptonIsolationValue = GetLepton(-1)->IsolationValue();
+
     return & (AllSolutions.insert(std::make_pair(name, results)).first->second);
 }
 
@@ -108,11 +111,11 @@ void TopAnalysis::TTBarDileptonicEvent::SolverResults::SetSolverResultsAndAnalyz
             top_barG = TopBar_Gen->getTop();
 
             double effMass = (top + top_bar).M();
-            if(effMass > 340.0)
+            if (effMass > 340.0)
                 SolEffMass[effMass] = i;
             else
                 SolEffMass[1000.0 + i] = i;
-            
+
             double topDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top, topG);
             double topBDr = ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (top_bar, top_barG);
 
