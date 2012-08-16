@@ -11,6 +11,7 @@
 #include "NTupleAnalyzer/include/base/Analyzer.h"
 #include "DataFormats/interface/DiLeptonTTBarEventProperties.h"
 #include "TH1.h"
+#include "TH3.h"
 #include "TF1.h"
 #include "TFitResult.h"
 #include <boost/lexical_cast.hpp>
@@ -109,6 +110,7 @@ public:
 
     bool FillGen;
     bool FillRec;
+    bool FillTree;
     vector<TopAnalysis::TTBarDileptonicEvent::TopDecays> GenDecayModes;
     
     TH1* hCosThetaPosLepton;
@@ -127,6 +129,15 @@ public:
     TH2* hCosThetaAllLeptonsVsLeptonJetDR;
     TH2* hCosThetaAllLeptonsVsLeptonPt;
     TH2* hCosThetaAllGenVsREC;
+    TH3* hCosThetaAllGenVsRECVsDR;
+    std::map<int , TTree*> allTrees;
+    double genCosThetaValueHolder;
+    double eventWeight;
+    double lumiWeight;
+    int nPU;
+    int nPV;
+    int eventType;
+    TFile* fileTree ;
     
     CosThetaAnalysis(const edm::ParameterSet& ps);
     virtual ~CosThetaAnalysis();

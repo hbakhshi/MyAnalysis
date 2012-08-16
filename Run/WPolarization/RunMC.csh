@@ -9,10 +9,10 @@ setenv COPYTREEFILENAME "TreeTTbar_"$INPUT".root"
 setenv MALLOC_CHECK_ 0
 setenv CPUNumber $2
 
-#setenv ApplyJES $4
-#setenv ApplyBTSFUnc $5
+setenv ApplyJES $4
+setenv ApplyBTSFUnc $5
 
-cd ../Scripts
+cd ../../Scripts
 source Env.csh
 
 cd $STARTUPDIR

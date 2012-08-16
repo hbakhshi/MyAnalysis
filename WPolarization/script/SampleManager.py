@@ -11,8 +11,8 @@ setTDRStyle()
 FileAddressPattern_Selected = '/home/hbakhshi/Documents/Analysis/Run/WPolarization/WPol_SelectedTTBars_%s.root'
 FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root'
 
-#FileAddressPattern_Selected = '/home/hbakhshi/Documents/WPolarization/BSFDN/WPol_%s_BSFDN.root'
-#FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/BSFDN/WPol_%s_BSFDN.root'
+#FileAddressPattern_Selected = '/home/hbakhshi/Documents/WPolarization/JESUP/WPol_%s_JESUP.root'
+#FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/JESUP/WPol_%s_JESUP.root'
 
 #FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root'
 #FileAddressPattern_Selected = '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root'
@@ -79,7 +79,7 @@ class SampleChannelInfo:
             self.EventTypeMaxVal = 4
         #Properties
         self.AllSortedDirectories = {}
-        self.PropertiesToDraw = {  'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = { }#'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
         
         if applyWeight :
             channel_specific_factor = ChannelSpecificFactors[self.Channel]['Overal']
@@ -131,12 +131,13 @@ class SampleChannelInfo:
                         self.PropertiesToDraw[property_name][cut_folder_name].SetLineStyle(1)
                         self.PropertiesToDraw[property_name][cut_folder_name].SetFillStyle(1001)
 
-        if self.Sample == 'TTBarSummer2011':
+        if self.Sample == 'TTBarSummer2011' or self.Sample.find('SysTT') >= 0:
+            print self.Sample
             CosTheta2D = FileSelected.Get( CosTheta2DPlotName % {'channel':channel.lower()} )
             CosTheta2D.Scale( self.Lumi_Weight )
             gROOT.cd()
             self.CosTheta2D = CosTheta2D.RebinX(10 , 'CosTheta2DGenRec_10_' + channel )
-            self.CosTheta2D.RebinY(10)
+            self.CosTheta2D.RebinY(1)
 
         CosTheta = FileSelected.Get( CosThetaPlotName % {'channel':channel.lower()} )
         CosTheta.Scale(self.Lumi_Weight)
@@ -159,56 +160,57 @@ class SampleChannelInfo:
         self.hCosTheta['100'] = CosTheta.Rebin(1 , "costheta100_"+channel+"_" + Sample)
 
 
-        #print FileSelected.GetName()
-        CosThetaVSIso = FileSelected.Get( CosThetaVSIsoPlotName % {'channel':channel.lower()} )
-        CosThetaVSIso.Scale(self.Lumi_Weight)
-        
-        CosThetaVSIso.SetFillStyle(1001)
-        CosThetaVSIso.SetFillColor(Colors[Sample])
-        CosThetaVSIso.SetLineColor(Colors[Sample])
-        gROOT.cd()
-        self.hCosTheta['IsoAll'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_pyAll" , 0 , -1 , "o").Rebin(10)
-        self.hCosTheta['Iso18'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_py18" , 0 , 18*2 , "o").Rebin(10)
-        self.hCosTheta['Iso16'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py16" , 0 , 16*2 , "o").Rebin(10)
-        self.hCosTheta['Iso14'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py14" , 0 , 14*2 , "o").Rebin(10)
-        self.hCosTheta['Iso12'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py12" , 0 , 12*2 , "o").Rebin(10)
-        self.hCosTheta['Iso10'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py10" , 0 , 10*2 , "o").Rebin(10)
-        self.hCosTheta['Iso08'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py08" , 0 , 8*2 , "o").Rebin(10)
-        self.hCosTheta['Iso06'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py06" , 0 , 6*2 , "o").Rebin(10)
-        self.hCosTheta['Iso04'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py04" , 0 , 4*2 , "o").Rebin(10)
-        self.hCosTheta['Iso02'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py02" , 0 , 2*2 , "o").Rebin(10)
+        if extractAllPlots:
+            #print FileSelected.GetName()
+            CosThetaVSIso = FileSelected.Get( CosThetaVSIsoPlotName % {'channel':channel.lower()} )
+            CosThetaVSIso.Scale(self.Lumi_Weight)
 
-        CosThetaVSDR = FileSelected.Get( CosThetaVSDRName % {'channel':channel.lower()} )
-        CosThetaVSDR.Scale(self.Lumi_Weight)
-        
-        CosThetaVSDR.SetFillStyle(1001)
-        CosThetaVSDR.SetFillColor(Colors[Sample])
-        CosThetaVSDR.SetLineColor(Colors[Sample])
-        gROOT.cd()
-        self.hCosTheta['DR40'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR40" , 8 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR50'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR50" , 10 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR60'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR60" , 6*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR70'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR70" , 7*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR80'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR80" , 8*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR90'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR90" , 9*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR100'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR100" , 10*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR150'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR150" , 15*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR200'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR200" , 20*2 , -1 , "o").Rebin(10)
-        self.hCosTheta['DR250'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR250" , 25*2 , -1 , "o").Rebin(10)
+            CosThetaVSIso.SetFillStyle(1001)
+            CosThetaVSIso.SetFillColor(Colors[Sample])
+            CosThetaVSIso.SetLineColor(Colors[Sample])
+            gROOT.cd()
+            self.hCosTheta['IsoAll'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_pyAll" , 0 , -1 , "o").Rebin(10)
+            self.hCosTheta['Iso18'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_py18" , 0 , 18*2 , "o").Rebin(10)
+            self.hCosTheta['Iso16'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py16" , 0 , 16*2 , "o").Rebin(10)
+            self.hCosTheta['Iso14'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py14" , 0 , 14*2 , "o").Rebin(10)
+            self.hCosTheta['Iso12'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py12" , 0 , 12*2 , "o").Rebin(10)
+            self.hCosTheta['Iso10'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py10" , 0 , 10*2 , "o").Rebin(10)
+            self.hCosTheta['Iso08'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py08" , 0 , 8*2 , "o").Rebin(10)
+            self.hCosTheta['Iso06'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py06" , 0 , 6*2 , "o").Rebin(10)
+            self.hCosTheta['Iso04'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py04" , 0 , 4*2 , "o").Rebin(10)
+            self.hCosTheta['Iso02'] = CosThetaVSIso.ProjectionY(self.Sample + channel +"_py02" , 0 , 2*2 , "o").Rebin(10)
 
-        CosThetaVSPt = FileSelected.Get( CosThetaVSPtName % {'channel':channel.lower()} )
-        CosThetaVSPt.Scale(self.Lumi_Weight)
-        
-        CosThetaVSPt.SetFillStyle(1001)
-        CosThetaVSPt.SetFillColor(Colors[Sample])
-        CosThetaVSPt.SetLineColor(Colors[Sample])
-        gROOT.cd()
-        self.hCosTheta['Pt20'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt20" , 20 , -1 , "o").Rebin(10)
-        self.hCosTheta['Pt25'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt25" , 25 , -1 , "o").Rebin(10)
-        self.hCosTheta['Pt30'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt30" , 30 , -1 , "o").Rebin(10)
-        self.hCosTheta['Pt35'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt35" , 35 , -1 , "o").Rebin(10)
-        self.hCosTheta['Pt40'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt40" , 40 , -1 , "o").Rebin(10)
-        self.hCosTheta['Pt45'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt45" , 45 , -1 , "o").Rebin(10)
+            CosThetaVSDR = FileSelected.Get( CosThetaVSDRName % {'channel':channel.lower()} )
+            CosThetaVSDR.Scale(self.Lumi_Weight)
+
+            CosThetaVSDR.SetFillStyle(1001)
+            CosThetaVSDR.SetFillColor(Colors[Sample])
+            CosThetaVSDR.SetLineColor(Colors[Sample])
+            gROOT.cd()
+            self.hCosTheta['DR40'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR40" , 8 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR50'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR50" , 10 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR60'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR60" , 6*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR70'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR70" , 7*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR80'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR80" , 8*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR90'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR90" , 9*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR100'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR100" , 10*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR150'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR150" , 15*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR200'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR200" , 20*2 , -1 , "o").Rebin(10)
+            self.hCosTheta['DR250'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR250" , 25*2 , -1 , "o").Rebin(10)
+
+            CosThetaVSPt = FileSelected.Get( CosThetaVSPtName % {'channel':channel.lower()} )
+            CosThetaVSPt.Scale(self.Lumi_Weight)
+
+            CosThetaVSPt.SetFillStyle(1001)
+            CosThetaVSPt.SetFillColor(Colors[Sample])
+            CosThetaVSPt.SetLineColor(Colors[Sample])
+            gROOT.cd()
+            self.hCosTheta['Pt20'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt20" , 20 , -1 , "o").Rebin(10)
+            self.hCosTheta['Pt25'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt25" , 25 , -1 , "o").Rebin(10)
+            self.hCosTheta['Pt30'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt30" , 30 , -1 , "o").Rebin(10)
+            self.hCosTheta['Pt35'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt35" , 35 , -1 , "o").Rebin(10)
+            self.hCosTheta['Pt40'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt40" , 40 , -1 , "o").Rebin(10)
+            self.hCosTheta['Pt45'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt45" , 45 , -1 , "o").Rebin(10)
 
 
         CosTheta = FileFull.Get( CosThetaPlotName % {'channel':channel.lower()} )
@@ -291,8 +293,8 @@ class SampleCombinedInfo:
             self.LastColumnW = cut
 
 
-        if self.Sample == 'TTBarSummer2011':
-            self.CosTheta2D = EE.CosTheta2D.Clone( 'CosTheta2DGenRec_10_Combined' )
+        if self.Sample == 'TTBarSummer2011' or self.Sample.find('SysTT') >= 0:
+            self.CosTheta2D = EE.CosTheta2D.Clone( 'CosTheta2DGenRec_10_Combined_' + self.Sample )
             self.CosTheta2D.Add( MM.CosTheta2D )
             self.CosTheta2D.Add( EM.CosTheta2D )
 
@@ -308,7 +310,7 @@ class SampleCombinedInfo:
         self.hCosThetaPreselected.Add( MM.hCosThetaPreselected )
         self.hCosThetaPreselected.Add( EM.hCosThetaPreselected )
         
-        self.PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = {}#'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
         self.AllSortedDirectories = {}
 
         if extractAllPlots :
@@ -375,7 +377,7 @@ class SampleInfo:
         self.MM.PropertiesToDraw[Property][Cut].Draw('SAMES')
 
 class DataInfo(SampleInfo):
-    def __init__(self):
+    def __init__(self , extractAllPlots = True):
         self.Name = 'Data'
         self.DataFileNames = {'EE':'DoubleEle2011' , 'MM':'DoubleMuon2011' , 'EM':'ElectronMuon2011'}
         self.DataFullFiles = {}
@@ -386,12 +388,12 @@ class DataInfo(SampleInfo):
             self.DataSelectedFiles[channel] = TFile( FileAddressPattern_Selected % self.DataFileNames[channel] , 'READ')
             self.DataFullFiles[channel] = TFile( FileAddressPattern_Full %  self.DataFileNames[channel] , 'READ')
             
-            self.AllPlots[channel] = SampleChannelInfo( channel , self.Name , self.DataFullFiles[channel] , self.DataSelectedFiles[channel] , False)
+            self.AllPlots[channel] = SampleChannelInfo( channel , self.Name , self.DataFullFiles[channel] , self.DataSelectedFiles[channel] , False , extractAllPlots)
 
         self.EE = self.AllPlots['EE']
         self.MM = self.AllPlots['MM']
         self.EM = self.AllPlots['EM']
-        self.Combined = SampleCombinedInfo( self.Name , self.EE , self.EM , self.MM)
+        self.Combined = SampleCombinedInfo( self.Name , self.EE , self.EM , self.MM , extractAllPlots)
         self.AllPlots['Combined'] = self.Combined
 
     def __del__(self):

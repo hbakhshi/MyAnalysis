@@ -1,9 +1,9 @@
 #! /usr/bin/python -i
 
-from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph, TF2, TRandom, kBlue, kRed, kAzure
+from ROOT import TCanvas,  TFile, THStack, TH1D, gROOT, TF1, TF3, TVirtualFitter, Double, TGraphErrors, TMultiGraph, TGraph, TF2, TRandom, kBlue, kRed, kAzure, TTree
 import array
 from math import sqrt, exp, pi, pow, factorial, log
-import os
+import os, re
 
 class dGammaFunctin:
     def __init__(self , justOne = -2):
@@ -84,6 +84,12 @@ class WeightFunction:
             
         return ret;
 
+class costheta_t:
+    def __init__(self):
+        self.genCosTheta = Double(0.0)
+        self.eventWeight = Double(0.0)
+        self.lumiWeight = Double(0.0)
+
 class LLFunction:
 
     def NCosThetaBins(self):
@@ -93,6 +99,7 @@ class LLFunction:
         return range(1, self.hData.GetNbinsX()+1)
 
     def __init__(self , stack , hData , hTTBar , distribution_function, std_fneg, std_f0 , name , TwoD = False):
+        self.Tree = False
         self.BKGStack = stack
         self.TwoD = TwoD
         self.hData = hData
@@ -126,6 +133,37 @@ class LLFunction:
         self.SeedGenerator = TRandom(65458782)
 
 
+    def SetTreeFile(self , fileName , treeNameFormat , begin , end):
+        self.Tree = True
+        self.TreeFile = TFile(fileName , "READ")
+        self.TreeNameFormat = treeNameFormat        
+
+        self.TreeInfo = {}
+
+        for nBin in range(begin , end+1):
+            treeName = self.TreeNameFormat % {'bin':nBin}
+            tree = self.TreeFile.Get(treeName)
+
+            genCosTheta = array.array('d' , [Double(0.0)])
+            eventWeight = array.array('d' , [Double(0.0)])
+            lumiWeight  = array.array('d' , [Double(0.0)])
+
+            tree.SetBranchAddress("GenCosTheta" , genCosTheta)
+            tree.SetBranchAddress("EventWeight" , eventWeight)
+            tree.SetBranchAddress("LumiWeight" , lumiWeight)            
+
+            thisBinInfo = []
+
+            for entry in range(0 , tree.GetEntries() ):
+                tree.GetEntry(entry)                
+
+                evtweight = eventWeight[0]*lumiWeight[0]
+
+                thisBinInfo.append( ( genCosTheta[0] , evtweight) )
+
+            print "Tree_%d is read" % (nBin)
+            self.TreeInfo[nBin] = thisBinInfo
+
     def SetErrorVariations(self):
         for nBin in self.CosThetaRange():
             if not self.ErrorRandomGenerators.has_key( nBin ):
@@ -135,8 +173,40 @@ class LLFunction:
 
 
     def SaveCanvas(self, fileName , fL , f0 ):
+
+        c0 = TCanvas(fileName+'WeightFuncion')
+        c0.cd()
+
+        wf = WeightFunction.GetWeightFunction(fileName )
+        wf.SetParameters( fL , f0)
+
+
+        if self.TwoD:
+            hWeights = TH1D( 'hFinal_Weights' , 'Final Weights' , len(self.CosThetaRange()) , -1 , 1)
+
+            for binCosTheta in self.CosThetaRange():
+                hprojection = self.TTBar.ProjectionY('_py' , binCosTheta , binCosTheta , 'o')
+                hprojection.Multiply( wf )
+                hWeights.SetBinContent( binCosTheta ,  hprojection.Integral() )
+
+            hWeights.Draw("text L")
+            
+            hRecCosTheta = self.TTBar.ProjectionX('_px')
+            hRecCosTheta.Multiply( wf )
+
+            hRecCosTheta.Draw("text L same")
+
+        else:    
+            wf.Draw()
+
+        c0.SaveAs( c0.GetName() + '.C')
+
+
         c = TCanvas(fileName)
         c.cd()
+
+
+        self.hData.Draw()
 
         stack1 = self.BKGStack
         
@@ -151,9 +221,9 @@ class LLFunction:
         TTBar2.SetFillColor(8)
         stack1.Add(TTBar2)
 
-        stack1.Draw()
+        stack1.Draw('SAME')
         
-        self.hData.Draw('SAMES')
+
         c.SaveAs(fileName + '.C')
 
         fileName = 'ttbar_' + fileName
@@ -166,7 +236,6 @@ class LLFunction:
         FinalDGammaFunction = dGammaFunctin.GetFunction('FinalDGammaFunction')
         FinalDGammaFunction.SetParameters(fL, f0, 0.2)
         FinalDGammaFunction.Draw()
-
 
         hTTBarNorm = None
 
@@ -242,7 +311,32 @@ class LLFunction:
             self.WF1.SetParameters(x[0] , x[1])
             N_TT = 0.0
 
-            if not self.TwoD :
+            if self.Tree:
+                # treeName = self.TreeNameFormat % {'bin':nBin}
+                # tree = self.TreeFile.Get(treeName)
+
+                # genCosTheta = array.array('d' , [Double(0.0)])
+                # eventWeight = array.array('d' , [Double(0.0)])
+                # lumiWeight  = array.array('d' , [Double(0.0)])
+
+                # tree.SetBranchAddress("GenCosTheta" , genCosTheta)
+                # tree.SetBranchAddress("EventWeight" , eventWeight)
+                # tree.SetBranchAddress("LumiWeight" , lumiWeight)
+                
+                # for entry in range(0 ,  tree.GetEntries() ):
+                #     tree.GetEntry(entry)
+
+                #     evtweight = eventWeight[0]*lumiWeight[0]
+                #     WeightVal = self.WF1.Eval(genCosTheta[0])
+
+                for entry in self.TreeInfo[nBin]:
+
+                    evtweight = entry[1]
+                    WeightVal = self.WF1.Eval(entry[0])
+                    
+                    N_TT += (evtweight*WeightVal)
+
+            elif not self.TwoD :
                 WeightVal = self.WF1.Eval(CosTheta)
                 N_TT = WeightVal*self.TTBar.GetBinContent(nBin)
             else:
@@ -250,8 +344,6 @@ class LLFunction:
                 hGenInfo = self.TTBar.ProjectionY( '_py' , nBin , nBin  , 'o')
                 hGenInfo.Multiply( self.WF1 )
                 N_TT = hGenInfo.Integral()
-                #for binGen in range(1 , hGenInfo.GetNbinsX() + 1):
-                #    N_TT += (self.WF1.Eval( hGenInfo.GetBinCenter(binGen) ) * hGenInfo.GetBinContent(binGen))
 
             N_MC = N_BKG + x[2]*N_TT
 
@@ -316,16 +408,17 @@ def GetMinimum(F_,CalcError = True , LoopsForMCErrors = 0):
 
     F = F_[0]
 
-    x_m = Double(0.0)
-    y_m = Double(0.0)
-    z_m = Double(0.0)
+    x_m = Double(0.3)
+    y_m = Double(0.7)
+    z_m = Double(1.0)
 
-    F.GetMinimumXYZ(x_m , y_m , z_m)
     if not CalcError:
+        F.GetMinimumXYZ(x_m , y_m , z_m)        
         return [x_m.real , y_m.real , z_m.real]
 
     if not LoopsForMCErrors == 0:
         #MC ERROR CALC GOES HERE
+        F.GetMinimumXYZ(x_m , y_m , z_m)        
         AllF0 = []
         AllFP = []
         AllFN = []

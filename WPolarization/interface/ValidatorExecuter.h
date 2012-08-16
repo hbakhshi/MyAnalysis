@@ -111,17 +111,17 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
         if ((sampleItr->first.find("TTBarSummer2011") != string::npos)) {
 
             TH2* hist_ee2d = mySampleInfo.GetCosTheta2DPlot("EE", 10);
-            hist_ee2d->Sumw2();            
-            DistributionProducerFromSelected *myDist_ee_signal = new DistributionProducerFromSelected(hist_ee2d, sampleItr->first, "EE", mySampleInfo , true);
-            
+            hist_ee2d->Sumw2();
+            DistributionProducerFromSelected *myDist_ee_signal = new DistributionProducerFromSelected(hist_ee2d, sampleItr->first + "Signal", "EE", mySampleInfo, true);
+
             TH2* hist_mm2d = mySampleInfo.GetCosTheta2DPlot("MM", 10);
             hist_mm2d->Sumw2();
-            DistributionProducerFromSelected *myDist_mm_signal = new DistributionProducerFromSelected(hist_mm2d, sampleItr->first, "MM", mySampleInfo , true);
-            
+            DistributionProducerFromSelected *myDist_mm_signal = new DistributionProducerFromSelected(hist_mm2d, sampleItr->first + "Signal", "MM", mySampleInfo, true);
+
             TH2* hist_em2d = mySampleInfo.GetCosTheta2DPlot("EM", 10);
             hist_em2d->Sumw2();
-            DistributionProducerFromSelected *myDist_em_signal = new DistributionProducerFromSelected(hist_em2d, sampleItr->first, "EM", mySampleInfo , true);
-            
+            DistributionProducerFromSelected *myDist_em_signal = new DistributionProducerFromSelected(hist_em2d, sampleItr->first + "Signal", "EM", mySampleInfo, true);
+
             //            cout<<sampleItr->first<<endl;
             signal_samples_ee[sampleItr->first] = myDist_ee;
             signal_samples_em[sampleItr->first] = myDist_em;
@@ -224,7 +224,7 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
         std::map<string, DistributionProducerFromSelected*> ::iterator sigItr = signal_samples.begin();
         for (; sigItr != signal_samples.end(); sigItr++) {
             //            cout<< "..." << sigItr->first << "..." <<endl;
-            TH2* tmp = dynamic_cast<TH2*>( sigItr->second->GeneratePartialSample(1.0 / 3.0, nPEX) );
+            TH2* tmp = dynamic_cast<TH2*> (sigItr->second->GeneratePartialSample(1.0 / 3.0, nPEX));
             hSumSIGPartial->Add(tmp);
             delete tmp;
         }
@@ -243,15 +243,15 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
             name__ << hSumBGPartial->GetName() << "_" << FNegValueSteps[i];
             title__.str("");
             title__ << hSumBGPartial->GetTitle() << " for F_ = " << FNegValueSteps[i];
-            
-            TH1* SIGinPEX = new TH1D(name__.str().c_str() , title__.str().c_str() , hSumSIGPartial->GetYaxis()->GetNbins() , hSumSIGPartial->GetYaxis()->GetXmin(), hSumSIGPartial->GetYaxis()->GetXmax());
-            for(int bin_id__ = 1 ; bin_id__ < SIGinPEX->GetNbinsX()+1 ; bin_id__ ++){
-                TH1* hproject = hSumSIGPartial->ProjectionY("_py" , bin_id__ , bin_id__ , "o");
+
+            TH1* SIGinPEX = new TH1D(name__.str().c_str(), title__.str().c_str(), hSumSIGPartial->GetYaxis()->GetNbins(), hSumSIGPartial->GetYaxis()->GetXmin(), hSumSIGPartial->GetYaxis()->GetXmax());
+            for (int bin_id__ = 1; bin_id__ < SIGinPEX->GetNbinsX() + 1; bin_id__++) {
+                TH1* hproject = hSumSIGPartial->ProjectionY("_py", bin_id__, bin_id__, "o");
                 hproject->Multiply(&WtbWeightor.first, 1);
-                SIGinPEX->SetBinContent(bin_id__ ,hproject->Integral() );
+                SIGinPEX->SetBinContent(bin_id__, hproject->Integral());
                 delete hproject;
             }
-            
+
             //            for(int mybin = 0; mybin < SIGinPEX->GetXaxis()->GetNbins(); mybin++)
             //                cout<<"SIGinPEX: "<<SIGinPEX->GetBinContent(mybin+1)<<endl;
             // SIGinPEX->Multiply(&WtbWeightor.first, 1);
@@ -276,7 +276,7 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
             //            for(int mybin = 0; mybin < SIGinPEX->GetXaxis()->GetNbins(); mybin++)
             //                cout<<"SIGinPEX: "<<SIGinPEX->GetBinContent(mybin+1)<<endl;
             std::pair<TF3, LikelihoodFunction*> LLinPEXforFNegValueArray = LikelihoodFunction::getLLFunction(
-                    string("F_" + name__.str()), bkg, SIGinPEX, signalMC , true);
+                    string("F_" + name__.str()), bkg, SIGinPEX, signalMC, true);
             TF3 LLinPEXforFNegValue = LLinPEXforFNegValueArray.first;
             //            for(int as = 0; as <1; as+=0.01)
             //                cout<<LLinPEXforFNegValue.Eval(as,1-as,1);
@@ -340,15 +340,15 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
         std::map<string, DistributionProducerFromSelected*>::iterator sigItr = signal_samples.begin();
         for (; sigItr != signal_samples.end(); sigItr++) {
             //            cout<< "..." << sigItr->first<< "..." <<endl;
-            TH2* tmp = dynamic_cast<TH2*> ( sigItr->second->GeneratePartialSampleLumiEQ(nPEXPull) );
+            TH2* tmp = dynamic_cast<TH2*> (sigItr->second->GeneratePartialSampleLumiEQ(nPEXPull));
             TH1* tmp2 = tmp->ProjectionX();
-            hData->Add( tmp2 );
+            hData->Add(tmp2);
             delete tmp;
             delete tmp2;
         }
 
         std::pair<TF3, LikelihoodFunction*> LLinPEXforFNegValueArray = LikelihoodFunction::getLLFunction(
-                string("F_" + name__.str()), bkg, hData, signalMC , true);
+                string("F_" + name__.str()), bkg, hData, signalMC, true);
         TF3 LLinPEXforFNegValue = LLinPEXforFNegValueArray.first;
         double x[3] = {-1., -1., -1.};
         double xerr[3] = {-1., -1., -1.};
@@ -404,6 +404,208 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
     bkg->Write();
 
     outFile->Close();
+}
+
+void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname = "") {
+    string treeFileName = "trees_" + ttbarname + "_BSFDN.root";
+    SamplesInfo mySampleInfo(AllEventsHistogramDirectory , ttbarname);
+    SamplesInfo::ttbarSampleInfo ttbarInfo = mySampleInfo.GetTTBarInfo(ttbarname);
+    double wttee, wttmm, wttem;
+    double Lumi_ee = mySampleInfo.Channels["EE"];
+    double Lumi_em = mySampleInfo.Channels["EM"];
+    double Lumi_mm = mySampleInfo.Channels["MM"];
+
+    std::map<string, double>::iterator sampleItr = mySampleInfo.files_xsec.begin();
+
+    TH2* signalMC = 0;
+    TH1* bkg = 0;
+    TH1* data = 0;
+    for (; sampleItr != mySampleInfo.files_xsec.end(); sampleItr++) {
+
+        TH1* hist_ee = mySampleInfo.GetCosThetaPlot("EE", sampleItr->first, 10);
+        hist_ee->Sumw2();
+
+        TH1* hist_mm = mySampleInfo.GetCosThetaPlot("MM", sampleItr->first, 10);
+        hist_mm->Sumw2();
+
+        TH1* hist_em = mySampleInfo.GetCosThetaPlot("EM", sampleItr->first, 10);
+        hist_em->Sumw2();
+
+        hist_ee->Scale(float(Lumi_ee * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EE")));
+        hist_mm->Scale(float(Lumi_mm * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "MM")));
+        hist_em->Scale(float(Lumi_em * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EM")));
+        //           if(sampleItr == mySampleInfo.Xsections.begin())
+        if (bkg == 0) {
+            if (Channel == "EE")
+                bkg = ((TH1*) hist_ee->Clone(string("bkg_" + string(hist_ee->GetName())).c_str()));
+            else if (Channel == "EM")
+                bkg = ((TH1*) hist_em->Clone(string("bkg_" + string(hist_em->GetName())).c_str()));
+            else if (Channel == "MM")
+                bkg = ((TH1*) hist_mm->Clone(string("bkg_" + string(hist_mm->GetName())).c_str()));
+            else if (Channel == "Combined") {
+                bkg = ((TH1*) hist_ee->Clone(string("bkg_" + string(hist_ee->GetName())).c_str()));
+                bkg->Add(hist_mm);
+                bkg->Add(hist_em);
+            }
+        } else {
+            if (Channel == "EE")
+                bkg->Add(hist_ee);
+            else if (Channel == "EM")
+                bkg->Add(hist_em);
+            else if (Channel == "MM")
+                bkg->Add(hist_mm);
+            else if (Channel == "Combined") {
+                bkg->Add(hist_ee);
+                bkg->Add(hist_mm);
+                bkg->Add(hist_em);
+            }
+        }
+
+        if ((sampleItr->first.find(ttbarname) != string::npos)) {
+
+            TH2* hist_ee2d = mySampleInfo.GetCosTheta2DPlot("EE", 10);
+            hist_ee2d->Sumw2();
+
+            TH2* hist_mm2d = mySampleInfo.GetCosTheta2DPlot("MM", 10);
+            hist_mm2d->Sumw2();
+
+            TH2* hist_em2d = mySampleInfo.GetCosTheta2DPlot("EM", 10);
+            hist_em2d->Sumw2();
+
+            wttee = ttbarInfo.WEE;
+            wttmm = ttbarInfo.WMM;
+            wttem = ttbarInfo.WEM;;
+
+            hist_ee2d->Scale(wttee);
+            hist_mm2d->Scale(wttmm);
+            hist_em2d->Scale(wttem);
+            //            if(sampleItr == mySampleInfo.Xsections.begin())
+            if (signalMC == 0) {
+                if (Channel == "EE")
+                    signalMC = ((TH2*) hist_ee2d->Clone(string("signal_" + string(hist_ee->GetName())).c_str()));
+                else if (Channel == "EM")
+                    signalMC = ((TH2*) hist_em2d->Clone(string("signal_" + string(hist_em->GetName())).c_str()));
+                else if (Channel == "MM")
+                    signalMC = ((TH2*) hist_mm2d->Clone(string("signal_" + string(hist_mm->GetName())).c_str()));
+                else if (Channel == "Combined") {
+                    signalMC = ((TH2*) hist_ee2d->Clone(string("signal_" + string(hist_ee->GetName())).c_str()));
+                    signalMC->Add(hist_mm2d);
+                    signalMC->Add(hist_em2d);
+                }
+            } else {
+                if (Channel == "EE")
+                    signalMC->Add(hist_ee2d);
+                else if (Channel == "EM")
+                    signalMC->Add(hist_em2d);
+                else if (Channel == "MM")
+                    signalMC->Add(hist_mm2d);
+                else if (Channel == "Combined") {
+                    signalMC->Add(hist_ee2d);
+                    signalMC->Add(hist_mm2d);
+                    signalMC->Add(hist_em2d);
+                }
+            }
+        }
+    }
+
+    map<string, string> data_names;
+    data_names["EE"] = "DoubleEle2011";
+    data_names["MM"] = "DoubleMuon2011";
+    data_names["EM"] = "ElectronMuon2011";
+
+    for (map<string, string>::const_iterator data_itr = data_names.begin(); data_itr != data_names.end(); data_itr++) {
+        TH1* hist_ = mySampleInfo.GetCosThetaPlot(data_itr->first, data_itr->second, 10);
+        hist_->Sumw2();
+
+        if (data == 0) {
+            if ((Channel == data_itr->first) || (Channel == "Combined"))
+                data = ((TH1*) hist_->Clone(string("data_" + string(hist_->GetName())).c_str()));
+        } else {
+            if (Channel == "Combined") {
+                data->Add(hist_);
+            }
+        }
+    }
+
+
+    std::vector<TH2*> allHistos;
+    allHistos.push_back(signalMC);    
+    
+    std::pair<TF3, LikelihoodFunction*> LLinPEXforFNegValueArray = LikelihoodFunction::getLLFunction(
+            "Fitter", bkg, data, signalMC, true);
+
+
+    double x[3] = {-1., -1., -1.};
+    double xerr[3] = {-1., -1., -1.};
+    double correlation = 0.0;
+
+    int fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+    double fneg = x[1];
+    double f0 = x[0];
+    double fpos = 1.0 - x[1] - x[0];
+
+    double errfneg = xerr[1];
+    double errf0 = xerr[0];
+    double errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
+
+    cout << "| Old Results";
+    cout << "|" << fneg << "+-" << errfneg;
+    cout << "|" << f0 << "+-" << errf0;
+    cout << "|" << correlation;
+    cout << "|" << fpos << "+-" << errfpos;
+    cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+
+    if (treeFileName != "") {
+        LLinPEXforFNegValueArray.second->SetTreeFile(treeFileName , wttee , wttem , wttmm);
+
+        fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+
+        fneg = x[1];
+        f0 = x[0];
+        fpos = 1.0 - x[1] - x[0];
+
+        errfneg = xerr[1];
+        errf0 = xerr[0];
+        errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
+
+        cout << "|" << 0.0;
+        cout << "|" << fneg << "+-" << errfneg;
+        cout << "|" << f0 << "+-" << errf0;
+        cout << "|" << correlation;
+        cout << "|" << fpos << "+-" << errfpos;
+        cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+
+        LLinPEXforFNegValueArray.second->useTree = false;
+
+        int nBins[] = {10, 20, 50, 80, 100, 200, 400, 500, 1000, 2000, 5000, 10000};
+
+        for (int i = 0; i < 12; i++) {
+            allHistos.push_back( LLinPEXforFNegValueArray.second->setnsignal2DFromTreeBins(nBins[i]) );
+
+            fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+
+            fneg = x[1];
+            f0 = x[0];
+            fpos = 1.0 - x[1] - x[0];
+
+            errfneg = xerr[1];
+            errf0 = xerr[0];
+            errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
+
+            cout << "|" << nBins[i];
+            cout << "|" << fneg << "+-" << errfneg;
+            cout << "|" << f0 << "+-" << errf0;
+            cout << "|" << correlation;
+            cout << "|" << fpos << "+-" << errfpos;
+            cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+        }
+    }
+    
+    TFile f("all2dhistos.root" , "RECREATE");
+    for(vector<TH2*>::const_iterator histo_itr = allHistos.begin() ; histo_itr != allHistos.end() ; histo_itr++)
+        (*histo_itr)->Write();
+    
+    f.Close();
 }
 #endif	/* VALIDATOREXECUTER_H */
 

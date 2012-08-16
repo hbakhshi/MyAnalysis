@@ -27,7 +27,7 @@ WhichChannel = ''
 
 sorted_samples = ['TTBarSummer2011', 'DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
 sorted_samples.reverse()
-systematic_samples = [] #'SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
+systematic_samples = []#'SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
 SamplesInfo = {}
 SysSamplesInfo = {}
 
@@ -38,14 +38,22 @@ stack_costheta_comb = THStack("stackCosTheta",'CosTheta for all Events')
 
 PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} }
 
+PrintCutFlowTables = False
+DrawCosThetaPlots = True
+DrawOtherPlots = False
+DrawControlPlots = False
+DoFit = True
+DrawFitComparisons = True
+WriteAllCombinedFile = False
+ExtractAllPlots = DrawControlPlots or DrawOtherPlots
 
 for sample in sorted_samples:
-    SamplesInfo[sample] = SampleInfo(sample, True)
+    SamplesInfo[sample] = SampleInfo(sample, ExtractAllPlots)
 
-for sample in systematic_samples:
-    SysSamplesInfo[sample] = SampleInfo(sample , True)
+#for sample in systematic_samples:
+#    SysSamplesInfo[sample] = SampleInfo(sample , False)
 
-Data = DataInfo()
+Data = DataInfo(ExtractAllPlots)
 
 SampleInfoType = type( SamplesInfo[SamplesInfo.keys()[0] ])
 
@@ -58,15 +66,9 @@ hAxis.SetStats(0)
 hAxis2 = hAxis.Clone('hAxis_0')
 hAxis3 = hAxis.Clone('hAxis_p')
 
-PrintCutFlowTables = False
-DrawCosThetaPlots = True
-DrawOtherPlots = False
-DrawControlPlots = False
-DoFit = True
-DrawFitComparisons = False
-WriteAllCombinedFile = False
+hSumBKG = None
 
-for  WhichChannel_ in ['Combined'] : # ,'EM' , 'MM' , 'EE' ]:
+for  WhichChannel_ in ['Combined' ,'EM' , 'MM' , 'EE' ]:
      WhichChannel = WhichChannel_
      
      t_mc = Table()
@@ -165,11 +167,14 @@ for  WhichChannel_ in ['Combined'] : # ,'EM' , 'MM' , 'EE' ]:
          FRErr = 0
          for nBins in ['10']: # 'Pt20', 'Pt25', 'Pt30', 'Pt35', 'Pt40', 'Pt45' ,  'DR40' , 'DR50' , 'DR60' , 'DR70' , 'DR80' , 'DR90' , 'DR100' , 'DR150' , 'DR200' , 'DR250' ,  'IsoAll' ,'Iso18' , 'Iso16' , 'Iso14' , 'Iso12' , 'Iso10' , 'Iso08' , 'Iso06' , 'Iso04' , 'Iso02' ]: # , '20' , '25' , '50' , '100']:
              stackAllButTTBar =  SamplesStack( AllSamplesButTTBar , sorted_samples , True , False , False ).stack_costheta[nBins]
+             stackAllButTTBar.SaveAs("a.C")
              #ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).hCosTheta[nBins]
              ttBarH =  SampleInfoType.__getattribute__( SamplesInfo['TTBarSummer2011'] , WhichChannel_).CosTheta2D
              dataH = Data.AllPlots[WhichChannel_].hCosTheta[nBins]
              llFunction = LLFunction.GetLLFunction( WhichChannel_ , stackAllButTTBar , dataH , ttBarH , PoissonDistribution , 0.3 , 0.7 , True)
+             llFunction[1].SetTreeFile( "/home/hbakhshi/Documents/Analysis/Run/WPolarization/trees.root" , "Tree_%(bin)d" , 1 , 10)
              fitVals = GetMinimum( llFunction, True , 0 )
+             print fitVals
              FL = fitVals[0]
              FLErr = fitVals[3]
              F0 = fitVals[1]
@@ -178,6 +183,9 @@ for  WhichChannel_ in ['Combined'] : # ,'EM' , 'MM' , 'EE' ]:
              FRecGenErr = fitVals[5]
              FR = 1.0 - FL - F0
              FRErr = sqrt( FLErr*FLErr + F0Err*F0Err )
+
+             hSumBKG = llFunction[1].hSum
+
              print >>org_file, tableRowFormat % {'nBins':nBins ,'FitName':'3D Fitting' , 'FL':FL , 'FLErr':FLErr , 'F0':F0 , 'F0Err':F0Err , 'FR':FR , 'FRErr':FRErr , 'FRecGen':FRecGen , 'FRecGenErr':FRecGenErr , 'Correlation':str( fitVals[6] ) }
 
              llFunction[1].SaveCanvas( 'fitRes'+ WhichChannel  + nBins  , FL , F0 )
@@ -262,7 +270,17 @@ if WriteAllCombinedFile:
         hCosTheta.Fit(fDGamma1)
 
         hCosTheta.Write()
+
+        if sample.find('TTBarSummer2011') >= 0:
+            SamplesInfo[sample].Combined.CosTheta2D.Write()
+    
+    hSumBKG.Write()
+
     for sample in SysSamplesInfo:
         SysSamplesInfo[sample].Combined.hCosTheta['10'].Write()
+
+        if sample.find('SysTT') >= 0:
+            SysSamplesInfo[sample].Combined.CosTheta2D.Write()
+
     Data.Combined.hCosTheta['10'].Write()
     fOut.Close()

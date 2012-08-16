@@ -20,7 +20,7 @@ python_version_patch := $(word 3,${python_version_full})
 python_lib = -lpython$(python_version_major).$(python_version_minor)
 
 CXX = $(if $(wildcard $(PWD)/external/$(MACHINE)/GCC),$(PWD)/external/$(MACHINE)/GCC/bin/g++ ,g++)
-BASICOPTS = -O0 #-g -DDEBUG
+BASICOPTS = -O0 -g -DDEBUG
 
 CCFLAGS = $(BASICOPTS) -fPIC
 CXXFLAGS = $(BASICOPTS) $(ROOTCFLAGS) -fPIC -DBOOST_FILESYSTEM_VERSION=2 

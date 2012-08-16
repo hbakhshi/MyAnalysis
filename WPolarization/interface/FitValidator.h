@@ -35,16 +35,27 @@ TRandom SeedGeneratorLumiEQ = TRandom(874546620);
 class SamplesInfo {
 public:
 
-    SamplesInfo(string __Wpol_all_location) : Wpol_all_location(__Wpol_all_location) {
-        files_xsec["TTBarSummer2011"] = 157.5;
+    string TTBarName;
+    SamplesInfo(string __Wpol_all_location , string ttbarName = "TTBarSummer2011") : Wpol_all_location(__Wpol_all_location) , TTBarName(ttbarName){
+        files_xsec[ttbarName] = 157.5;
         files_xsec["DYSummer2011"] = 3048.0;
         files_xsec["WJetsSummer2011"] = 31314.0;
+//        files_xsec["SysZJetsQD"] = 3048.0;
+//        files_xsec["SysWJetsQD"] = 31314.0;
         files_xsec["WWSummer2011"] = 4.65;
         files_xsec["SingleTopSummer2011"] = 64.5;
-        files_xsec["SingleTopTWSummer2011"] = 2 * 7.9;
+        files_xsec["SingleTopTWSummer2011"] =  2 * 7.9;
         files_xsec["WZSummer2011"] = 0.6;
         files_xsec["ZZSummer2011"] = 4.65;
 
+        map<string, double> files_xsec_temp;
+        for(map<string, double>::iterator itr = files_xsec.begin() ; itr != files_xsec.end() ; itr ++)
+            files_xsec_temp[ itr->first + "_BSFDN" ] = itr->second;
+        
+        TTBarName += "_BSFDN";
+        files_xsec.clear();
+        files_xsec = files_xsec_temp;
+        
         Channels["EE"] = 4529.518;
         Channels["MM"] = 4459.007;
         Channels["EM"] = 4631.724;
@@ -53,7 +64,34 @@ public:
     ~SamplesInfo() {
     };
 
+    struct ttbarSampleInfo {
+    public:
+        string Name;
+        double WEE;
+        double WEM;
+        double WMM;
+
+        ttbarSampleInfo(string name, double wee, double wem, double wmm) {
+            Name = name;
+            WEE = wee;
+            WEM = wem;
+            WMM = wmm;
+        }
+    };
+    ttbarSampleInfo GetTTBarInfo(string Name){ //usefull for systematics
+        double N0 = ReadN0(Name , "EE");
+        double lval = 157.5 / N0;
+        ttbarSampleInfo ret(Name , Channels["EE"]*lval , Channels["EM"]*lval  , Channels["MM"]*lval );
+        return ret;
+    }
+
     double ReadN0(string Sample, string Channel) const {
+        int pos_ = Sample.find("_");
+        if(pos_ != string::npos){
+            Sample = Sample.substr(0 , pos_);
+        }
+        
+        
         TFile* file = TFile::Open((Wpol_all_location + "/WPol_" + Sample + ".root").c_str(), "READ");
         string selectionPlotName = "Selection/hEventSelection" + Channel;
         TH1* hSelection = (TH1*) file->Get(selectionPlotName.c_str());
@@ -65,7 +103,7 @@ public:
     TH1* GetCosThetaPlot(string Channel, string name, int nFinalBin = 10) {
         //cout << name << endl;
         if (files.count(name) == 0)
-            files[name] = TFile::Open(("./WPol_SelectedTTBars_" + name + ".root").c_str(), "READ");
+            files[name] = TFile::Open(("./WPol_" + name + ".root").c_str(), "READ");
 
         //cout << "./WPol_SelectedTTBars_" + name + ".root" << endl;
 
@@ -92,9 +130,9 @@ public:
 
     TH2* GetCosTheta2DPlot(string Channel, int nFinalBin = 10) {
         //cout << name << endl;
-        string name = "TTBarSummer2011";
+        string name = TTBarName;
         if (files.count(name) == 0)
-            files[name] = TFile::Open(("./WPol_SelectedTTBars_" + name + ".root").c_str(), "READ");
+            files[name] = TFile::Open(("./WPol_" + name + ".root").c_str(), "READ");
 
         //cout << "./WPol_SelectedTTBars_" + name + ".root" << endl;
 
@@ -210,7 +248,7 @@ public:
                     , hInput->GetYaxis()->GetXmin(), hInput->GetYaxis()->GetXmax());
             hRet->Sumw2();
             for (unsigned int i = 0; i < selectedValues.size(); i++)
-                ((TH2*)hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)], Weight);
+                ((TH2*) hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)], Weight);
         } else {
             hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
                     , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());
@@ -251,7 +289,7 @@ public:
                     , hInput->GetYaxis()->GetXmin(), hInput->GetYaxis()->GetXmax());
             hRet->Sumw2();
             for (unsigned int i = 0; i < selectedValues.size(); i++)
-                ((TH2*)hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)]);
+                ((TH2*) hRet)->Fill(sampleContent[selectedValues.at(i)], sampleContentGen[selectedValues.at(i)]);
         } else {
             hRet = new TH1D(hName.c_str(), hTitle.c_str(), hInput->GetXaxis()->GetNbins()
                     , hInput->GetXaxis()->GetXmin(), hInput->GetXaxis()->GetXmax());

@@ -97,6 +97,8 @@ process.SelectedEvents = cms.VPSet(
 IsTTBar = False
 if INPUT.find( 'TTBarSummer2011' ) >= 0:
     IsTTBar = True
+if INPUT.find( 'SysTT' ) >= 0:
+    IsTTBar = True
 if INPUT.find( 'SELECTED' ) >= 0:
     INPUT = 'SelectedEvents'
 INPUTPSet = process.vpsets[INPUT][0]
@@ -289,6 +291,8 @@ process.WPolarization = cms.PSet(
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(1,2,3,4),
+            FillTree = cms.untracked.bool(True),
+            TreeFileName = cms.string("tree_dilep.root"),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -299,6 +303,8 @@ process.WPolarization = cms.PSet(
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(3),
+            FillTree = cms.untracked.bool(True),
+            TreeFileName = cms.string("tree_ee.root"),            
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -309,6 +315,8 @@ process.WPolarization = cms.PSet(
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(4),
+            FillTree = cms.untracked.bool(True),
+            TreeFileName = cms.string("tree_mm.root"),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -319,6 +327,8 @@ process.WPolarization = cms.PSet(
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(1 , 2), #is hard-coded as em==me
+            FillTree = cms.untracked.bool(True),
+            TreeFileName = cms.string("tree_em.root"),            
             FillRec=cms.bool(True)
             )
 #       cms.PSet(

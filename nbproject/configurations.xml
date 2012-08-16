@@ -735,6 +735,10 @@
           </df>
         </df>
         <df name="WPolarization">
+          <df name="BSFDN">
+          </df>
+          <df name="BSFUP">
+          </df>
           <df name="Combined">
             <in>Combined_cos_theta.C</in>
             <in>Combined_cos_theta_preselected.C</in>
@@ -919,6 +923,10 @@
           </df>
           <df name="FitValidation">
           </df>
+          <df name="JESDN">
+          </df>
+          <df name="JESUP">
+          </df>
           <df name="MM">
             <in>MM_cos_theta.C</in>
             <in>MM_cos_theta_preselected.C</in>
@@ -995,7 +1003,13 @@
             <in>aaa5zzNumberOfBJetszSecondLeptonPt.C</in>
             <in>aaa5zzNumberOfBJetszThirdJetPt.C</in>
           </df>
+          <in>a.C</in>
+          <in>allBkgs.C</in>
+          <in>allData.C</in>
+          <in>fitResCombined10.C</in>
+          <in>fitResCombined10WeightFuncion.C</in>
           <in>tdrstyle.C</in>
+          <in>ttbar_fitResCombined10.C</in>
         </df>
       </df>
       <df name="WPolarization">

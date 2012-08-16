@@ -7,12 +7,15 @@
 
 #include "WPolarization/interface/CosThetaAnalysis.h"
 #include "TLorentzVector.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "TROOT.h"
 
 CosThetaAnalysis::CosThetaAnalysis(const edm::ParameterSet& ps) : BASE(ps),
 AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")),
 solverSolution((TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions)(ps.getParameter<int >("SolverSolution"))),
 solverName(ps.getParameter<string >("SolverName")),
 FillGen(ps.getParameter<bool >("FillGen")),
+FillTree(ps.getUntrackedParameter<bool >("FillTree", false)),
 FillRec(ps.getParameter<bool >("FillRec")) {
 
 
@@ -38,7 +41,29 @@ FillRec(ps.getParameter<bool >("FillRec")) {
         hCosThetaAllLeptonsVsLeptonIsolation = new TH2D("hCosThetaAllLeptonsVsLeptonIsolation", "cos(#theta) for all leptons vs. lepton isolation", 40, 0.0, 0.2, 100, -1, 1);
         hCosThetaAllLeptonsVsLeptonJetDR = new TH2D("hCosThetaAllLeptonsVsLeptonJetDR", "cos(#theta) for all leptons vs. lepton #delta R with the bjet", 400, 0.0, 20, 100, -1, 1);
         hCosThetaAllLeptonsVsLeptonPt = new TH2D("hCosThetaAllLeptonsVsLeptonPt", "cos(#theta) for all leptons vs. lepton p_t", 1000, 0.0, 1000, 100, -1, 1);
-        hCosThetaAllGenVsREC = new TH2D("hCosThetaAllGenVsREC", "cos(#theta) for all leptons in gen-level vs. rec-level", 100, -1.0, 1.0, 100, -1, 1);
+        hCosThetaAllGenVsREC = new TH2D("hCosThetaAllGenVsREC", "cos(#theta) for all leptons in gen-level vs. rec-level;cos(#theta_{rec});cos(#theta_{rec})", 100, -1.0, 1.0, 100, -1, 1);
+        hCosThetaAllGenVsRECVsDR = new TH3D("hCosThetaAllGenVsRECvsDR", "cos(#theta) for all leptons in gen-level vs. rec-level;cos(#theta_{rec});cos(#theta_{rec});#Delta R", 100, -1.0, 1.0, 100, -1, 1, 80, 0.0, 8.0);
+
+        if (FillTree) {
+            fileTree = TFile::Open(ps.getParameter<string>("TreeFileName").c_str(), "RECREATE");
+            fileTree->cd();
+            for (int i = 1; i < 11; i++) {
+                ostringstream tree_name_;
+                tree_name_ << "Tree_" << i;
+
+                string tree_name = tree_name_.str();
+
+                TTree* t = (allTrees[i] = new TTree(tree_name.c_str(), tree_name.c_str()));
+
+                t->Branch("GenCosTheta", &genCosThetaValueHolder, "GenCosTheta/D");
+                t->Branch("EventWeight", &eventWeight, "EventWeight/D");
+                t->Branch("nPU", &nPU, "nPU/I");
+                t->Branch("nPV", &nPV, "nPV/I");
+                t->Branch("LumiWeight", &lumiWeight, "LumiWeight/D");
+                t->Branch("eventType", &eventType, "eventType/I");
+            }
+            gROOT->cd();
+        }
     }
 }
 
@@ -90,11 +115,70 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
     hCosThetaAllLeptonsVsLeptonIsolation->Fill(ev->TopBar_Rec->W.leptonIsolationValue, costheta_tbar, ev->Weight);
     hCosThetaAllLeptonsVsLeptonJetDR->Fill(ev->TopBar_Rec->LeptonBDeltaR(), costheta_tbar, ev->Weight);
     hCosThetaAllLeptonsVsLeptonPt->Fill(ev->TopBar_Rec->W.lepton.Pt(), costheta_tbar, ev->Weight);
-    
+
 
     if ((FillGen && ev->GenDecayMode == ev->RecDecayMode)) {
         hCosThetaAllGenVsREC->Fill(costheta_top, cosThetaGenPos, ev->Weight);
         hCosThetaAllGenVsREC->Fill(costheta_tbar, cosThetaGenNeg, ev->Weight);
+
+        double dr1 = ROOT::Math::VectorUtil::DeltaR(ev->Top_Rec->getTop(), ev->TOP_Gen.getTop());
+        hCosThetaAllGenVsRECVsDR->Fill(costheta_top, cosThetaGenPos, dr1, ev->Weight);
+        double dr2 = ROOT::Math::VectorUtil::DeltaR(ev->TopBar_Rec->getTop(), ev->TOPBar_Gen.getTop());
+        hCosThetaAllGenVsRECVsDR->Fill(costheta_tbar, cosThetaGenNeg, dr2, ev->Weight);
+
+        if (FillTree) {
+            fileTree->cd();
+            switch (ev->RecDecayMode) {
+                case TopAnalysis::TTBarDileptonicEvent::DiEle:
+                    lumiWeight = 0.191553;
+                    eventWeight = ev->Weight * 0.994;
+                    break;
+                case TopAnalysis::TTBarDileptonicEvent::DiMu:
+                    lumiWeight = 0.189140;
+                    eventWeight = ev->Weight * 0.997;
+                    break;
+                case TopAnalysis::TTBarDileptonicEvent::ElM_MuP:
+                case TopAnalysis::TTBarDileptonicEvent::ElP_MuM:
+                    lumiWeight = 0.196072;
+                    eventWeight = ev->Weight * 0.995;
+                    break;
+                default:
+                    cout << "Nonusual RecDecayMode Value : " << ev->RecDecayMode << endl;
+                    break;
+            }
+            nPU = ev->PUnumInteractions;
+            nPV = ev->NPrimaryVertices;
+            eventType = int(ev->RecDecayMode);
+
+            if (costheta_top > 1.0 || costheta_top < -1.0)
+                cout << "wrong costhet* t value" << costheta_top << endl;
+            else {
+                int binGen1; // = (int) (floor(costheta_top / 0.2) + 6.0);
+                binGen1 = 1 + int (10 * (costheta_top + 1.0) / (2.0));
+                genCosThetaValueHolder = cosThetaGenPos;
+                if (binGen1 > 10)
+                    binGen1 = 10;
+                if (allTrees.count(binGen1) == 1)
+                    allTrees[binGen1]->Fill();
+                else
+                    cout << "wrong binGen1 value : " << costheta_top << "  " << binGen1 << endl;
+            }
+
+            if (costheta_tbar > 1.0 || costheta_tbar < -1.0)
+                cout << "wrong costhet* tbar value" << costheta_tbar << endl;
+            else {
+                int binGen2; //= (int) (floor(costheta_tbar / 0.2) + 6.0);
+                binGen2 = 1 + int (10 * (costheta_tbar + 1.0) / (2.0));
+                genCosThetaValueHolder = cosThetaGenNeg;
+                if (binGen2 > 10)
+                    binGen2 = 10;
+                if (allTrees.count(binGen2) == 1)
+                    allTrees[binGen2]->Fill();
+                else
+                    cout << "wrong binGen2 value : " << costheta_tbar << "  " << binGen2 << endl;
+            }
+            gROOT->cd();
+        }
     }
 
     hCosThetaAllLeptonsUnWeighted->Fill(costheta_top);
@@ -111,6 +195,58 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
 }
 
 void CosThetaAnalysis::End() {
+    if (FillTree) {
+        fileTree->cd();
+        for (int i = 1; i < 11; i++) {
+            allTrees[i]->Write();
+        }
+
+        TH2* signal2DFromTree = new TH2D("hsignal2DFromTree", "signal2DFromTree", 10, -1.0, 1.0, 10000, -1.0, 1.0);
+        for (int nBin = 1; nBin < 10 + 1; nBin++) {
+            double binCenter = hCosThetaAllGenVsREC->GetXaxis()->GetBinCenter(nBin);
+            ostringstream treeName;
+
+            treeName << "Tree_" << nBin;
+            TTree* tree = (TTree*) allTrees[nBin];
+
+            double genCosTheta = 0.0;
+            double eventWeight = 0.0;
+            double lumiWeight = 0.0;
+            int eventType = 0.0;
+
+            tree->SetBranchAddress("GenCosTheta", &genCosTheta);
+            tree->SetBranchAddress("EventWeight", &eventWeight);
+            tree->SetBranchAddress("LumiWeight", &lumiWeight);
+            tree->SetBranchAddress("eventType", &eventType);
+
+
+            for (int entry = 0; entry < tree->GetEntries(); entry++) {
+
+                tree->GetEntry(entry);
+
+                double evtweight = eventWeight; //* lumiWeight;
+
+                if (eventType == 3) { //dile
+                    evtweight /= 0.994;
+                    evtweight *= 0.192709;
+                } else if (eventType == 1 || eventType == 2) {//emu
+                    evtweight /= 0.995;
+                    evtweight *= 0.197058;
+                } else if (eventType == 4) {//emu
+                    evtweight /= 0.997;
+                    evtweight *= 0.189709;
+                }
+
+                signal2DFromTree->Fill(binCenter, genCosTheta, evtweight);
+            }
+            cout << "Tree_" << (nBin) << "is read" << endl;
+        }
+
+        signal2DFromTree->Write();
+        
+        fileTree->Close();
+    }
+
     TFile* file = info::TheInfo->OutFile;
     file->cd();
     file->mkdir(this->Name.c_str())->cd();
@@ -146,6 +282,8 @@ void CosThetaAnalysis::End() {
         hCosThetaAllLeptonsVsLeptonJetDR->Write();
         hCosThetaAllLeptonsVsLeptonPt->Write();
         hCosThetaAllGenVsREC->Write();
+        hCosThetaAllGenVsRECVsDR->Write();
+
     }
 
     if (FillGen) {

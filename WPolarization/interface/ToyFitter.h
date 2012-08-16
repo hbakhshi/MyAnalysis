@@ -12,12 +12,16 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TROOT.h"
+#include "TFile.h"
+#include "TTree.h"
 #include "TMath.h"
 #include "TCanvas.h"
 #include "TRandom1.h"
 #include "TVirtualFitter.h"
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <map>
 
 using namespace std;
 
@@ -87,15 +91,17 @@ public:
         data->Sumw2();
         bkg->Sumw2();
         signal->Sumw2();
+        this->Tree = false;
     }
 
-    LLBase(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum, string sss_tmp , double std_f0 = 0.7, double std_fneg = 0.3)
+    LLBase(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum, string sss_tmp, double std_f0 = 0.7, double std_fneg = 0.3)
     : Name(name), bkg(nonWtbSum), data(hData), signal2D(WtbSum),
     weightor(WeightFunctionCreator::getWeightFunction("wieghtor" + name, std_f0, std_fneg)) {
         data->Sumw2();
         bkg->Sumw2();
         signal2D->Sumw2();
         signal = NULL;
+        this->Tree = false;
     }
 
     virtual ~LLBase() {
@@ -134,6 +140,68 @@ public:
         //        cout<<"LL: "<<LL<<endl;
         return LL;
     }
+
+    void SetTreeFile(string fileName , double wee , double wem , double wmm) {
+        this->Tree = true;
+        this->useTree = true;
+        this->nsignal2DFromTreeBins = 10000;
+        int nbins = data->GetXaxis()->GetNbins();
+
+        TFile* TreeFile = TFile::Open(fileName.c_str(), "UPDATE");
+        signal2DFromTree = new TH2D("hsignal2DFromTree", "signal2DFromTree", nbins, -1.0, 1.0, 10000, -1.0, 1.0);
+        TH1D* heventtype = new TH1D("heventtype" , "event type" , 15 , 0.0 , 15 );
+        for (int nBin = 1; nBin < nbins + 1; nBin++) {
+            double binCenter = data->GetBinCenter(nBin);
+            ostringstream treeName;
+
+            treeName << "Tree_" << nBin;
+            TTree* tree = (TTree*) TreeFile->Get(treeName.str().c_str());
+
+            double genCosTheta = 0.0;
+            double eventWeight = 0.0;
+            double lumiWeight = 0.0;
+            int eventType = 0.0;
+            
+            tree->SetBranchAddress("GenCosTheta", &genCosTheta);
+            tree->SetBranchAddress("EventWeight", &eventWeight);
+            tree->SetBranchAddress("LumiWeight", &lumiWeight);
+            tree->SetBranchAddress("eventType", &eventType);
+
+
+            for (int entry = 0; entry < tree->GetEntries(); entry++) {
+
+                tree->GetEntry(entry);
+                heventtype->Fill(eventType);
+                
+                double evtweight = eventWeight ; //* lumiWeight;
+                
+                if(eventType == 3) { //dile
+                    evtweight/=0.994;
+                    evtweight*=wee; //0.192709;
+                }else if(eventType == 1 || eventType == 2){//emu
+                    evtweight/=0.995;
+                    evtweight*=wem; //0.197058;
+                }else if(eventType == 4){//emu
+                    evtweight/=0.997;
+                    evtweight*=wmm; //0.189709;
+                }
+
+                TreeInfo[nBin].push_back(make_pair(genCosTheta, evtweight));
+
+
+                signal2DFromTree->Fill(binCenter, genCosTheta, evtweight);
+            }
+            // cout << "Tree_" << (nBin) << "is read" << endl;
+        }
+
+        //signal2DFromTree->Write();
+        gROOT->cd();
+        signal2DFromTree = (TH2*) signal2DFromTree->Clone("Cloned");
+        
+        TreeFile->cd();
+        heventtype->Write();
+        TreeFile->Close();
+    }
 protected:
     string Name;
     TH1* bkg;
@@ -142,6 +210,22 @@ protected:
     TH2* signal2D;
     std::pair<TF1, WeightFunctionCreator*> weightor;
 
+    bool Tree;
+    map< int, vector< pair<double, double> > > TreeInfo;
+    TH2* signal2DFromTree;
+    TH2* signal2DFromTreeRebinned;
+    int nsignal2DFromTreeBins;
+public:
+    bool useTree;
+    TH2* setnsignal2DFromTreeBins(int n){
+        nsignal2DFromTreeBins = n;
+        stringstream newName ;
+        newName << signal2DFromTree->GetName() << n ;
+        gROOT->cd();
+        return (this->signal2DFromTreeRebinned = signal2DFromTree->RebinY( signal2DFromTree->GetNbinsY()/n , newName.str().c_str() ) );
+    }
+    double wttee,wttmm,wttem;
+protected:   
     virtual vector<double> getNdataNmc(int bin, double f0, double f_, double rec_gen) = 0;
 
     double getWeight(double costheta, double f0, double f_) {
@@ -159,19 +243,19 @@ public:
 
     };
 
-    LikelihoodFunction(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum , string sss_tmp) : LLBase(name, nonWtbSum, hData, WtbSum , sss_tmp) {
+    LikelihoodFunction(string name, TH1* nonWtbSum, TH1* hData, TH2* WtbSum, string sss_tmp) : LLBase(name, nonWtbSum, hData, WtbSum, sss_tmp) {
 
     };
 
     ~LikelihoodFunction() {
     }
 
-    static std::pair<TF3, LikelihoodFunction*> getLLFunction(string name, TH1* nonWtbSum, TH1* hData, TH1* WtbSum , bool castTOH2) {
-        LikelihoodFunction * functor ;
-        if(!castTOH2)
+    static std::pair<TF3, LikelihoodFunction*> getLLFunction(string name, TH1* nonWtbSum, TH1* hData, TH1* WtbSum, bool castTOH2) {
+        LikelihoodFunction * functor;
+        if (!castTOH2)
             functor = new LikelihoodFunction(name, nonWtbSum, hData, WtbSum);
         else
-            functor = new LikelihoodFunction( name, nonWtbSum, hData, (TH2*)WtbSum , "" );
+            functor = new LikelihoodFunction(name, nonWtbSum, hData, (TH2*) WtbSum, "");
         TF3 ret(name.c_str(), functor, 0.0, 1.0, 0.0, 0.1, 0.0, 2.0, 0, "LikelihoodFunction");
         ret.SetRange(0.0, 0.0, 0.000001, 1.0, 1.0, 2.0);
         return make_pair(ret, functor);
@@ -192,17 +276,36 @@ protected:
 
         double nSignal = 0.0;
 
-        if (this->signal != NULL) {
-            double weight = getWeight(costheta, f0, f_) * rec_gen;
+        if (this->Tree) {
+            if (this->useTree) {
+                for (vector < pair<double, double > > ::const_iterator itr = this->TreeInfo[bin].begin();
+                        itr != this->TreeInfo[bin].end(); itr++) {
+
+                    double evtweight = itr->second;
+                    double WeightVal = getWeight(itr->first, f0, f_);
+
+                    nSignal += (evtweight * WeightVal);
+                }
+            } else {
+                weightor.first.SetParameters(f0, f_);
+                gROOT->cd();
+
+                TH1* hithrecbin = this->signal2DFromTreeRebinned->ProjectionY("_py", bin, bin, "o");
+                
+                hithrecbin->Multiply(&(weightor.first), 1.0);
+                nSignal = hithrecbin->Integral();
+            }
+        } else if (this->signal != NULL) {
+            double weight = getWeight(costheta, f0, f_);
             nSignal = weight * signal->GetBinContent(bin);
-        }else{
+        } else {
             weightor.first.SetParameters(f0, f_);
             gROOT->cd();
-            TH1* hithrecbin = this->signal2D->ProjectionY("_py" , bin , bin , "o");
-            hithrecbin->Multiply( &(weightor.first) , rec_gen);
+            TH1* hithrecbin = this->signal2D->ProjectionY("_py", bin, bin, "o");
+            hithrecbin->Multiply(&(weightor.first), 1.0);
             nSignal = hithrecbin->Integral();
         }
-        double nMC = bkg->GetBinContent(bin) + nSignal;
+        double nMC = bkg->GetBinContent(bin) + (nSignal * rec_gen);
         //        cout<<"****** "<<nData<<"\t"<<nMC<<endl;
         vector<double> ret;
         ret.push_back(nData);
@@ -289,10 +392,12 @@ int GetMinimum(TF3 F, double * x, double * xerr, double & corr12, bool CalcError
     //    based on the documentation of TF3::GetMinimumXYZ from
     //    http://root.cern.ch/root/html532/src/TF3.cxx.html#QUjxjE
     //    F.Print("all");
-    F.GetMinimumXYZ(x[0], x[1], x[2]);
     //    cout<<x[0]<<"\t"<<x[1]<<"\t"<<x[2]<<endl;
-    if (!CalcError)
+    if (!CalcError) {
+        F.GetMinimumXYZ(x[0], x[1], x[2]);
+
         return 0;
+    }
     //    go to minuit for the final minimization
 
     TVirtualFitter * minuit = TVirtualFitter::Fitter(&F, 3);
@@ -307,9 +412,9 @@ int GetMinimum(TF3 F, double * x, double * xerr, double & corr12, bool CalcError
     double yu = 0.0;
     double zl = 0.0;
     double zu = 0.0;
-    minuit->SetParameter(0, "x", x[0], 0.1, xl, xu);
-    minuit->SetParameter(1, "y", x[1], 0.1, yl, yu);
-    minuit->SetParameter(2, "z", x[2], 0.1, zl, zu);
+    minuit->SetParameter(0, "x", 0.7, 0.1, xl, xu);
+    minuit->SetParameter(1, "y", 0.3, 0.1, yl, yu);
+    minuit->SetParameter(2, "z", 1.0, 0.1, zl, zu);
     for (int i = 0; i < 10; i++)
         arg_list[i] = 1.;
     Int_t fitResult = minuit->ExecuteCommand("MIGRAD", arg_list, 0);
