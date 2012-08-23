@@ -45,7 +45,7 @@ FillRec(ps.getParameter<bool >("FillRec")) {
         hCosThetaAllGenVsRECVsDR = new TH3D("hCosThetaAllGenVsRECvsDR", "cos(#theta) for all leptons in gen-level vs. rec-level;cos(#theta_{rec});cos(#theta_{rec});#Delta R", 100, -1.0, 1.0, 100, -1, 1, 80, 0.0, 8.0);
 
         if (FillTree) {
-            fileTree = TFile::Open(ps.getParameter<string>("TreeFileName").c_str(), "RECREATE");
+            fileTree = TFile::Open(ps.getParameter<string > ("TreeFileName").c_str(), "RECREATE");
             fileTree->cd();
             for (int i = 1; i < 11; i++) {
                 ostringstream tree_name_;
@@ -56,11 +56,17 @@ FillRec(ps.getParameter<bool >("FillRec")) {
                 TTree* t = (allTrees[i] = new TTree(tree_name.c_str(), tree_name.c_str()));
 
                 t->Branch("GenCosTheta", &genCosThetaValueHolder, "GenCosTheta/D");
+                t->Branch("RecCosTheta", &recCosThetaValueHolder, "RecCosTheta/D");
+
                 t->Branch("EventWeight", &eventWeight, "EventWeight/D");
+                t->Branch("eventType", &eventType, "eventType/I");
+
                 t->Branch("nPU", &nPU, "nPU/I");
                 t->Branch("nPV", &nPV, "nPV/I");
-                t->Branch("LumiWeight", &lumiWeight, "LumiWeight/D");
-                t->Branch("eventType", &eventType, "eventType/I");
+
+                t->Branch("isElectron", &isElectron, "isElectron/O");
+                t->Branch("LeptonPt", &LeptonPt, "LeptonPt/D");
+                t->Branch("LeptonEta", &LeptonEta, "LeptonEta/D");
             }
             gROOT->cd();
         }
@@ -128,24 +134,7 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
 
         if (FillTree) {
             fileTree->cd();
-            switch (ev->RecDecayMode) {
-                case TopAnalysis::TTBarDileptonicEvent::DiEle:
-                    lumiWeight = 0.191553;
-                    eventWeight = ev->Weight * 0.994;
-                    break;
-                case TopAnalysis::TTBarDileptonicEvent::DiMu:
-                    lumiWeight = 0.189140;
-                    eventWeight = ev->Weight * 0.997;
-                    break;
-                case TopAnalysis::TTBarDileptonicEvent::ElM_MuP:
-                case TopAnalysis::TTBarDileptonicEvent::ElP_MuM:
-                    lumiWeight = 0.196072;
-                    eventWeight = ev->Weight * 0.995;
-                    break;
-                default:
-                    cout << "Nonusual RecDecayMode Value : " << ev->RecDecayMode << endl;
-                    break;
-            }
+            eventWeight = ev->Weight;
             nPU = ev->PUnumInteractions;
             nPV = ev->NPrimaryVertices;
             eventType = int(ev->RecDecayMode);
@@ -156,6 +145,12 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
                 int binGen1; // = (int) (floor(costheta_top / 0.2) + 6.0);
                 binGen1 = 1 + int (10 * (costheta_top + 1.0) / (2.0));
                 genCosThetaValueHolder = cosThetaGenPos;
+                recCosThetaValueHolder = costheta_top;
+                
+                isElectron = ev->Top_Rec->W.isElectron;
+                LeptonPt =  ev->Top_Rec->W.lepton.Pt();
+                LeptonEta =  ev->Top_Rec->W.lepton.Eta();
+                
                 if (binGen1 > 10)
                     binGen1 = 10;
                 if (allTrees.count(binGen1) == 1)
@@ -170,6 +165,12 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
                 int binGen2; //= (int) (floor(costheta_tbar / 0.2) + 6.0);
                 binGen2 = 1 + int (10 * (costheta_tbar + 1.0) / (2.0));
                 genCosThetaValueHolder = cosThetaGenNeg;
+                recCosThetaValueHolder = costheta_tbar;
+                
+                isElectron = ev->TopBar_Rec->W.isElectron;
+                LeptonPt =  ev->TopBar_Rec->W.lepton.Pt();
+                LeptonEta =  ev->TopBar_Rec->W.lepton.Eta();
+                
                 if (binGen2 > 10)
                     binGen2 = 10;
                 if (allTrees.count(binGen2) == 1)
@@ -243,7 +244,7 @@ void CosThetaAnalysis::End() {
         }
 
         signal2DFromTree->Write();
-        
+
         fileTree->Close();
     }
 

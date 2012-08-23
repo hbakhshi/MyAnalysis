@@ -292,7 +292,7 @@ process.WPolarization = cms.PSet(
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(1,2,3,4),
             FillTree = cms.untracked.bool(True),
-            TreeFileName = cms.string("tree_dilep.root"),
+            TreeFileName = cms.string("tree_dilep_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -304,7 +304,7 @@ process.WPolarization = cms.PSet(
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(3),
             FillTree = cms.untracked.bool(True),
-            TreeFileName = cms.string("tree_ee.root"),            
+            TreeFileName = cms.string("tree_ee_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),            
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -316,7 +316,7 @@ process.WPolarization = cms.PSet(
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(4),
             FillTree = cms.untracked.bool(True),
-            TreeFileName = cms.string("tree_mm.root"),
+            TreeFileName = cms.string("tree_mm_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),
             FillRec=cms.bool(True)
             ),
         cms.PSet(
@@ -328,7 +328,7 @@ process.WPolarization = cms.PSet(
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(1 , 2), #is hard-coded as em==me
             FillTree = cms.untracked.bool(True),
-            TreeFileName = cms.string("tree_em.root"),            
+            TreeFileName = cms.string("tree_em_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),            
             FillRec=cms.bool(True)
             )
 #       cms.PSet(

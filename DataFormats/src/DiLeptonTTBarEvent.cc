@@ -14,7 +14,7 @@ NumberOfSolutions(0) {
 }
 
 TopAnalysis::TTBarDileptonicEvent::SolverResults::SolverResults(string name, math::XYZTLorentzVector the_b, math::XYZTLorentzVector the_bbar,
-        math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen) :
+        math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, bool isPlusEle , bool isMinusEle , double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen) :
 Top_Rec(+1),
 TopBar_Rec(-1),
 Top_Gen(tgen),
@@ -24,9 +24,11 @@ NumberOfSolutions(0) {
 
     Top_Rec.b.SetXYZT(the_b.X(), the_b.Y(), the_b.Z(), the_b.T());
     Top_Rec.W.lepton.SetXYZT(the_lplus.X(), the_lplus.Y(), the_lplus.Z(), the_lplus.T());
+    Top_Rec.W.isElectron = isPlusEle;
 
     TopBar_Rec.b.SetXYZT(the_bbar.X(), the_bbar.Y(), the_bbar.Z(), the_bbar.T());
     TopBar_Rec.W.lepton.SetXYZT(the_lminus.X(), the_lminus.Y(), the_lminus.Z(), the_lminus.T());
+    TopBar_Rec.W.isElectron = isMinusEle;
 
     this->MET.Set(met_x, met_y);
 
@@ -58,7 +60,7 @@ void TopAnalysis::TTBarDileptonicEvent::SolverResults::SwapBs() {
 
 TopAnalysis::TTBarDileptonicEvent::SolverResults* TopAnalysis::TTBarDileptonicEvent::AddSolverResults(string name, int the_b_index, int the_bbar_index) {
     TopAnalysis::TTBarDileptonicEvent::SolverResults results(name, Jets[the_b_index], Jets[the_bbar_index],
-            GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
+            GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0),GetLepton(+1)->isElectron() , GetLepton(-1)->isElectron(), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
 
     results.Top_Rec.W.leptonIsolationValue = GetLepton(+1)->IsolationValue();
     results.TopBar_Rec.W.leptonIsolationValue = GetLepton(-1)->IsolationValue();

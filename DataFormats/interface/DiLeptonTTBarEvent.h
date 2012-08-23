@@ -58,7 +58,7 @@ namespace TopAnalysis {
             struct WBoson {
                 TLorentzVector lepton;
                 TLorentzVector neutrino;
-
+                bool isElectron;
                 double leptonIsolationValue;
             } W;
 
@@ -105,7 +105,7 @@ namespace TopAnalysis {
 
             //SolverResults(vector<double> pnux, vector<double> pnuy, vector<double> pnuz, vector<double> pnubx, vector<double> pnuby, vector<double> pnubz);
 
-            SolverResults(string name,  math::XYZTLorentzVector the_b,  math::XYZTLorentzVector the_bbar,  math::XYZTLorentzVector the_lminus,  math::XYZTLorentzVector the_lplus, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen );
+            SolverResults(string name,  math::XYZTLorentzVector the_b,  math::XYZTLorentzVector the_bbar,  math::XYZTLorentzVector the_lminus,  math::XYZTLorentzVector the_lplus,bool isPlusEle , bool isMinusEle , double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen );
             void SwapBs();
             //to be able to put in a map
             SolverResults();

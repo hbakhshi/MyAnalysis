@@ -132,8 +132,11 @@ public:
     TH3* hCosThetaAllGenVsRECVsDR;
     std::map<int , TTree*> allTrees;
     double genCosThetaValueHolder;
+    double recCosThetaValueHolder;
     double eventWeight;
-    double lumiWeight;
+    bool   isElectron;
+    double LeptonPt;
+    double LeptonEta;
     int nPU;
     int nPV;
     int eventType;
