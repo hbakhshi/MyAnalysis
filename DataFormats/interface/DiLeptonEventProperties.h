@@ -183,7 +183,7 @@ namespace ElectronAnalysis {
         class LeptonEta : public ObjectProperty<TheEventType> {
         public:
 
-            LeptonEta() : ObjectProperty<TheEventType>("LeptonEta", "Lepton #Eta", -3, 3, 60, "DiLeptonEvent", 4) {
+            LeptonEta() : ObjectProperty<TheEventType>("LeptonEta", "Lepton #eta", -3, 3, 60, "DiLeptonEvent", 4) {
                 string s = "";
                 string s2 = "";
                 if (LeptonNumber == 1) {
@@ -237,7 +237,7 @@ namespace ElectronAnalysis {
         class JetEta : public ObjectProperty<TheEventType> {
         public:
 
-            JetEta() : ObjectProperty<TheEventType>("JetEta", "Jet #Eta", -3, 3, 60, "DiLeptonEvent", 6) {
+            JetEta() : ObjectProperty<TheEventType>("JetEta", "Jet #eta", -3, 3, 60, "DiLeptonEvent", 6) {
                 string s = "";
                 string s2 = "";
                 if (JetNumber == 1) {

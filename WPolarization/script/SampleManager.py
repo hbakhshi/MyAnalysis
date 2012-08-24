@@ -8,7 +8,7 @@ gROOT.LoadMacro('tdrstyle.C')
 from ROOT import setTDRStyle
 setTDRStyle()
 
-FileAddressPattern_Selected = '/home/hbakhshi/Documents/Analysis/Run/WPolarization/WPol_SelectedTTBars_%s.root'
+FileAddressPattern_Selected = '/home/hbakhshi/Documents/Analysis/Run/WPolarization/Run/WPol_SelectedTTBars_%s.root'
 FileAddressPattern_Full = '/home/hbakhshi/Documents/WPolarization/WPol/WPol_%s.root'
 
 #FileAddressPattern_Selected = '/home/hbakhshi/Documents/WPolarization/JESUP/WPol_%s_JESUP.root'
@@ -26,11 +26,11 @@ CosThetaVSDRName = 'costheta_%(channel)s/hCosThetaAllLeptonsVsLeptonJetDR'
 CosThetaVSPtName = 'costheta_%(channel)s/hCosThetaAllLeptonsVsLeptonPt'
 
 ChannelSpecificFactors = { 'EE':{'Overal':0.994 ,'DYSummer2011':1.56 } , 'EM':{'Overal':0.995 ,'DYSummer2011':1.31 } , 'MM':{'Overal':0.997 ,'DYSummer2011':1.09 } }
-XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':2400.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65, 'SysWJetsQU':31314.0 , 'SysTTQU':157.5 , 'SysTTQD':157.5 , 'SysZJetsQD':3048.0 , 'SysZJetsQU':3048.0 , 'SysTTM175':157.5 , 'SysWJetsQD':31314.0 , 'SysTTM169':157.5 }
+XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':2400.0 , 'DY20To50Summer2011':9611.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65, 'SysWJetsQU':31314.0 , 'SysTTQU':157.5 , 'SysTTQD':157.5 , 'SysZJetsQD':3048.0 , 'SysZJetsQU':3048.0 , 'SysTTM175':157.5 , 'SysWJetsQD':31314.0 , 'SysTTM169':157.5 }
 
 OLD_Colors = {'TTBarSummer2011':41, 'DYSummer2011':46 ,'WJetsSummer2011':31 , 'WWSummer2011':29 , 'SingleTopSummer2011':4 , 'SingleTopTWSummer2011':7 , 'WZSummer2011':90 , 'ZZSummer2011':66 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
 
-Colors = {'TTBarSummer2011':kBlue-2, 'DYSummer2011':kBlue-10 ,'WJetsSummer2011':kAzure-2 , 'WWSummer2011':kAzure - 9 , 'SingleTopSummer2011':kBlue+1 , 'SingleTopTWSummer2011':kAzure+1 , 'WZSummer2011':kAzure , 'ZZSummer2011':kBlue-6 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
+Colors = {'TTBarSummer2011':kBlue-2, 'DYSummer2011':kBlue-10, 'DY20To50Summer2011':kBlue-4 ,'WJetsSummer2011':kAzure-2 , 'WWSummer2011':kAzure - 9 , 'SingleTopSummer2011':kBlue+1 , 'SingleTopTWSummer2011':kAzure+1 , 'WZSummer2011':kAzure , 'ZZSummer2011':kBlue-6 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
 
 
 IntLumis = {'EE':4529.518 , 'MM':4459.007 , 'EM':4631.724}
@@ -79,7 +79,7 @@ class SampleChannelInfo:
             self.EventTypeMaxVal = 4
         #Properties
         self.AllSortedDirectories = {}
-        self.PropertiesToDraw = { }#'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = { 'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
         
         if applyWeight :
             channel_specific_factor = ChannelSpecificFactors[self.Channel]['Overal']
@@ -131,20 +131,28 @@ class SampleChannelInfo:
                         self.PropertiesToDraw[property_name][cut_folder_name].SetLineStyle(1)
                         self.PropertiesToDraw[property_name][cut_folder_name].SetFillStyle(1001)
 
+        CosTheta = FileSelected.Get( CosThetaPlotName % {'channel':channel.lower()} )
+        CosTheta.Scale(self.Lumi_Weight)
+
         if self.Sample == 'TTBarSummer2011' or self.Sample.find('SysTT') >= 0:
             print self.Sample
             CosTheta2D = FileSelected.Get( CosTheta2DPlotName % {'channel':channel.lower()} )
             CosTheta2D.Scale( self.Lumi_Weight )
             gROOT.cd()
+
+            rec_projection = CosTheta2D.ProjectionX( "cosTheta2d_Projection_" + channel )
+            #rec_projection.Print("base")
+            CosTheta.Add( rec_projection )
+
             self.CosTheta2D = CosTheta2D.RebinX(10 , 'CosTheta2DGenRec_10_' + channel )
             self.CosTheta2D.RebinY(1)
+            
 
-        CosTheta = FileSelected.Get( CosThetaPlotName % {'channel':channel.lower()} )
-        CosTheta.Scale(self.Lumi_Weight)
+        
         last_column_name_w = '%(colIndex)02d-%(step)s' % {'colIndex':self.hSelectionFull.GetNbinsX()+1  , 'step': 'nTTBars'}
         self.RowW[ last_column_name_w  ] = 0
         for bin_cos_theta in range(1, CosTheta.GetNbinsX()+1):
-            self.RowW[ last_column_name_w  ] += CosTheta.GetBinContent( bin_cos_theta )/2
+            self.RowW[ last_column_name_w  ] += ( CosTheta.GetBinContent( bin_cos_theta )/2 )
         CosTheta.SetTitle(Sample[ :Sample.find(stringToRemove) ])
         
         CosTheta.SetFillStyle(1001)
@@ -310,7 +318,7 @@ class SampleCombinedInfo:
         self.hCosThetaPreselected.Add( MM.hCosThetaPreselected )
         self.hCosThetaPreselected.Add( EM.hCosThetaPreselected )
         
-        self.PropertiesToDraw = {}#'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
         self.AllSortedDirectories = {}
 
         if extractAllPlots :
@@ -478,6 +486,7 @@ class SamplesStack:
             Errors[nBin] = 0.0
 
         for h_MC in stack.GetHists():
+            h_MC.Print()
             hSum.Add( h_MC )
         
         for nBin in range(1, hSum.GetNbinsX()+1):
@@ -508,9 +517,9 @@ class SamplesStack:
 
         c.cd()
         c.SaveAs(self.Channel + '/' + name + '.gif' )
-        c.SaveAs(self.Channel + '/' + name + '.C' )
-        c.SaveAs(self.Channel + '/' + name + '.pdf' )
-        c.SaveAs(self.Channel + '/' + name + '.eps' )
+        # c.SaveAs(self.Channel + '/' + name + '.C' )
+        # c.SaveAs(self.Channel + '/' + name + '.pdf' )
+        # c.SaveAs(self.Channel + '/' + name + '.eps' )
         c.Close()
         return total_difference    
 

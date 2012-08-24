@@ -25,7 +25,7 @@ print >>org_file,'#+STYLE: <script type="text/javascript" src="../highslide/high
 
 WhichChannel = ''
 
-sorted_samples = ['TTBarSummer2011', 'DYSummer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
+sorted_samples = ['TTBarSummer2011', 'DYSummer2011', 'DY20To50Summer2011' ,'SingleTopTWSummer2011', 'WJetsSummer2011' , 'WWSummer2011' , 'SingleTopSummer2011' , 'WZSummer2011', 'ZZSummer2011' ]
 sorted_samples.reverse()
 systematic_samples = []#'SysWJetsQU' , 'SysTTQU' , 'SysTTQD' , 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175' , 'SysWJetsQD' , 'SysTTM169']
 SamplesInfo = {}
@@ -38,12 +38,12 @@ stack_costheta_comb = THStack("stackCosTheta",'CosTheta for all Events')
 
 PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Electrons_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} }
 
-PrintCutFlowTables = False
+PrintCutFlowTables = True
 DrawCosThetaPlots = True
-DrawOtherPlots = False
-DrawControlPlots = False
-DoFit = True
-DrawFitComparisons = True
+DrawOtherPlots = True
+DrawControlPlots = True
+DoFit = False
+DrawFitComparisons = False
 WriteAllCombinedFile = False
 ExtractAllPlots = DrawControlPlots or DrawOtherPlots
 
@@ -137,7 +137,7 @@ for  WhichChannel_ in ['Combined' ,'EM' , 'MM' , 'EE' ]:
          #print >> org_file, tbl_data_tmp
          print >> org_file, tbl_mc_weighted_formula_str
 
-     if DrawControlPlots:
+     if DrawCosThetaPlots:
          print >>org_file, '** Plot of Cos(\\theta)'
          print >> org_file, stack.DrawCosTheta( Data )
 

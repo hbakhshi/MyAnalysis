@@ -131,55 +131,54 @@ bool CosThetaAnalysis::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
         hCosThetaAllGenVsRECVsDR->Fill(costheta_top, cosThetaGenPos, dr1, ev->Weight);
         double dr2 = ROOT::Math::VectorUtil::DeltaR(ev->TopBar_Rec->getTop(), ev->TOPBar_Gen.getTop());
         hCosThetaAllGenVsRECVsDR->Fill(costheta_tbar, cosThetaGenNeg, dr2, ev->Weight);
+    }
+    if (FillTree) {
+        fileTree->cd();
+        eventWeight = ev->Weight;
+        nPU = ev->PUnumInteractions;
+        nPV = ev->NPrimaryVertices;
+        eventType = int(ev->RecDecayMode);
 
-        if (FillTree) {
-            fileTree->cd();
-            eventWeight = ev->Weight;
-            nPU = ev->PUnumInteractions;
-            nPV = ev->NPrimaryVertices;
-            eventType = int(ev->RecDecayMode);
+        if (costheta_top > 1.0 || costheta_top < -1.0)
+            cout << "wrong costhet* t value" << costheta_top << endl;
+        else {
+            int binGen1; // = (int) (floor(costheta_top / 0.2) + 6.0);
+            binGen1 = 1 + int (10 * (costheta_top + 1.0) / (2.0));
+            genCosThetaValueHolder = cosThetaGenPos;
+            recCosThetaValueHolder = costheta_top;
 
-            if (costheta_top > 1.0 || costheta_top < -1.0)
-                cout << "wrong costhet* t value" << costheta_top << endl;
-            else {
-                int binGen1; // = (int) (floor(costheta_top / 0.2) + 6.0);
-                binGen1 = 1 + int (10 * (costheta_top + 1.0) / (2.0));
-                genCosThetaValueHolder = cosThetaGenPos;
-                recCosThetaValueHolder = costheta_top;
-                
-                isElectron = ev->Top_Rec->W.isElectron;
-                LeptonPt =  ev->Top_Rec->W.lepton.Pt();
-                LeptonEta =  ev->Top_Rec->W.lepton.Eta();
-                
-                if (binGen1 > 10)
-                    binGen1 = 10;
-                if (allTrees.count(binGen1) == 1)
-                    allTrees[binGen1]->Fill();
-                else
-                    cout << "wrong binGen1 value : " << costheta_top << "  " << binGen1 << endl;
-            }
+            isElectron = ev->Top_Rec->W.isElectron;
+            LeptonPt = ev->Top_Rec->W.lepton.Pt();
+            LeptonEta = ev->Top_Rec->W.lepton.Eta();
 
-            if (costheta_tbar > 1.0 || costheta_tbar < -1.0)
-                cout << "wrong costhet* tbar value" << costheta_tbar << endl;
-            else {
-                int binGen2; //= (int) (floor(costheta_tbar / 0.2) + 6.0);
-                binGen2 = 1 + int (10 * (costheta_tbar + 1.0) / (2.0));
-                genCosThetaValueHolder = cosThetaGenNeg;
-                recCosThetaValueHolder = costheta_tbar;
-                
-                isElectron = ev->TopBar_Rec->W.isElectron;
-                LeptonPt =  ev->TopBar_Rec->W.lepton.Pt();
-                LeptonEta =  ev->TopBar_Rec->W.lepton.Eta();
-                
-                if (binGen2 > 10)
-                    binGen2 = 10;
-                if (allTrees.count(binGen2) == 1)
-                    allTrees[binGen2]->Fill();
-                else
-                    cout << "wrong binGen2 value : " << costheta_tbar << "  " << binGen2 << endl;
-            }
-            gROOT->cd();
+            if (binGen1 > 10)
+                binGen1 = 10;
+            if (allTrees.count(binGen1) == 1)
+                allTrees[binGen1]->Fill();
+            else
+                cout << "wrong binGen1 value : " << costheta_top << "  " << binGen1 << endl;
         }
+
+        if (costheta_tbar > 1.0 || costheta_tbar < -1.0)
+            cout << "wrong costhet* tbar value" << costheta_tbar << endl;
+        else {
+            int binGen2; //= (int) (floor(costheta_tbar / 0.2) + 6.0);
+            binGen2 = 1 + int (10 * (costheta_tbar + 1.0) / (2.0));
+            genCosThetaValueHolder = cosThetaGenNeg;
+            recCosThetaValueHolder = costheta_tbar;
+
+            isElectron = ev->TopBar_Rec->W.isElectron;
+            LeptonPt = ev->TopBar_Rec->W.lepton.Pt();
+            LeptonEta = ev->TopBar_Rec->W.lepton.Eta();
+
+            if (binGen2 > 10)
+                binGen2 = 10;
+            if (allTrees.count(binGen2) == 1)
+                allTrees[binGen2]->Fill();
+            else
+                cout << "wrong binGen2 value : " << costheta_tbar << "  " << binGen2 << endl;
+        }
+        gROOT->cd();
     }
 
     hCosThetaAllLeptonsUnWeighted->Fill(costheta_top);
