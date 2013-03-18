@@ -1,0 +1,1 @@
+rm -f obj/Goraz/*Fit* bin/Goraz/FitValidation ; make /home/hbakhshi/Documents/Analysis/bin/Goraz/FitValidation
