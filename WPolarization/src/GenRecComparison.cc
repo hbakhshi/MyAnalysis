@@ -13,6 +13,7 @@ GenRecComparison::GenRecComparison(const edm::ParameterSet& ps) : BASE(ps),
 top_histos("Top"),
 antitop_histos("AntiTop"),
 event_histos("Statistics"),
+gen_info("GenInfo"),
 AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")),
 solverSolution((TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions)(ps.getParameter<int >("SolverSolution"))),
 solverName(ps.getParameter<string >("SolverName")) {
@@ -101,6 +102,21 @@ solverName(ps.getParameter<string >("SolverName")) {
     top_histos.AddHisto1<GenRecComp < 1, 5, 5 > >();
     top_histos.AddHisto1<GenRecComp < 1, 5, 6 > >();
     top_histos.AddHisto2<GenRecComp < 1, 5, 2 >, GenRecComp < 1, 5, 4 > >();
+    
+    
+    gen_info.AddHisto1<GenRecComp < 1, 1, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 1, 1, 8 > >();
+    gen_info.AddHisto1<GenRecComp < 1, 2, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 1, 2, 8 > >();
+    gen_info.AddHisto1<GenRecComp < 1, 5, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 1, 5, 8 > >();
+
+    gen_info.AddHisto1<GenRecComp < 2, 1, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 2, 1, 8 > >();
+    gen_info.AddHisto1<GenRecComp < 2, 2, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 2, 2, 8 > >();
+    gen_info.AddHisto1<GenRecComp < 2, 5, 7 > >();
+    gen_info.AddHisto1<GenRecComp < 2, 5, 8 > >();
 }
 
 GenRecComparison::~GenRecComparison() {
@@ -131,6 +147,8 @@ bool GenRecComparison::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
         this->top_histos.Fill(ev);
         this->antitop_histos.Fill(ev);
 
+        this->gen_info.Fill(ev);
+        
         return true;
     } else
         return false;
@@ -144,6 +162,7 @@ void GenRecComparison::End() {
     this->top_histos.Write(dir);
     this->antitop_histos.Write(dir);
     this->event_histos.Write(dir);
+    this->gen_info.Write(dir);
 
     file->cd();
 }

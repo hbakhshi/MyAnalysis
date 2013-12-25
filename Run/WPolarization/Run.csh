@@ -9,7 +9,9 @@ setenv COPYTREEFILENAME "TreeTTbar_"$INPUT".root"
 setenv MALLOC_CHECK_ 0
 setenv CPUNumber $2
 
-cd ../Scripts
+setenv TOPMass $4
+
+cd ../../Scripts
 source Env.csh
 
 cd $STARTUPDIR

@@ -121,6 +121,14 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
     this->TheEvent.PUnumInteractions = this->TheTree->PUnumInteractions;
     this->TheEvent.NPrimaryVertices = this->TheTree->NVrtx;
 
+    this->TheEvent.PDFID1 = this->TheTree->PDFID1;
+    this->TheEvent.PDFID2 = this->TheTree->PDFID2;
+    this->TheEvent.PDFScalePDF = this->TheTree->PDFScalePDF;
+    this->TheEvent.PDFx1 = this->TheTree->PDFx1;
+    this->TheEvent.PDFx2 = this->TheTree->PDFx2;
+    this->TheEvent.PDFxPDF1 = this->TheTree->PDFxPDF1;
+    this->TheEvent.PDFxPDF2 = this->TheTree->PDFxPDF2;
+    
     BASE::FillAllValue(BASE::EventSelectionHistos.at(TTbarEventSelector::TTbarEventSelectionSteps_All));
 
     hEventSelectionElectronElectron.Fill(1);
@@ -202,8 +210,10 @@ TTBarDileptonicEvent* TTbarEventSelector::Read(int& stat) {
         //cout << "gen is going to be set" ;
         this->SetGenTops();
         //cout << "it is set ";
-        if (((TTbarSelectorConfig*) BASE::Config)->MCStudy)
+        if (((TTbarSelectorConfig*) BASE::Config)->MCStudy){
+            this->TheEvent.Weight = 1.0;
             return &TheEvent;
+        }
     } else
         TheEvent.hasGenInfo = false;
 
@@ -1046,6 +1056,8 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     ObjectProperty<TopAnalysis::TTBarDileptonicEvent>* nprvtx =
             BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::NPrimaryVertices());
 
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::LeptonsDPhi() );
+
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(nprvtx);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 1, 1 > ::type());
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 2, 1 > ::type());
@@ -1056,7 +1068,7 @@ void TTbarEventSelector::AddSelectionPlotsEvent() {
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto1ToAll(new TopAnalysis::DiLeptonTTBarEventProperties::JetBTag < 3, 2 > ::type());
 
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), nprvtx);
-    
+    BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), new TopAnalysis::DiLeptonTTBarEventProperties::LeptonsDPhi() );    
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_HT);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_InvMass);
     BASE::EventSelectionHistosAfterObjectCreation.AddHisto2ToAll(&(this->EventTypeReader), Prop_PFMet);

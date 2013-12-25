@@ -1,6 +1,30 @@
 import FWCore.ParameterSet.Config as cms
 import os
 
+class SiStripDQMFolder( cms.PSet ):
+    def __init__(self,*arg,**args):
+        cms.PSet.__init__(self, *arg , **args)
+        self.DetIds = cms.vstring()
+        self.SubDirs = cms.VPSet()
+
+    def SetName(self, name):
+        self.Name = name
+        
+    def AddDetId( self, det_id_range ):
+        self.DetIds.append( det_id_range)
+
+    def mkdir(self, name):
+        newdir = SiStripDQMFolder(Name=cms.string(name))
+        #newdir.SetName(name)
+        self.SubDirs.append( newdir )
+        return newdir
+        
+Test = SiStripDQMFolder(Name=cms.string("test1") )
+#Test.SetName("test1")
+test2 = Test.mkdir("test2")
+test3 = Test.mkdir("test3")
+test4 = test2.mkdir("test4")
+
 TTBarMadSummer2011 = cms.VPSet(
     cms.PSet(
         File=cms.string(os.environ['ntpHome'] + "/TTMad_status3.root"),

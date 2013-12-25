@@ -14,7 +14,7 @@ NumberOfSolutions(0) {
 }
 
 TopAnalysis::TTBarDileptonicEvent::SolverResults::SolverResults(string name, math::XYZTLorentzVector the_b, math::XYZTLorentzVector the_bbar,
-        math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, bool isPlusEle , bool isMinusEle , double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen) :
+        math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, bool isPlusEle, bool isMinusEle, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen) :
 Top_Rec(+1),
 TopBar_Rec(-1),
 Top_Gen(tgen),
@@ -60,7 +60,7 @@ void TopAnalysis::TTBarDileptonicEvent::SolverResults::SwapBs() {
 
 TopAnalysis::TTBarDileptonicEvent::SolverResults* TopAnalysis::TTBarDileptonicEvent::AddSolverResults(string name, int the_b_index, int the_bbar_index) {
     TopAnalysis::TTBarDileptonicEvent::SolverResults results(name, Jets[the_b_index], Jets[the_bbar_index],
-            GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0),GetLepton(+1)->isElectron() , GetLepton(-1)->isElectron(), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
+            GetLepton(-1)->get4Vector(0), GetLepton(+1)->get4Vector(0), GetLepton(+1)->isElectron(), GetLepton(-1)->isElectron(), PFMET.X(), PFMET.Y(), &(TOP_Gen), &(TOPBar_Gen));
 
     results.Top_Rec.W.leptonIsolationValue = GetLepton(+1)->IsolationValue();
     results.TopBar_Rec.W.leptonIsolationValue = GetLepton(-1)->IsolationValue();
@@ -259,15 +259,76 @@ void TopAnalysis::TTBarDileptonicEvent::SetLeptons(Lepton* lep1, Lepton* lep2) {
     //    }
 }
 
-double TopAnalysis::TTBarDileptonicEvent::TopDecayChain::CosTheta() const {
+double TopAnalysis::TTBarDileptonicEvent::TopDecayChain::CosThetaTopW() const {
+    TLorentzVector w = getW();
+    TLorentzVector top = getTop();
+    TLorentzVector b = b;
+
+    top.Boost(-w.BoostVector());
+    b.Boost(-w.BoostVector());
+
+    return ROOT::Math::VectorUtil::CosTheta(b.Vect(), top.Vect());
+
+    TLorentzVector w2 = getW();
+    TLorentzVector top2 = getTop();
+
+    w2.Boost(-top2.BoostVector());
+
+    double ret= ROOT::Math::VectorUtil::CosTheta(w2.Vect(), top.Vect());
+    
+//    if(ret > -0.9){
+//        cout << "----------------" << endl;
+//        w.Print();
+//        top2.Print();
+//        cout << endl;
+//        w2.Print();
+//        top.Print();
+//        cout << "angle :" << ret << endl;
+//        cout << "----------------" << endl;
+//    }
+    
+    return ret;
+}
+
+double TopAnalysis::TTBarDileptonicEvent::TopDecayChain::CosThetaTopSpin() const {
     TLorentzVector w = getW();
     TLorentzVector lep = W.lepton;
     TLorentzVector top = getTop();
 
-    lep.Boost(-w.BoostVector());
-    w.Boost(-top.BoostVector());
+    lep.Boost(-top.BoostVector());
+    //w.Boost(-top.BoostVector());
+        
+    //lep.Boost( -w.BoostVector() );
 
-    return ROOT::Math::VectorUtil::CosTheta(lep, w);
+    return ROOT::Math::VectorUtil::CosTheta(lep.Vect(), top.Vect());
+}
+
+double TopAnalysis::TTBarDileptonicEvent::TopDecayChain::CosTheta(int method) const {
+    TLorentzVector w = getW();
+    TLorentzVector lep = W.lepton;
+    TLorentzVector top = getTop();
+
+    if (method == 1) {
+        lep.Boost(-w.BoostVector());
+        top.Boost(-w.BoostVector());
+
+        double val = ROOT::Math::VectorUtil::CosTheta(lep.Vect(), -(top.Vect()));
+        //cout << val << endl;
+        return val;
+    } else if (method == 2) {
+        lep.Boost(-top.BoostVector());
+        w.Boost(-top.BoostVector());
+        
+        lep.Boost( -w.BoostVector() );
+
+        return ROOT::Math::VectorUtil::CosTheta(lep.Vect(), w.Vect());
+    } else if (method == 3) {
+        lep.Boost(-w.BoostVector());
+        w.Boost(-top.BoostVector());
+
+        return ROOT::Math::VectorUtil::CosTheta(lep.Vect(), w.Vect());
+    } else 
+        throw -10;
 }
 
 void TopAnalysis::TTBarDileptonicEvent::TopDecayChain::Clear() {

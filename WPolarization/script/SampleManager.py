@@ -1,7 +1,7 @@
-from ROOT import TFile, TTree, THStack, TCanvas, TH1D, gROOT, kBlue, kAzure
+from ROOT import TFile, TTree, THStack, TCanvas, TH1D, gROOT, kBlue, kAzure, kRed, kGreen,kCyan,kGray, kBlack,kOrange, TLegendEntry, TLegend, TGraphErrors, TLatex, TH2D
 from Table import *
 
-import copy,os
+import copy,os,array
 from math import sqrt
 
 gROOT.LoadMacro('tdrstyle.C')
@@ -26,11 +26,18 @@ CosThetaVSDRName = 'costheta_%(channel)s/hCosThetaAllLeptonsVsLeptonJetDR'
 CosThetaVSPtName = 'costheta_%(channel)s/hCosThetaAllLeptonsVsLeptonPt'
 
 ChannelSpecificFactors = { 'EE':{'Overal':0.994 ,'DYSummer2011':1.56 } , 'EM':{'Overal':0.995 ,'DYSummer2011':1.31 } , 'MM':{'Overal':0.997 ,'DYSummer2011':1.09 } }
-XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':2400.0 , 'DY20To50Summer2011':9611.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65, 'SysWJetsQU':31314.0 , 'SysTTQU':157.5 , 'SysTTQD':157.5 , 'SysZJetsQD':3048.0 , 'SysZJetsQU':3048.0 , 'SysTTM175':157.5 , 'SysWJetsQD':31314.0 , 'SysTTM169':157.5 }
+#ChannelSpecificFactors = { 'EE':{'Overal':0.994 ,'DYSummer2011':1 } , 'EM':{'Overal':0.995 ,'DYSummer2011':1 } , 'MM':{'Overal':0.997 ,'DYSummer2011':1 } }
+XSections = { 'TTBarSummer2011':157.5, 'DYSummer2011':2400.0 , 'DY10To50Summer2011':9611.0 ,'WJetsSummer2011':31314.0 , 'WWSummer2011':4.65 , 'SingleTopSummer2011':64.5 , 'SingleTopTWSummer2011':2*7.9 , 'WZSummer2011':0.6 , 'ZZSummer2011':4.65, 'SysWJetsQU':31314.0 , 'SysTTQU':157.5 , 'SysTTQD':157.5 , 'SysZJetsQD':3048.0 , 'SysZJetsQU':3048.0 , 'SysTTM175':157.5 , 'SysWJetsQD':31314.0 , 'SysTTM169':157.5 }
+
+
+SampleCategoriesOrdered = ['t#bar{t}' , 'diboson' , 'single top' , 'DY+Jets' , 'Data' , 'Systematics']
+SampleCategories = { 't#bar{t}':['TTBarSummer2011'] , 'diboson':['WJetsSummer2011','WWSummer2011','WZSummer2011','ZZSummer2011'] , 'single top' :['SingleTopTWSummer2011' , 'SingleTopSummer2011'] , 'DY+Jets':['DYSummer2011' , 'DY10To50Summer2011'] , 'Data':['Data'], 'Systematics':['SysWJetsQU' , 'SysTTQU' , 'SysTTQD', 'SysZJetsQD' , 'SysZJetsQU' , 'SysTTM175', 'SysWJetsQD' , 'SysTTM169' ] }
+
+SampleCategoriesColors = {'t#bar{t}':kRed , 'diboson':kBlue , 'single top':kGreen , 'DY+Jets':kGray , 'Data':kBlack , 'Systematics':kRed }
 
 OLD_Colors = {'TTBarSummer2011':41, 'DYSummer2011':46 ,'WJetsSummer2011':31 , 'WWSummer2011':29 , 'SingleTopSummer2011':4 , 'SingleTopTWSummer2011':7 , 'WZSummer2011':90 , 'ZZSummer2011':66 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
 
-Colors = {'TTBarSummer2011':kBlue-2, 'DYSummer2011':kBlue-10, 'DY20To50Summer2011':kBlue-4 ,'WJetsSummer2011':kAzure-2 , 'WWSummer2011':kAzure - 9 , 'SingleTopSummer2011':kBlue+1 , 'SingleTopTWSummer2011':kAzure+1 , 'WZSummer2011':kAzure , 'ZZSummer2011':kBlue-6 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
+Colors = {'TTBarSummer2011':kBlue-2, 'DYSummer2011':kBlue-10, 'DY10To50Summer2011':kBlue-4 ,'WJetsSummer2011':kAzure-2 , 'WWSummer2011':kAzure - 9 , 'SingleTopSummer2011':kBlue+1 , 'SingleTopTWSummer2011':kAzure+1 , 'WZSummer2011':kAzure , 'ZZSummer2011':kBlue-6 ,  'Data':1  , 'SysWJetsQU':1 , 'SysTTQU':1 , 'SysTTQD':1, 'SysZJetsQD':1 , 'SysZJetsQU':1 , 'SysTTM175':1, 'SysWJetsQD':1 , 'SysTTM169':1 }
 
 
 IntLumis = {'EE':4529.518 , 'MM':4459.007 , 'EM':4631.724}
@@ -41,6 +48,12 @@ class SampleChannelInfo:
         pass
 
     def __init__(self, channel, Sample,  FileFull, FileSelected , applyWeight = True , extractAllPlots = True):
+        self.Category = ""
+        for cat in SampleCategories.keys():
+            if SampleCategories[cat].count( Sample ) > 0:
+                self.Category = cat
+                self.Color = SampleCategoriesColors[cat]
+                #print Sample + ' ' + self.Category + '  ' + str(self.Color)
         self.Sample = Sample
         formatting = {'channel':channel}
         self.Channel = channel
@@ -79,13 +92,13 @@ class SampleChannelInfo:
             self.EventTypeMaxVal = 4
         #Properties
         self.AllSortedDirectories = {}
-        self.PropertiesToDraw = { 'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = { 'NPrVtx':{} , 'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} , 'DPhi':{} }
         
         if applyWeight :
             channel_specific_factor = ChannelSpecificFactors[self.Channel]['Overal']
             if ChannelSpecificFactors[self.Channel].has_key(Sample):
                 channel_specific_factor *= ChannelSpecificFactors[self.Channel][Sample]
-
+                print self.Channel + " - " + Sample + " Factor is applied"
             self.Lumi_Weight = channel_specific_factor*XSections[Sample]*self.integrated_lumi  / self.hSelectionFull.GetBinContent(1)
         else:
             self.Lumi_Weight = 1.0
@@ -108,11 +121,11 @@ class SampleChannelInfo:
                 nPassed = histo_for_this_cut.GetBinContent(cut)*self.Lumi_Weight
                 nPassedW = histoW_for_this_cut.GetBinContent(cut)*self.Lumi_Weight
 
-                if cut == self.hSelectionFull.GetNbinsX():
-                    self.RowW[ colName+"_Err" ] = histo_for_this_cut.GetBinError(cut)
-                    self.RowW[ colName+"_Weight" ] = self.Lumi_Weight
+                #if cut == self.hSelectionFull.GetNbinsX():
+                #self.RowW[ colName+"_Err" ] = 
+                #self.RowW[ colName+"_Weight" ] = self.Lumi_Weight
 
-                self.RowW[ colName ] = nPassedW
+                self.RowW[ colName ] = Variable( nPassedW , histo_for_this_cut.GetBinError(cut)*self.Lumi_Weight ) 
                 self.Row[ colName ] = nPassed
                 last_column_name = colName
 
@@ -120,20 +133,27 @@ class SampleChannelInfo:
                     self.AllSortedDirectories[ len(self.AllSortedDirectories) ] = cut_folder_name
                     for property_name in self.PropertiesToDraw.keys():
                         hProp_path =  PropertiesHistoPathFormat % {'SF_OF':self.SF_OF_Value , 'Folder':cut_folder_name , 'Property':property_name }
+                        hProp2 = None
                         hProp2 = file_for_this_cut.Get( hProp_path )
+                        if hProp2==None:
+                            hProp2 = TH2D()
+
                         hProp_newName = '%(File)s_%(SF_OF)s_%(Channel)s%(Folder)s_DiLeptonEvent_%(Property)s' % {'SF_OF':self.SF_OF_Value , 'Folder':cut_folder_name , 'Property':property_name , 'File':Sample , 'Channel':self.Channel}
                         gROOT.cd()
                         self.PropertiesToDraw[property_name][cut_folder_name] = hProp2.ProjectionY(hProp_newName, self.EventTypeMinVal, self.EventTypeMaxVal, "o" )
+                        if property_name == "DPhi":
+                            self.PropertiesToDraw[property_name][cut_folder_name].Rebin(9)
                         self.PropertiesToDraw[property_name][cut_folder_name].Scale( self.Lumi_Weight )
                         self.PropertiesToDraw[property_name][cut_folder_name].SetTitle( Sample[ :Sample.find(stringToRemove) ] )
-                        self.PropertiesToDraw[property_name][cut_folder_name].SetFillColor(Colors[Sample])
-                        self.PropertiesToDraw[property_name][cut_folder_name].SetLineColor(Colors[Sample])
+                        self.PropertiesToDraw[property_name][cut_folder_name].SetFillColor(self.Color)
+                        self.PropertiesToDraw[property_name][cut_folder_name].SetLineColor(self.Color)
                         self.PropertiesToDraw[property_name][cut_folder_name].SetLineStyle(1)
                         self.PropertiesToDraw[property_name][cut_folder_name].SetFillStyle(1001)
 
         CosTheta = FileSelected.Get( CosThetaPlotName % {'channel':channel.lower()} )
         CosTheta.Scale(self.Lumi_Weight)
 
+        self.HasFullCosThetaInfo = False
         if self.Sample == 'TTBarSummer2011' or self.Sample.find('SysTT') >= 0:
             print self.Sample
             CosTheta2D = FileSelected.Get( CosTheta2DPlotName % {'channel':channel.lower()} )
@@ -144,20 +164,38 @@ class SampleChannelInfo:
             #rec_projection.Print("base")
             CosTheta.Add( rec_projection )
 
+            self.CosTheta2DOriginal = CosTheta2D.Clone('CosTheta2DGenRec_Original_' + channel )
+
             self.CosTheta2D = CosTheta2D.RebinX(10 , 'CosTheta2DGenRec_10_' + channel )
             self.CosTheta2D.RebinY(1)
             
+            if extractAllPlots:
+                CosThetaDir = FileSelected.Get( 'costheta_%(channel)s' % {'channel':channel.lower()} )
+                hasCosThetaNeg_vs_Pos_TTBar = CosThetaDir.FindKeyAny('hCosThetaNeg_vs_Pos_TTBar')
+                self.HasFullCosThetaInfo = (not (hasCosThetaNeg_vs_Pos_TTBar == None))
+                if self.HasFullCosThetaInfo :
+                    self.hCosThetaNeg_vs_Pos_TTBar = CosThetaDir.Get('hCosThetaNeg_vs_Pos_TTBar')
+                    self.hCosThetaNeg_vs_Pos_TTBar.Scale( self.Lumi_Weight )
+                    self.hCosThetaNeg_vs_Pos_TTBar.SetTitle( Sample[ :Sample.find(stringToRemove)] )
+
+                    self.hCosThetaNeg_vs_Pos_Gen   = CosThetaDir.Get('hCosThetaNeg_vs_Pos_Gen'  )
+                    self.hCosThetaNeg_vs_Pos_Gen.Scale( self.Lumi_Weight )
+                    self.hCosThetaNeg_vs_Pos_Gen.SetTitle( Sample[ :Sample.find(stringToRemove)] )
+
+                    self.hCosThetaVSTopEta_Gen = CosThetaDir.Get('hCosThetaAllLeptonsVsTopEta_Gen')
+                    self.hCosThetaVSTopEta_Gen.Scale( self.Lumi_Weight )
+                    self.hCosThetaVSTopEta_Gen.SetTitle( Sample[ :Sample.find(stringToRemove)] )
 
         
         last_column_name_w = '%(colIndex)02d-%(step)s' % {'colIndex':self.hSelectionFull.GetNbinsX()+1  , 'step': 'nTTBars'}
-        self.RowW[ last_column_name_w  ] = 0
+        self.RowW[ last_column_name_w  ] = Variable(0.0 , 0.0)
         for bin_cos_theta in range(1, CosTheta.GetNbinsX()+1):
-            self.RowW[ last_column_name_w  ] += ( CosTheta.GetBinContent( bin_cos_theta )/2 )
+            self.RowW[ last_column_name_w  ] += Variable(  CosTheta.GetBinContent( bin_cos_theta )/2 , CosTheta.GetBinError( bin_cos_theta )/2    )
         CosTheta.SetTitle(Sample[ :Sample.find(stringToRemove) ])
         
         CosTheta.SetFillStyle(1001)
-        CosTheta.SetFillColor(Colors[Sample])
-        CosTheta.SetLineColor(Colors[Sample])
+        CosTheta.SetFillColor(self.Color)
+        CosTheta.SetLineColor(self.Color)
         self.hCosTheta = {}
         gROOT.cd()
         self.hCosTheta['05'] = CosTheta.Rebin(20 , "costheta05_"+channel+"_" + Sample)
@@ -174,8 +212,8 @@ class SampleChannelInfo:
             CosThetaVSIso.Scale(self.Lumi_Weight)
 
             CosThetaVSIso.SetFillStyle(1001)
-            CosThetaVSIso.SetFillColor(Colors[Sample])
-            CosThetaVSIso.SetLineColor(Colors[Sample])
+            CosThetaVSIso.SetFillColor(self.Color)
+            CosThetaVSIso.SetLineColor(self.Color)
             gROOT.cd()
             self.hCosTheta['IsoAll'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_pyAll" , 0 , -1 , "o").Rebin(10)
             self.hCosTheta['Iso18'] = CosThetaVSIso.ProjectionY(self.Sample + channel + "_py18" , 0 , 18*2 , "o").Rebin(10)
@@ -192,8 +230,8 @@ class SampleChannelInfo:
             CosThetaVSDR.Scale(self.Lumi_Weight)
 
             CosThetaVSDR.SetFillStyle(1001)
-            CosThetaVSDR.SetFillColor(Colors[Sample])
-            CosThetaVSDR.SetLineColor(Colors[Sample])
+            CosThetaVSDR.SetFillColor(self.Color)
+            CosThetaVSDR.SetLineColor(self.Color)
             gROOT.cd()
             self.hCosTheta['DR40'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR40" , 8 , -1 , "o").Rebin(10)
             self.hCosTheta['DR50'] = CosThetaVSDR.ProjectionY(self.Sample + channel + "_pyDR50" , 10 , -1 , "o").Rebin(10)
@@ -210,8 +248,8 @@ class SampleChannelInfo:
             CosThetaVSPt.Scale(self.Lumi_Weight)
 
             CosThetaVSPt.SetFillStyle(1001)
-            CosThetaVSPt.SetFillColor(Colors[Sample])
-            CosThetaVSPt.SetLineColor(Colors[Sample])
+            CosThetaVSPt.SetFillColor(self.Color)
+            CosThetaVSPt.SetLineColor(self.Color)
             gROOT.cd()
             self.hCosTheta['Pt20'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt20" , 20 , -1 , "o").Rebin(10)
             self.hCosTheta['Pt25'] = CosThetaVSPt.ProjectionY(self.Sample + channel + "_pyPt25" , 25 , -1 , "o").Rebin(10)
@@ -226,8 +264,8 @@ class SampleChannelInfo:
         CosTheta.SetTitle(Sample[ :Sample.find(stringToRemove) ])
         
         CosTheta.SetFillStyle(1001)
-        CosTheta.SetFillColor(Colors[Sample])
-        CosTheta.SetLineColor(Colors[Sample])
+        CosTheta.SetFillColor(self.Color)
+        CosTheta.SetLineColor(self.Color)
         gROOT.cd()
         self.hCosThetaPreselected = CosTheta.Rebin(4, "preselected_costheta_"+channel+"_" + Sample)
 
@@ -235,25 +273,37 @@ class SampleChannelInfo:
         self.LastColumnW = last_column_name_w
 
         if extractAllPlots :
+            CosThetaDir = FileSelected.Get( 'costheta_%(channel)s' % {'channel':channel.lower()} )
+            hasCosThetaNeg_vs_Pos = CosThetaDir.FindKeyAny('hCosThetaNeg_vs_Pos')
+            self.HasFullCosThetaInfo = (not (hasCosThetaNeg_vs_Pos == None))
+            if self.HasFullCosThetaInfo :
+                self.hCosThetaNeg_vs_Pos = CosThetaDir.Get('hCosThetaNeg_vs_Pos')
+                self.hCosThetaNeg_vs_Pos.Scale( self.Lumi_Weight )
+                self.hCosThetaNeg_vs_Pos.SetTitle( Sample[ :Sample.find(stringToRemove)] )
+
+                self.hCosThetaVSTopEta = CosThetaDir.Get('hCosThetaAllLeptonsVsTopEta')
+                self.hCosThetaVSTopEta.Scale( self.Lumi_Weight )
+                self.hCosThetaVSTopEta.SetTitle( Sample[ :Sample.find(stringToRemove)] )
+
             NPrVtsAllNameFormat = '%(File)s_%(Channel)s%(Folder)s_DiLeptonEvent_NPrVtxAlls'
             self.NPrVtxAll = FileSelected.Get('Selection/EventSelectionHistosAfterObjectCreation/AllSelctedEvents/AllSelctedEvents_DiLeptonEvent_EventTypevsNPrVtx').ProjectionY(NPrVtsAllNameFormat % {'File':Sample , 'Channel':channel , 'Folder':'Weighted' } , self.EventTypeMinVal, self.EventTypeMaxVal, "o" )
             self.NPrVtxAll.Scale( self.Lumi_Weight )
             self.NPrVtxAll.SetTitle( Sample[ :Sample.find(stringToRemove) ] )
-            self.NPrVtxAll.SetFillColor(Colors[Sample])
-            self.NPrVtxAll.SetLineColor(Colors[Sample])
+            self.NPrVtxAll.SetFillColor(self.Color)
+            self.NPrVtxAll.SetLineColor(self.Color)
             self.NPrVtxAll.SetLineStyle(1)
             self.NPrVtxAll.SetFillStyle(1001)
 
             self.NPrVtxAllNoW = FileSelected.Get('Selection/EventSelectionHistosAfterObjectCreation/AllSelctedEventsNoW/AllSelctedEventsNoW_DiLeptonEvent_EventTypevsNPrVtx').ProjectionY(NPrVtsAllNameFormat % {'File':Sample , 'Channel':channel , 'Folder':'NoWeighted' }, self.EventTypeMinVal, self.EventTypeMaxVal, "o" )
             self.NPrVtxAllNoW.Scale( self.Lumi_Weight )
             self.NPrVtxAllNoW.SetTitle( Sample[ :Sample.find(stringToRemove) ] )
-            self.NPrVtxAllNoW.SetFillColor(Colors[Sample])
-            self.NPrVtxAllNoW.SetLineColor(Colors[Sample])
+            self.NPrVtxAllNoW.SetFillColor(self.Color)
+            self.NPrVtxAllNoW.SetLineColor(self.Color)
             self.NPrVtxAllNoW.SetLineStyle(1)
             self.NPrVtxAllNoW.SetFillStyle(1001)
 
 
-            self.AllTopRecPlots = {'TopToppt':None , 'TopTopEta':None , 'TopWpt':None , 'TopWEta':None ,'Topneutrinospt':None , 'TopneutrinosEta':None ,'AntitopAntitoppt':None , 'AntitopAntitopEta':None ,'AntitopWpt':None , 'AntitopWEta':None ,'Antitopneutrinospt':None , 'AntitopneutrinosEta':None ,'TTBarEffectiveMass':20  }
+            self.AllTopRecPlots = {'TopToppt':None , 'TopTopEta':2 , 'TopWpt':None , 'TopWEta':None ,'Topneutrinospt':None , 'TopneutrinosEta':None ,'AntitopAntitoppt':None , 'AntitopAntitopEta':2 ,'AntitopWpt':None , 'AntitopWEta':None ,'Antitopneutrinospt':None , 'AntitopneutrinosEta':None ,'TTBarEffectiveMass':20  }
             TopRecPlotsNameFormat = 'neutrino_solver_%(channel)s/MinEffectiveMassResults/MinEffectiveMassResults_TTBarDileptonicEvent_%(prop)s'
 
             for plot in self.AllTopRecPlots.keys() :
@@ -264,13 +314,16 @@ class SampleChannelInfo:
                     self.AllTopRecPlots[plot] = FileSelected.Get( TopRecPlotsNameFormat % {'channel':channel.lower() , 'prop':plot  } ).Rebin(nGroups , Sample + channel + plot )
                 self.AllTopRecPlots[plot].Scale( self.Lumi_Weight )
                 self.AllTopRecPlots[plot].SetTitle( Sample[ :Sample.find(stringToRemove)] )
-                self.AllTopRecPlots[plot].SetFillColor(Colors[Sample])
-                self.AllTopRecPlots[plot].SetLineColor(Colors[Sample])
+                self.AllTopRecPlots[plot].SetFillColor(self.Color)
+                self.AllTopRecPlots[plot].SetLineColor(self.Color)
                 self.AllTopRecPlots[plot].SetLineStyle(1)
                 self.AllTopRecPlots[plot].SetFillStyle(1001)
 
 class SampleCombinedInfo:
     def __init__(self, Sample, EE , EM, MM , extractAllPlots = True):
+
+        self.Category = EE.Category
+        self.Color = EE.Color
         self.Channel = 'Combined'
         self.Sample = Sample
         self.Row  = RowObject()
@@ -282,7 +335,7 @@ class SampleCombinedInfo:
 
         colName = '%(colIndex)02d-%(step)s' % {'colIndex':1  , 'step': 'All'}    
         self.Row[colName] = EM.hSelectionFull.GetBinContent(1)
-        self.RowW[colName] = EM.hSelectionFull.GetBinContent(1)
+        self.RowW[colName] = Variable (EM.hSelectionFull.GetBinContent(1) , EM.hSelectionFull.GetBinError(1) )
 
         self.LastColumnW = colName
         self.LastColumn = colName
@@ -306,6 +359,24 @@ class SampleCombinedInfo:
             self.CosTheta2D.Add( MM.CosTheta2D )
             self.CosTheta2D.Add( EM.CosTheta2D )
 
+            self.CosTheta2DOriginal = EE.CosTheta2DOriginal.Clone( 'CosTheta2DGenRec_Original_Combined_' + self.Sample )
+            self.CosTheta2DOriginal.Add( MM.CosTheta2DOriginal )
+            self.CosTheta2DOriginal.Add( EM.CosTheta2DOriginal )
+
+            if EE.HasFullCosThetaInfo:
+                self.hCosThetaNeg_vs_Pos_Gen = EE.hCosThetaNeg_vs_Pos_Gen.Clone( 'hCosThetaNeg_vs_Pos_Gen_Combined_' + self.Sample )
+                self.hCosThetaNeg_vs_Pos_Gen.Add( MM.hCosThetaNeg_vs_Pos_Gen )
+                self.hCosThetaNeg_vs_Pos_Gen.Add( EM.hCosThetaNeg_vs_Pos_Gen )
+                
+                self.hCosThetaNeg_vs_Pos_TTBar = EE.hCosThetaNeg_vs_Pos_TTBar.Clone( 'hCosThetaNeg_vs_Pos_TTBar_Combined_' + self.Sample )
+                self.hCosThetaNeg_vs_Pos_TTBar.Add( MM.hCosThetaNeg_vs_Pos_TTBar )
+                self.hCosThetaNeg_vs_Pos_TTBar.Add( EM.hCosThetaNeg_vs_Pos_TTBar )
+
+                self.hCosThetaVSTopEta_Gen = EE.hCosThetaVSTopEta_Gen.Clone( 'hCosThetaVSTopEta_Gen_Combined_' + self.Sample )
+                self.hCosThetaVSTopEta_Gen.Add( MM.hCosThetaVSTopEta_Gen )
+                self.hCosThetaVSTopEta_Gen.Add( EM.hCosThetaVSTopEta_Gen )
+            
+
         self.hCosTheta = {}
 
         for cosTheta in EE.hCosTheta.keys():            
@@ -318,7 +389,7 @@ class SampleCombinedInfo:
         self.hCosThetaPreselected.Add( MM.hCosThetaPreselected )
         self.hCosThetaPreselected.Add( EM.hCosThetaPreselected )
         
-        self.PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} }
+        self.PropertiesToDraw = {'NumberOfJets':{} , 'PFMET':{}, 'Dilepton_InvariantMass':{}, 'JetsHT':{} , 'NumberOfBJets':{} , 'FirstLeptonEta':{} , 'FirstLeptonPt':{} , 'SecondLeptonEta':{} , 'SecondLeptonPt':{} , 'FirstJetPt':{} , 'SecondJetPt':{} , 'ThirdJetPt':{} , 'PositiveLeptonEta':{} , 'PositiveLeptonPt':{} , 'NegativeLeptonEta':{} , 'NegativeLeptonPt':{} , 'FirstBJetPt':{} , 'SecondBJetPt':{} , 'ThirdBJetPt':{} , 'FirstJetEta':{} , 'SecondJetEta':{} , 'ThirdJetEta':{} , 'DPhi':{} }
         self.AllSortedDirectories = {}
 
         if extractAllPlots :
@@ -337,6 +408,18 @@ class SampleCombinedInfo:
                         cut_name_forSF = '_InvMassZ'
                     self.PropertiesToDraw[propertY][cut].Add( EEProp[ cut_name_forSF ] )
                     self.PropertiesToDraw[propertY][cut].Add( MMProp[ cut_name_forSF ] )
+
+
+            if EE.HasFullCosThetaInfo:
+                self.hCosThetaNeg_vs_Pos = EE.hCosThetaNeg_vs_Pos.Clone( 'hCosThetaNeg_vs_Pos_Combined_' + self.Sample )
+                self.hCosThetaNeg_vs_Pos.Add( MM.hCosThetaNeg_vs_Pos )
+                self.hCosThetaNeg_vs_Pos.Add( EM.hCosThetaNeg_vs_Pos )
+
+                self.hCosThetaVSTopEta = EE.hCosThetaVSTopEta.Clone( 'hCosThetaVSTopEta_Combined_' + self.Sample )
+                self.hCosThetaVSTopEta.Add( MM.hCosThetaVSTopEta )
+                self.hCosThetaVSTopEta.Add( EM.hCosThetaVSTopEta )
+
+
 
             NPrVtsAllNameFormat = '%(File)s_%(Channel)s%(Folder)s_DiLeptonEvent_NPrVtxAlls'
             self.NPrVtxAllNoW = EE.NPrVtxAllNoW.Clone( NPrVtsAllNameFormat % {'File':Sample , 'Channel':self.Channel , 'Folder':'NoWeighted'} ) 
@@ -387,6 +470,8 @@ class SampleInfo:
 class DataInfo(SampleInfo):
     def __init__(self , extractAllPlots = True):
         self.Name = 'Data'
+        self.Category = 'Data'
+        self.Color = SampleCategoriesColors[self.Category]
         self.DataFileNames = {'EE':'DoubleEle2011' , 'MM':'DoubleMuon2011' , 'EM':'ElectronMuon2011'}
         self.DataFullFiles = {}
         self.DataSelectedFiles = {}
@@ -410,7 +495,9 @@ class DataInfo(SampleInfo):
             self.DataSelectedFiles[filename].Close()
 
 class SamplesStack:
-    def DrawAndSave(self, stack , hist , name , LogY = 0 , external_title = ''):
+    def DrawAndSave(self, stack , hist , name , LogY = 0 , external_title = '' , errors_to_draw=[]):
+        #if not name == "bbbTopTopEta" :
+        #    return 0.0
 
         if not os.access( self.Channel , os.F_OK) :
             os.mkdir( self.Channel )
@@ -442,6 +529,8 @@ class SamplesStack:
         if hist.GetBinContent(hist.GetMaximumBin()) > maxVal:
             stack.SetMaximum( 1.01*hist.GetBinContent(hist.GetMaximumBin()) )
             maxVal = hist.GetBinContent(hist.GetMaximumBin())
+            if not len(errors_to_draw) == 0 :
+                maxVal *= 1.4
 
         stack.Draw("9 HIST")
 
@@ -460,10 +549,52 @@ class SamplesStack:
         hist.SetLineWidth( 2 )
         hist.GetXaxis().SetTitle('')
         hist.GetXaxis().SetLabelSize(0.0)
+        hist.GetYaxis().SetTitle('')
         hist.Draw("9 E1 SAME")
 
-        c1.BuildLegend(0.7,0.7,1.0,1.0)
+        leg = TLegend(0.75,0.75,0.95,0.95)
+        leg.SetBorderSize( 0 )
+        leg.SetTextFont(62)
+        leg.SetLineColor(1)
+        leg.SetLineStyle(1)
+        leg.SetLineWidth(1)
+        leg.SetFillColor(0)
+        leg.SetFillStyle(0)
+
+        for category in SampleCategoriesOrdered:
+            if category == "Systematics" :
+                continue
+
+            color = SampleCategoriesColors[category]
+            leg_entry_name = "%(cat)s_%(color)d" % {"cat":"category" , "color":color}
+            print leg_entry_name
+            entry = None
+            if category == "Data":
+                entry=leg.AddEntry(leg_entry_name,category,"PLE")
+            else:
+                entry=leg.AddEntry(leg_entry_name,category,"F")
+            
+            entry.SetLineColor(color)
+            entry.SetLineStyle(1)
+            entry.SetLineWidth(1)
+            entry.SetMarkerColor(color)
+            entry.SetMarkerStyle(21)
+            entry.SetMarkerSize(1)
+            entry.SetFillColor(color)
+            entry.SetFillStyle(1001)
+
         c1.SetPad( 0 , 0.295 , 1, 1)
+        c1.cd()
+        leg.SetOption("BR NDC")
+        leg.ConvertNDCtoPad()
+        leg.Draw()
+
+        latex = TLatex( 0.15 , 0.91 , "CMS Preliminary, 4.6 fb^{-1} at #sqrt{s} =7TeV" )
+        c1.cd()
+        latex.SetNDC(True)
+        latex.Draw()
+        c1.Modified()
+        
 
         c2 =  c.cd(2)
         c2.SetPad( c2.GetXlowNDC(), c2.GetXlowNDC() , 1 , 0.295)
@@ -485,15 +616,40 @@ class SamplesStack:
         for nBin in range(1, hist.GetNbinsX()+1):
             Errors[nBin] = 0.0
 
+        xx_for_errors = array.array('d')
+        yy_for_errors = array.array('d')
+        xxerr_for_errors = array.array('d')
+        yyerr_for_errors = array.array('d')
+
         for h_MC in stack.GetHists():
-            h_MC.Print()
+            #h_MC.Print()
             hSum.Add( h_MC )
         
         for nBin in range(1, hSum.GetNbinsX()+1):
             Errors[nBin] = hSum.GetBinError(nBin)
+            if not len(errors_to_draw) == 0:
+                xx_for_errors.append( hSum.GetBinCenter(nBin) )
+                yy_for_errors.append( hSum.GetBinContent(nBin) )
+                yyerr_for_errors.append( errors_to_draw[nBin-1] )
+                xxerr_for_errors.append( hSum.GetBinWidth(nBin)/2 )
+
+                Errors[nBin] = sqrt( errors_to_draw[nBin-1]*errors_to_draw[nBin-1] + hSum.GetBinError(nBin)*hSum.GetBinError(nBin) )
+        
+        if not len(errors_to_draw) == 0:
+            err_graph = TGraphErrors( hSum.GetNbinsX() , xx_for_errors , yy_for_errors ,  xxerr_for_errors ,  yyerr_for_errors)
+            c.cd(1)
+            err_graph.SetFillColor(kBlack)
+            err_graph.SetFillStyle(3005)
+            err_graph.Draw('2')
+
+            entry=leg.AddEntry("Systematics_Uncertainity","Syst. Unc.","F")
+            entry.SetFillColor(kBlack)
+            entry.SetFillStyle(3005)
+
+            c.cd(2)
 
         for nBin in range(1, hSum.GetNbinsX()+1):
-            hSum.SetBinError( nBin , sqrt(Errors[nBin]) )
+            hSum.SetBinError( nBin , Errors[nBin] )
 
         hDivision.Divide( hist , hSum )
         hDivision.GetYaxis().SetRangeUser( 0.5 , 1.5)
@@ -506,8 +662,8 @@ class SamplesStack:
         hDivision.GetXaxis().SetTitle(xaxisTitle)
         #hDivision.GetXaxis().SetLabelSize(0.0)
         hDivision.GetYaxis().SetNdivisions(3 , 6 , 0 , True)
-        hDivision.Draw()
-        hOne.Draw("SAME E1")
+        hDivision.Draw("E1")
+        hOne.Draw("SAME C")
 
         total_difference = 0.0
         for nBin in range(1, hist.GetNbinsX()+1):
@@ -516,27 +672,35 @@ class SamplesStack:
             total_difference += (data_in_bin - mc_in_bin)
 
         c.cd()
+        c.Modified()
         c.SaveAs(self.Channel + '/' + name + '.gif' )
-        # c.SaveAs(self.Channel + '/' + name + '.C' )
-        # c.SaveAs(self.Channel + '/' + name + '.pdf' )
+        c.SaveAs(self.Channel + '/' + name + '.C' )
+        c.SaveAs(self.Channel + '/' + name + '.pdf' )
         # c.SaveAs(self.Channel + '/' + name + '.eps' )
         c.Close()
         return total_difference    
 
-    def DrawCosTheta(self , Data):
+    def DrawCosTheta(self , Data , Errors = []):
         dataType = type( Data )
         data = dataType. __getattribute__(Data , self.Channel)
-        
-        deltaMC_Data_CosTheta = self.DrawAndSave( self.stack_costheta['10'] ,  data.hCosTheta['10'] , self.Channel + '_cos_theta' , 0 , 'cos(#theta^{*})' )
-        deltaMC_Data_CosTheta_LogY = self.DrawAndSave( self.stack_costheta['10'] ,  data.hCosTheta['10'] , self.Channel + '_cos_theta_logy' , 1 , 'cos(#theta^{*})' )
-        deltaMC_Data_CosThetaPreselected = self.DrawAndSave( self.stack_costheta_preselected ,  data.hCosThetaPreselected , self.Channel + '_cos_theta_preselected',1, 'cos(#theta^{*})' )
+
+        NNName = '_cos_theta'
+        if not len(Errors) == 0:
+            NNName += '_errors'
+
+        deltaMC_Data_CosTheta = self.DrawAndSave( self.stack_costheta['10'] ,  data.hCosTheta['10'] , self.Channel + NNName , 0 , 'cos(#theta^{*})' , Errors )
+        deltaMC_Data_CosTheta_LogY = self.DrawAndSave( self.stack_costheta['10'] ,  data.hCosTheta['10'] , self.Channel +NNName + '_logy' , 1 , 'cos(#theta^{*})' , Errors )
+
         ret = '*** Plot of Cos(\\theta) for selected events \n'
         ret = ret + '    - Difference is : 2*' + str(deltaMC_Data_CosTheta/2) + '\n'
-        ret = ret + '    [[[%(Channel)s/%(Channel)s_cos_theta.gif]]]'%{'Channel':self.Channel}  + '\n'
-        ret = ret + '    [[[%(Channel)s/%(Channel)s_cos_theta_logy.gif]]]'%{'Channel':self.Channel}  + '\n'
-        ret = ret +  '*** Plot of Cos(\\theta) for pre-selected events \n'
-        ret = ret + '    - Difference is : 2*' + str(deltaMC_Data_CosThetaPreselected/2)  + '\n'
-        ret = ret + '    [[[%(Channel)s/%(Channel)s_cos_theta_preselected.gif]]]'%{'Channel':self.Channel} + '\n'
+        ret = ret + '    [[[%(Channel)s/%(Channel)s%(NNName)s.gif]]]'%{'Channel':self.Channel, 'NNName':NNName}  + '\n'
+        ret = ret + '    [[[%(Channel)s/%(Channel)s%(NNName)s_logy.gif]]]'%{'Channel':self.Channel, 'NNName':NNName}  + '\n'
+        if len(Errors) == 0:
+            deltaMC_Data_CosThetaPreselected = self.DrawAndSave( self.stack_costheta_preselected ,  data.hCosThetaPreselected , self.Channel + '_cos_theta_preselected',1, 'cos(#theta^{*})' )            
+            ret = ret +  '*** Plot of Cos(\\theta) for pre-selected events \n'
+            ret = ret + '    - Difference is : 2*' + str(deltaMC_Data_CosThetaPreselected/2)  + '\n'
+            ret = ret + '    [[[%(Channel)s/%(Channel)s_cos_theta_preselected.gif]]]'%{'Channel':self.Channel} + '\n'
+
         return ret
 
 
@@ -610,83 +774,88 @@ class SamplesStack:
         self.RowW = RowObject()
         
         sample_id = 0
-        for sampleName in sortedSamples:
-            if ArrayOfAllSamples.keys().count(sampleName) == 0:
-                continue
-            sample = ArrayOfAllSamples[sampleName]
-            #print sample.Sample
-            if sample_id == 0:
-                self.Channel = sample.Channel
-                self.AllSortedDirectories = sample.AllSortedDirectories
+        for category in reversed(SampleCategoriesOrdered):
+            for sampleName in sortedSamples:
+                if ArrayOfAllSamples.keys().count(sampleName) == 0:
+                    continue
+                sample = ArrayOfAllSamples[sampleName]
+
+                if category.count( sample.Category ) == 0:
+                    continue
                 
+                #print sample.Sample
+                if sample_id == 0:
+                    self.Channel = sample.Channel
+                    self.AllSortedDirectories = sample.AllSortedDirectories
+
+                    if StackCosTheta:
+                        self.stack_costheta = {}
+
+                        for cosTheta in sample.hCosTheta.keys():
+                            self.stack_costheta[cosTheta] =  THStack("stackCosTheta" +cosTheta+ "_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        # self.stack_costheta['10'] =  THStack("stackCosTheta10_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        # self.stack_costheta['20'] =  THStack("stackCosTheta20_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        # self.stack_costheta['25'] =  THStack("stackCosTheta25_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        # self.stack_costheta['50'] =  THStack("stackCosTheta50_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        # self.stack_costheta['100'] =  THStack("stackCosTheta100_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+
+                        self.stack_costheta_preselected =  THStack("preselected_stackCosTheta_" + self.Channel ,'CosTheta for preselected ' + self.Channel +' Events')
+
+                    if StackControlPlots:
+                        self.PropertiesToDraw = {}
+
+                        for column in sample.Row:
+                            self.Row[column] = sample.Row[column]
+                        self.Row[ sorted(self.Row.keys())[0] ] = ''
+                        for column in sample.RowW:
+                            self.RowW[column] = sample.RowW[column]
+                        self.RowW[ sorted(self.RowW.keys())[0] ] = ''
+
+                        for Property in sample.PropertiesToDraw.keys():
+                            allStacks = {}
+                            for Cut in sample.PropertiesToDraw[Property].keys():
+                                stack_newName = 'stack_%(Channel)s_%(Cut)s_%(Property)s' % {'Cut':Cut , 'Property':Property , 'Channel':self.Channel }
+                                allStacks[Cut]= THStack( stack_newName , stack_newName )
+                                allStacks[Cut].Add( sample.PropertiesToDraw[Property][Cut] )
+
+                            self.PropertiesToDraw[Property] = allStacks
+
+                    if StackOtherPlots:
+
+                        self.AllTopRecStacks = {}
+                        for prop in sample.AllTopRecPlots.keys():
+                            self.AllTopRecStacks[prop] = THStack("stack_" + prop + "_" + self.Channel , sample.AllTopRecPlots[prop].GetTitle() )
+                            self.AllTopRecStacks[prop].Add( sample.AllTopRecPlots[prop] )
+
+                        self.stack_NPrVtxAll = THStack("stack_NPrVtxAll_" + self.Channel , '# Primary vertices')
+                        self.stack_NPrVtxAllNoW = THStack("stack_NPrVtxAllNoW_" + self.Channel , '# Primary vertices , no pu')
+                    sample_id = 1
+                else:
+                    if StackControlPlots:
+                        for column in sorted(self.Row.keys())[1:]:
+                            self.Row[column] = self.Row[column] + sample.Row[column]
+                        for column in sorted(self.RowW.keys())[1:]:
+                            self.RowW[column] = self.RowW[column] + sample.RowW[column]
+
+                        for Property in sample.PropertiesToDraw.keys():
+                            for Cut in sample.PropertiesToDraw[Property].keys():
+                                self.PropertiesToDraw[Property][Cut].Add( sample.PropertiesToDraw[Property][Cut] )
+
+                    if StackOtherPlots:
+                        for prop in sample.AllTopRecPlots.keys():
+                            self.AllTopRecStacks[prop].Add( sample.AllTopRecPlots[prop] )
+
                 if StackCosTheta:
-                    self.stack_costheta = {}
-
                     for cosTheta in sample.hCosTheta.keys():
-                        self.stack_costheta[cosTheta] =  THStack("stackCosTheta" +cosTheta+ "_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-                    # self.stack_costheta['10'] =  THStack("stackCosTheta10_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-                    # self.stack_costheta['20'] =  THStack("stackCosTheta20_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-                    # self.stack_costheta['25'] =  THStack("stackCosTheta25_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-                    # self.stack_costheta['50'] =  THStack("stackCosTheta50_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
-                    # self.stack_costheta['100'] =  THStack("stackCosTheta100_" + self.Channel ,'CosTheta for ' + self.Channel +' Events')
+                        self.stack_costheta[cosTheta].Add( sample.hCosTheta[cosTheta] )
+                    # self.stack_costheta['10'].Add( sample.hCosTheta['10'] )
+                    # self.stack_costheta['20'].Add( sample.hCosTheta['20'] )
+                    # self.stack_costheta['25'].Add( sample.hCosTheta['25'] )
+                    # self.stack_costheta['50'].Add( sample.hCosTheta['50'] )
+                    # self.stack_costheta['100'].Add( sample.hCosTheta['100'] )
 
-                    self.stack_costheta_preselected =  THStack("preselected_stackCosTheta_" + self.Channel ,'CosTheta for preselected ' + self.Channel +' Events')
-
-                if StackControlPlots:
-                    self.PropertiesToDraw = {}
-
-                    for column in sample.Row:
-                        self.Row[column] = sample.Row[column]
-                    self.Row[ sorted(self.Row.keys())[0] ] = ''
-                    for column in sample.RowW:
-                        self.RowW[column] = sample.RowW[column]
-                    self.RowW[ sorted(self.RowW.keys())[0] ] = ''
-
-                    for Property in sample.PropertiesToDraw.keys():
-                        allStacks = {}
-                        for Cut in sample.PropertiesToDraw[Property].keys():
-                            stack_newName = 'stack_%(Channel)s_%(Cut)s_%(Property)s' % {'Cut':Cut , 'Property':Property , 'Channel':self.Channel }
-                            allStacks[Cut]= THStack( stack_newName , stack_newName )
-                            allStacks[Cut].Add( sample.PropertiesToDraw[Property][Cut] )
-
-                        self.PropertiesToDraw[Property] = allStacks
+                    self.stack_costheta_preselected.Add( sample.hCosThetaPreselected )
 
                 if StackOtherPlots:
-
-                    self.AllTopRecStacks = {}
-                    for prop in sample.AllTopRecPlots.keys():
-                        self.AllTopRecStacks[prop] = THStack("stack_" + prop + "_" + self.Channel , sample.AllTopRecPlots[prop].GetTitle() )
-                        self.AllTopRecStacks[prop].Add( sample.AllTopRecPlots[prop] )
-
-                    self.stack_NPrVtxAll = THStack("stack_NPrVtxAll_" + self.Channel , '# Primary vertices')
-                    self.stack_NPrVtxAllNoW = THStack("stack_NPrVtxAllNoW_" + self.Channel , '# Primary vertices , no pu')
-                sample_id = 1
-            else:
-                if StackControlPlots:
-                    for column in sorted(self.Row.keys())[1:]:
-                        self.Row[column] = self.Row[column] + sample.Row[column]
-                    for column in sorted(self.RowW.keys())[1:]:
-                        self.RowW[column] = self.RowW[column] + sample.RowW[column]
-
-                    for Property in sample.PropertiesToDraw.keys():
-                        for Cut in sample.PropertiesToDraw[Property].keys():
-                            self.PropertiesToDraw[Property][Cut].Add( sample.PropertiesToDraw[Property][Cut] )
-
-                if StackOtherPlots:
-                    for prop in sample.AllTopRecPlots.keys():
-                        self.AllTopRecStacks[prop].Add( sample.AllTopRecPlots[prop] )
-
-            if StackCosTheta:
-                for cosTheta in sample.hCosTheta.keys():
-                    self.stack_costheta[cosTheta].Add( sample.hCosTheta[cosTheta] )
-                # self.stack_costheta['10'].Add( sample.hCosTheta['10'] )
-                # self.stack_costheta['20'].Add( sample.hCosTheta['20'] )
-                # self.stack_costheta['25'].Add( sample.hCosTheta['25'] )
-                # self.stack_costheta['50'].Add( sample.hCosTheta['50'] )
-                # self.stack_costheta['100'].Add( sample.hCosTheta['100'] )
-
-                self.stack_costheta_preselected.Add( sample.hCosThetaPreselected )
-                
-            if StackOtherPlots:
-                self.stack_NPrVtxAll.Add( sample.NPrVtxAll )
-                self.stack_NPrVtxAllNoW.Add( sample.NPrVtxAllNoW )
+                    self.stack_NPrVtxAll.Add( sample.NPrVtxAll )
+                    self.stack_NPrVtxAllNoW.Add( sample.NPrVtxAllNoW )

@@ -15,14 +15,23 @@ namespace TopAnalysis {
 
     class TTBarDileptonicEvent : public ElectronAnalysis::DiLepton {
     public:
+        //.......................
+        float PDFScalePDF;
+        float PDFx1;
+        float PDFx2;
+        float PDFxPDF1;
+        float PDFxPDF2;
+        int PDFID1;
+        int PDFID2;
+        //.......................
         int PUnumInteractions;
         int NPrimaryVertices;
         //PER CHANNEL TRIGGER INFO
         bool TRG_DiMuon;
         bool TRG_DiEle;
-        bool TRG_EleMuon;        
+        bool TRG_EleMuon;
         //
-        
+
         enum TopDecays {
             NOT_SET = 0,
             ElP_MuM = 1,
@@ -42,7 +51,7 @@ namespace TopAnalysis {
             ExtraBs = 14,
             BadNu = 15,
             Others = 16,
-            
+
             EE_Inconsistent_With_Trigger = 17,
             MM_Inconsistent_With_Trigger = 18,
             EM_Inconsistent_With_Trigger = 19
@@ -62,10 +71,10 @@ namespace TopAnalysis {
                 double leptonIsolationValue;
             } W;
 
-            double LeptonBDeltaR() const{
-                return ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector >(this->W.lepton , this->b) ;
+            double LeptonBDeltaR() const {
+                return ROOT::Math::VectorUtil::DeltaR<TLorentzVector, TLorentzVector > (this->W.lepton, this->b);
             };
-            
+
             inline TLorentzVector getW() const {
                 return W.lepton + W.neutrino;
             };
@@ -79,8 +88,9 @@ namespace TopAnalysis {
             TopDecayChain(int charge) : Charge(charge) {
             };
 
-            double CosTheta() const;
-
+            double CosTheta(int method = 1) const;
+            double CosThetaTopW() const;
+	  double CosThetaTopSpin() const;
             void Clear();
         };
 
@@ -105,7 +115,7 @@ namespace TopAnalysis {
 
             //SolverResults(vector<double> pnux, vector<double> pnuy, vector<double> pnuz, vector<double> pnubx, vector<double> pnuby, vector<double> pnubz);
 
-            SolverResults(string name,  math::XYZTLorentzVector the_b,  math::XYZTLorentzVector the_bbar,  math::XYZTLorentzVector the_lminus,  math::XYZTLorentzVector the_lplus,bool isPlusEle , bool isMinusEle , double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen );
+            SolverResults(string name, math::XYZTLorentzVector the_b, math::XYZTLorentzVector the_bbar, math::XYZTLorentzVector the_lminus, math::XYZTLorentzVector the_lplus, bool isPlusEle, bool isMinusEle, double met_x, double met_y, TopDecayChain* tgen, TopDecayChain* tbargen);
             void SwapBs();
             //to be able to put in a map
             SolverResults();

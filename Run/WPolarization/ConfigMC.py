@@ -28,6 +28,11 @@ CPUN = 1
 if os.environ.has_key( 'CPUNumber' ):
     CPUN = int(os.environ['CPUNumber'])
 
+TOPMass = 172.9
+if os.environ.has_key( 'TOPMass' ):
+    TOPMass = float(os.environ['TOPMass'])
+
+
 __CopyTreeFileName =  STARTUPDIR + "/" + COPYTREEFILENAME
 
 process.SyncTTBars = cms.VPSet(
@@ -251,6 +256,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_ee"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 0.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -260,6 +266,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_mm"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 1.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -269,6 +276,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_em"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 2.25 , 3.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -278,6 +286,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_all"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 2.25 , 3.25 , 1.25 , 0.25),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -291,7 +300,7 @@ process.WPolarization = cms.PSet(
             SolverSolution = cms.int32(0),
             FillGen=cms.bool(IsTTBar),
             GenDecayModes=cms.vint32(1,2,3,4),
-            FillTree = cms.untracked.bool(True),
+            FillTree = cms.untracked.bool(False),
             TreeFileName = cms.string("tree_dilep_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),
             FillRec=cms.bool(True)
             ),
@@ -330,15 +339,35 @@ process.WPolarization = cms.PSet(
             FillTree = cms.untracked.bool(True),
             TreeFileName = cms.string("tree_em_" +  INPUTPSet.Name.value() + UncertPartFileName  + ".root"),            
             FillRec=cms.bool(True)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_ee"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 0.25 ),
+            ApplyWeights=cms.bool(True)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_mm"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 1.25 ),
+            ApplyWeights=cms.bool(True)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_em"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 2.25 , 3.25 ),
+            ApplyWeights=cms.bool(True)
             )
-#       cms.PSet(
-#           Name=cms.string("GenRecComparison_ee"),
-#           Type=cms.string("GenRecComparison"),
-#           EventTypes=cms.vdouble( 0.25  ),
-#           SolverName = cms.string("neutrino_solver_ee"),
-#           SolverSolution = cms.int32(0)
-#       )
     )
 )
 
+if IsTTBar : 
+    A = cms.PSet(
+        Name=cms.string("GenRecComparison_all"),
+        Type=cms.string("GenRecComparison"),
+        EventTypes=cms.vdouble( 0.25  ),
+        SolverName = cms.string("neutrino_solver_all"),
+        SolverSolution = cms.int32(0)
+        )
+    process.WPolarization.Analyzers.append( A )
 #prepare_ds(process.vpsets[INPUT],20,False)

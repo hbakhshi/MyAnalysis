@@ -3,6 +3,60 @@
 RunInfo* info::TheInfo = new RunInfo();
 int info::CPU_Number(0);
 
+
+class SiStripDQMFolder {
+public:
+  SiStripDQMFolder( edm::ParameterSet parent_dir , const SiStripDQMFolder* TheParent = NULL ){
+    this->Name = parent_dir.getParameter< string >("Name");
+    this->DetIdRanges = parent_dir.getParameter< std::vector<std::string> >("DetIds");
+    this->Parent = TheParent ;
+
+    SubDirInfo = parent_dir.getParameterSetVector("SubDirs");
+    SubDirs.reserve(SubDirInfo.size());
+
+    int subdir_id = 0;
+    for( edm::VParameterSet::const_iterator subdir = SubDirInfo.begin() ; subdir != SubDirInfo.end() ; subdir++){
+      SiStripDQMFolder* subfolder = new SiStripDQMFolder( *subdir , this ); //(&SubDirs[subdir_id])
+      SubDirs.push_back( subfolder );
+      subdir_id ++;
+    }
+  }
+
+  string GetTabs() const{
+    string ret;
+    if(Parent == NULL)
+      ret = "";
+    else
+      ret = (Parent)->GetTabs() + "\t";
+
+    return ret;
+  }
+
+  string GetFullName() const{
+    string ret;
+    if(Parent == NULL)
+      ret = this->Name ;
+    else
+      ret = (Parent)->GetFullName() + "/" + this->Name ;
+
+    return ret;
+  }
+
+  void Print() const{
+    cout << GetFullName() << endl;
+    for( std::vector< SiStripDQMFolder* >::const_iterator subs = SubDirs.begin() ; subs != SubDirs.end() ; subs++ )
+      (*subs)->Print();
+  }
+
+  std::string Name;
+  std::vector<std::string> DetIdRanges;
+
+  edm::VParameterSet SubDirInfo;
+  std::vector< SiStripDQMFolder* > SubDirs;
+
+  const SiStripDQMFolder* Parent;
+};
+
 void info::AnalyzeArgs(int argc, char** argv , std::string module_name) {
     // only allow one argument for this simple example which should be the
     // the python cfg file
@@ -13,6 +67,9 @@ void info::AnalyzeArgs(int argc, char** argv , std::string module_name) {
 
     // get the python configuration
     PythonProcessDesc builder(argv[1]);
+    const edm::ParameterSet& param_test = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet > ("Test");
+    SiStripDQMFolder a( param_test , NULL);
+    a.Print();
 
     const edm::ParameterSet& params = builder.processDesc()->getProcessPSet()->getParameter<edm::ParameterSet > (module_name);
 

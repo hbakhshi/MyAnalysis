@@ -11,6 +11,7 @@ setenv CPUNumber $2
 
 setenv ApplyJES $4
 setenv ApplyBTSFUnc $5
+setenv TOPMass $6
 
 cd ../../Scripts
 source Env.csh

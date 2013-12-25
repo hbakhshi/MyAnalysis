@@ -20,6 +20,9 @@ public:
     Histograms< TopAnalysis::TTBarDileptonicEvent > top_histos;
     Histograms< TopAnalysis::TTBarDileptonicEvent > antitop_histos;
     Histograms< TopAnalysis::TTBarDileptonicEvent > event_histos;
+
+    Histograms< TopAnalysis::TTBarDileptonicEvent > gen_info;
+    
     std::vector<double> AcceptedEventTypes;
     TopAnalysis::DiLeptonTTBarEventProperties::EventType EventTypeReader;
 

@@ -17,16 +17,26 @@ int main(int argc, char *argv[]) {
     int StartPEXPull;
     int LPEXPull;
     int cpu;
+    
+    int printAll;
+    int zwqscale;
+    int sampleToRewieght;
+    int other_syst;
 
     string ttbarName = "";
     int mode = -1;
-    if (argc == 4 || argc == 5) {
+    if (argc == 9) {
         ChannelName = argv[1];
         AllEventsHistogramDirectory = argv[2];
         cpu = atoi(argv[3]);
-        if(argc == 5){
-            ttbarName = argv[4];
-        }
+
+        
+        ttbarName = argv[4];
+        printAll = atoi(argv[5]);
+        zwqscale = atoi(argv[6]);
+        sampleToRewieght = atoi(argv[7]);
+        other_syst = atoi(argv[8]);
+        
         mode = 0;
     } else if (argc == 8) {
         ChannelName = argv[1];
@@ -42,6 +52,7 @@ int main(int argc, char *argv[]) {
         std::cout << "wrong argument list" << std::endl;
         string exe_name = string(argv[0]);
         std::cout << "usage : " + exe_name + " ChannelName AllEventsHistogramDirectory #FirstPEX #PEXs #FirstPullPEX #PullPEXs #CPU" << endl;
+        std::cout << "usage : " + exe_name + " ChannelName AllEventsHistogramDirectory #CPU TreeFileName printAll zwqscale sampleToReweight weightSign" << endl;
         return EXIT_FAILURE;
     }
     CPU_ZERO(&mask_t);
@@ -53,8 +64,8 @@ int main(int argc, char *argv[]) {
         std::cout << "RunFitValidation(" << StartPEX << "," << LPEX << "," << StartPEXPull << "," << LPEXPull << "," << ChannelName << "," << AllEventsHistogramDirectory << ")" << endl;
         RunFitValidation(StartPEX, LPEX, StartPEXPull, LPEXPull, ChannelName, AllEventsHistogramDirectory);
     } else if (mode == 0) {
-        std::cout << "RunFit("  << ChannelName << "," << AllEventsHistogramDirectory << ")" << endl;
-        RunFit(ChannelName, AllEventsHistogramDirectory , ttbarName);
+        //std::cout << "RunFit("  << ChannelName << "," << AllEventsHistogramDirectory << "," << ttbarName << ")" << endl;
+        RunFit(ChannelName, AllEventsHistogramDirectory, ttbarName, printAll , zwqscale , sampleToRewieght , other_syst);
     }
     return EXIT_SUCCESS;
 }

@@ -14,6 +14,7 @@
 #include "TROOT.h"
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TMath.h"
 #include "TCanvas.h"
 #include "TRandom1.h"
@@ -22,6 +23,8 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+
+#include "LHAPDF/LHAPDF.h"
 
 using namespace std;
 
@@ -141,66 +144,453 @@ public:
         return LL;
     }
 
-    void SetTreeFile(string fileName , double wee , double wem , double wmm) {
+    double SumOfErrors(double sys, double stat) {
+        return sqrt(sys * sys + stat * stat);
+    }
+
+    TH2* hLepSF(bool electron, string appendix = "") {
+        TH2* hret = new TH2D();
+
+        string name___;
+        if (electron)
+            name___ = "hElecSF_" + appendix;
+        else
+            name___ = "hMuonSF_" + appendix;
+
+        hret->SetNameTitle(name___.c_str(), name___.c_str());
+
+        double pt_bins [] = {20, 22, 24, 26, 28, 30, 32, 34, 36, 40, 1000};
+        double eta_bins[] = {0, 1.5, 10};
+        hret->SetBins(10, pt_bins, 2, eta_bins);
+
+        if (electron) {
+            hret->SetBinContent(1, 1, 0.990);
+            hret->SetBinError(1, 1, SumOfErrors(0.004, 0.001));
+
+            hret->SetBinContent(2, 1, 0.999);
+            hret->SetBinError(2, 1, SumOfErrors(0.003, 0.001));
+
+            hret->SetBinContent(3, 1, 1.003);
+            hret->SetBinError(3, 1, SumOfErrors(0.003, 0.002));
+
+            hret->SetBinContent(4, 1, 0.997);
+            hret->SetBinError(4, 1, SumOfErrors(0.002, 0.002));
+
+            hret->SetBinContent(5, 1, 1.001);
+            hret->SetBinError(5, 1, SumOfErrors(0.002, 0.000));
+
+            hret->SetBinContent(6, 1, 0.999);
+            hret->SetBinError(6, 1, SumOfErrors(0.001, 0.002));
+
+            hret->SetBinContent(7, 1, 1.001);
+            hret->SetBinError(7, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(8, 1, 0.998);
+            hret->SetBinError(8, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(9, 1, 0.996);
+            hret->SetBinError(9, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(10, 1, 0.993);
+            hret->SetBinError(10, 1, SumOfErrors(0.000, 0.000));
+
+            hret->SetBinContent(1, 2, 1.002);
+            hret->SetBinError(1, 2, SumOfErrors(0.007, 0.005));
+
+            hret->SetBinContent(2, 2, 1.018);
+            hret->SetBinError(2, 2, SumOfErrors(0.006, 0.005));
+
+            hret->SetBinContent(3, 2, 1.012);
+            hret->SetBinError(3, 2, SumOfErrors(0.005, 0.006));
+
+            hret->SetBinContent(4, 2, 1.006);
+            hret->SetBinError(4, 2, SumOfErrors(0.002, 0.004));
+
+            hret->SetBinContent(5, 2, 1.013);
+            hret->SetBinError(5, 2, SumOfErrors(0.001, 0.004));
+
+            hret->SetBinContent(6, 2, 1.003);
+            hret->SetBinError(6, 2, SumOfErrors(0.002, 0.003));
+
+            hret->SetBinContent(7, 2, 1.005);
+            hret->SetBinError(7, 2, SumOfErrors(0.003, 0.002));
+
+            hret->SetBinContent(8, 2, 1.005);
+            hret->SetBinError(8, 2, SumOfErrors(0.003, 0.002));
+
+            hret->SetBinContent(9, 2, 1.000);
+            hret->SetBinError(9, 2, SumOfErrors(0.002, 0.001));
+
+            hret->SetBinContent(10, 2, 0.997);
+            hret->SetBinError(10, 2, SumOfErrors(0.001, 0.000));
+        } else { //for muon
+            hret->SetBinContent(1, 1, 0.993);
+            hret->SetBinError(1, 1, SumOfErrors(0.002, 0.001));
+
+            hret->SetBinContent(2, 1, 0.992);
+            hret->SetBinError(2, 1, SumOfErrors(0.002, 0.001));
+
+            hret->SetBinContent(3, 1, 0.996);
+            hret->SetBinError(3, 1, SumOfErrors(0.002, 0.001));
+
+            hret->SetBinContent(4, 1, 0.997);
+            hret->SetBinError(4, 1, SumOfErrors(0.001, 0.001));
+
+            hret->SetBinContent(5, 1, 0.997);
+            hret->SetBinError(5, 1, SumOfErrors(0.001, 0.001));
+
+            hret->SetBinContent(6, 1, 1.000);
+            hret->SetBinError(6, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(7, 1, 0.999);
+            hret->SetBinError(7, 1, SumOfErrors(0.001, 0.001));
+
+            hret->SetBinContent(8, 1, 0.999);
+            hret->SetBinError(8, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(9, 1, 0.999);
+            hret->SetBinError(9, 1, SumOfErrors(0.001, 0.000));
+
+            hret->SetBinContent(10, 1, 0.998);
+            hret->SetBinError(10, 1, SumOfErrors(0.000, 0.000));
+
+            hret->SetBinContent(1, 2, 1.001);
+            hret->SetBinError(1, 2, SumOfErrors(0.003, 0.003));
+
+            hret->SetBinContent(2, 2, 0.999);
+            hret->SetBinError(2, 2, SumOfErrors(0.003, 0.004));
+
+            hret->SetBinContent(3, 2, 1.004);
+            hret->SetBinError(3, 2, SumOfErrors(0.002, 0.004));
+
+            hret->SetBinContent(4, 2, 1.001);
+            hret->SetBinError(4, 2, SumOfErrors(0.002, 0.005));
+
+            hret->SetBinContent(5, 2, 1.001);
+            hret->SetBinError(5, 2, SumOfErrors(0.002, 0.004));
+
+            hret->SetBinContent(6, 2, 1.004);
+            hret->SetBinError(6, 2, SumOfErrors(0.002, 0.004));
+
+            hret->SetBinContent(7, 2, 1.005);
+            hret->SetBinError(7, 2, SumOfErrors(0.003, 0.002));
+
+            hret->SetBinContent(8, 2, 1.002);
+            hret->SetBinError(8, 2, SumOfErrors(0.001, 0.002));
+
+            hret->SetBinContent(9, 2, 1.002);
+            hret->SetBinError(9, 2, SumOfErrors(0.001, 0.001));
+
+            hret->SetBinContent(10, 2, 1.000);
+            hret->SetBinError(10, 2, SumOfErrors(0.000, 0.000));
+        }
+
+        return hret;
+    }
+
+  void SetTreeFile(string fileName, double wee, double wem, double wmm, std::map< int, double >* PUWeights = NULL, bool applyLepSF = false , int PdfSetID = 0 , double spinCorr = 0.0 , int trigger_syst = 0) {
         this->Tree = true;
         this->useTree = true;
         this->nsignal2DFromTreeBins = 10000;
         int nbins = data->GetXaxis()->GetNbins();
 
-        TFile* TreeFile = TFile::Open(fileName.c_str(), "UPDATE");
+        //TFile* TreeFile = TFile::Open(fileName.c_str(), "UPDATE");
+        gROOT->cd();
         signal2DFromTree = new TH2D("hsignal2DFromTree", "signal2DFromTree", nbins, -1.0, 1.0, 10000, -1.0, 1.0);
-        TH1D* heventtype = new TH1D("heventtype" , "event type" , 15 , 0.0 , 15 );
+        TH1D* heventtype = new TH1D("heventtype", "event type", 15, 0.0, 15);
+
+        double genCosThetaValueHolder;
+        double recCosThetaValueHolder;
+        double eventWeight;
+        bool isElectron;
+        bool isFirstLepton;
+        double LeptonPt;
+        double LeptonEta;
+        int nPU;
+        int nPV;
+        int eventType;
+        int GenEventType;
+
+	double GenTopCosTheta, GenAntiTopCosTheta ;
+
+	float  PDFScalePDF;
+	float  PDFx1;
+	float  PDFx2;
+	float  PDFxPDF1;
+	float  PDFxPDF2;
+	int PDFID1;
+	int PDFID2;
+
+        TH2* hElecSF = hLepSF(true);
+        TH2* hMuonSF = hLepSF(false);
+        TH2* hLEPSF_temp = hLepSF(false, "temp");
+
+	if ( PdfSetID != 0 ){
+	  LHAPDF::initLHAPDF();
+	  std::vector<LHAPDF::PDFSetInfo> pdfinfo = LHAPDF::getAllPDFSetInfo();
+
+	  std::vector<int> interestingpdfs;
+	  //std::cout << "loaded: " << pdfinfo.size() << " pdfs." << std::endl;
+	  // std::map<string , int> pdfstat;
+	  for(size_t ii=0; ii<pdfinfo.size(); ii++){
+	    if(pdfinfo[ii].file=="cteq61.LHgrid"){
+	      interestingpdfs.push_back(ii);
+
+	      // if ( pdfstat.count( pdfinfo[ii].file ) > 0)
+	      //   pdfstat[ pdfinfo[ii].file ] ++;
+	      // else
+	      //   pdfstat[ pdfinfo[ii].file ] = 0;
+
+	      // cout << pdfinfo[ii] << endl;
+
+	    }
+	  }
+	  // for( std::map<string , int>::const_iterator itr = pdfstat.begin() ; itr != pdfstat.end() ; itr++ )
+	  //   cout << itr->first << " : " << itr->second << endl;
+	  LHAPDF::setVerbosity ( LHAPDF::SILENT );
+	  LHAPDF::initPDFSet("/usr/share/lhapdf/PDFsets/" + pdfinfo[interestingpdfs[0]].file);
+	  //cout << interestingpdfs.size() << endl;
+
+	}
+
         for (int nBin = 1; nBin < nbins + 1; nBin++) {
             double binCenter = data->GetBinCenter(nBin);
             ostringstream treeName;
 
             treeName << "Tree_" << nBin;
-            TTree* tree = (TTree*) TreeFile->Get(treeName.str().c_str());
+            TChain* tree = new TChain(treeName.str().c_str());
+            //(TTree*) TreeFile->Get(treeName.str().c_str());
 
-            double genCosTheta = 0.0;
-            double eventWeight = 0.0;
-            double lumiWeight = 0.0;
-            int eventType = 0.0;
-            
-            tree->SetBranchAddress("GenCosTheta", &genCosTheta);
+            tree->Add(fileName.c_str());
+
+	    if( tree->FindBranch("GenTopCosTheta") ){
+	      tree->SetBranchAddress("GenTopCosTheta", &GenTopCosTheta);
+	      tree->SetBranchAddress("GenAntiTopCosTheta", &GenAntiTopCosTheta);
+	    }else{
+	      GenTopCosTheta = GenAntiTopCosTheta = 0.0 ;
+	    }
+
+	    tree->SetBranchAddress("PDFScalePDF", &PDFScalePDF);
+	    tree->SetBranchAddress("PDFx1", &PDFx1);
+	    tree->SetBranchAddress("PDFx2", &PDFx2);
+	    //tree->SetBranchAddress("PDFxPDF1", &PDFxPDF1);
+	    //tree->SetBranchAddress("PDFxPDF2", &PDFxPDF1);
+	    tree->SetBranchAddress("PDFID1", &PDFID1);
+	    tree->SetBranchAddress("PDFID2", &PDFID2);
+
+
+            tree->SetBranchAddress("GenCosTheta", &genCosThetaValueHolder);
+            tree->SetBranchAddress("RecCosTheta", &recCosThetaValueHolder);
+
             tree->SetBranchAddress("EventWeight", &eventWeight);
-            tree->SetBranchAddress("LumiWeight", &lumiWeight);
             tree->SetBranchAddress("eventType", &eventType);
+            tree->SetBranchAddress("GenEventType", &GenEventType);
+
+            tree->SetBranchAddress("nPU", &nPU);
+            tree->SetBranchAddress("nPV", &nPV);
+
+            tree->SetBranchAddress("isElectron", &isElectron);
+            tree->SetBranchAddress("isFirstLepton", &isFirstLepton);
+            tree->SetBranchAddress("LeptonPt", &LeptonPt);
+            tree->SetBranchAddress("LeptonEta", &LeptonEta);
 
 
             for (int entry = 0; entry < tree->GetEntries(); entry++) {
 
                 tree->GetEntry(entry);
                 heventtype->Fill(eventType);
+
+                double evtweight = eventWeight; //* lumiWeight;
+
+
+                //the trg SF needs to be added
+                double trg_sf_weight = 0.0;
+		double trg_sf_weight_err = 0.0;
+                if (isElectron) {
+                    if (isFirstLepton) {
+                        if (20.0 <= LeptonPt && LeptonPt <= 30.0) {
+			  if (fabs(LeptonEta) < 1.5){
+                                trg_sf_weight = 0.9849;			    
+				trg_sf_weight_err = 3.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.9774;
+				trg_sf_weight_err = 7.0e-4;
+			  }
+                        } else {
+			  if (fabs(LeptonEta) < 1.5){
+                                trg_sf_weight = 0.9928;
+				trg_sf_weight_err = 1.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.9938;
+				trg_sf_weight_err = 1.0e-4;
+			  }
+                        }
+                    } else {
+                        if (20.0 <= LeptonPt && LeptonPt <= 30.0) {
+			  if (fabs(LeptonEta) < 1.5){
+                                trg_sf_weight = 0.9923;
+				trg_sf_weight_err = 2.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.9953;
+				trg_sf_weight_err = 3.0e-4;
+			  }
+                        } else {
+			  if (fabs(LeptonEta) < 1.5){
+                                trg_sf_weight = 0.9948;
+				trg_sf_weight_err = 1.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.9956;
+				trg_sf_weight_err = 1.0e-4;
+			  }
+                        }
+                    }
+                } else {
+                    if (isFirstLepton) {
+                        if (20.0 <= LeptonPt && LeptonPt <= 30.0) {
+			  if (fabs(LeptonEta) < 0.8){
+                                trg_sf_weight = 0.9648;
+				trg_sf_weight_err = 7.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 1.2){
+                                trg_sf_weight = 0.9516;
+				trg_sf_weight_err = 13.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 2.1){
+                                trg_sf_weight = 0.9480;
+				trg_sf_weight_err = 9.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.8757;
+				trg_sf_weight_err = 26.0e-4;
+			  }
+                        } else {
+			  if (fabs(LeptonEta) < 0.8){
+                                trg_sf_weight = 0.9666;
+				trg_sf_weight_err = 3.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 1.2){
+                                trg_sf_weight = 0.9521;
+				trg_sf_weight_err = 5.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 2.1){
+                                trg_sf_weight = 0.9485;
+				trg_sf_weight_err = 4.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.8772;
+				trg_sf_weight_err = 12.0e-4;
+			  }
+                        }
+                    } else {
+                        if (20.0 <= LeptonPt && LeptonPt <= 30.0) {
+			  if (fabs(LeptonEta) < 0.8){
+                                trg_sf_weight = 0.9655;
+				trg_sf_weight_err = 7.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 1.2){
+                                trg_sf_weight = 0.9535;
+				trg_sf_weight_err = 13.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 2.1){
+                                trg_sf_weight = 0.9558;
+				trg_sf_weight_err = 9.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.9031;
+				trg_sf_weight_err = 23.0e-4;
+			  }
+                        } else {
+			  if (fabs(LeptonEta) < 0.8){
+                                trg_sf_weight = 0.9670;
+				trg_sf_weight_err = 3.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 1.2){
+                                trg_sf_weight = 0.9537;
+				trg_sf_weight_err = 5.0e-4;
+			  }
+			  else if (fabs(LeptonEta) < 2.1){
+                                trg_sf_weight = 0.9530;
+				trg_sf_weight_err = 4.0e-4;
+			  }
+			  else{
+                                trg_sf_weight = 0.8992;
+				trg_sf_weight_err = 11.0e-4;
+			  }
+                        }
+
+                    }
+                }//the trg_sf_weight is known
+
+		if(trigger_syst != 0)
+		  trigger_syst /= abs(trigger_syst) ;
+
+		trg_sf_weight += (trigger_syst*trg_sf_weight_err);
+		
+                evtweight *= trg_sf_weight;
+
+                if (applyLepSF) {
+                    int bin_eta_pt = hLEPSF_temp->FindBin(LeptonPt, fabs(LeptonEta));
+                    if (isElectron)
+                        evtweight *= hElecSF->GetBinContent(bin_eta_pt);
+                    else
+                        evtweight *= hMuonSF->GetBinContent(bin_eta_pt);
+                }
                 
-                double evtweight = eventWeight ; //* lumiWeight;
-                
-                if(eventType == 3) { //dile
-                    evtweight/=0.994;
-                    evtweight*=wee; //0.192709;
-                }else if(eventType == 1 || eventType == 2){//emu
-                    evtweight/=0.995;
-                    evtweight*=wem; //0.197058;
-                }else if(eventType == 4){//emu
-                    evtweight/=0.997;
-                    evtweight*=wmm; //0.189709;
+                if (eventType == 3) { //dile
+                    //                    evtweight /= 0.994;
+                    evtweight *= wee; //0.192709;
+                } else if (eventType == 1 || eventType == 2) {//emu
+                    //                    evtweight /= 0.995;
+                    evtweight *= wem; //0.197058;
+                } else if (eventType == 4) {//emu
+                    //                    evtweight /= 0.997;
+                    evtweight *= wmm; //0.189709;
                 }
 
-                TreeInfo[nBin].push_back(make_pair(genCosTheta, evtweight));
+                if (PUWeights != NULL) {
+                    evtweight *= PUWeights->at(nPU);
+                }
+
+		if( spinCorr != 0.0){
+		  double spin_corr_w = ( 1.0 - spinCorr*GenTopCosTheta*GenAntiTopCosTheta );
+		  evtweight *= spin_corr_w ;
+		}
+
+		if ( PdfSetID != 0 ){
+		  LHAPDF::usePDFMember(0);
+		  PDFxPDF1 = LHAPDF::xfx(PDFx1 , PDFScalePDF , PDFID1 ) ; 
+		  PDFxPDF2 = LHAPDF::xfx(PDFx2 , PDFScalePDF , PDFID2 ) ; 
+		
+		  LHAPDF::usePDFMember(PdfSetID);
+		  PDFxPDF1 = LHAPDF::xfx(PDFx1 , PDFScalePDF , PDFID1 ) / PDFxPDF1;
+		  PDFxPDF2 = LHAPDF::xfx(PDFx2 , PDFScalePDF , PDFID2 ) / PDFxPDF2;
+		  double pdf_weight = PDFxPDF2*PDFxPDF1 ; 
+
+		  evtweight *= pdf_weight ;
+		}
+		
+                if (eventType == GenEventType && evtweight != 0.0) {
+
+                    TreeInfo[nBin].push_back(make_pair(genCosThetaValueHolder, evtweight));
 
 
-                signal2DFromTree->Fill(binCenter, genCosTheta, evtweight);
+                    signal2DFromTree->Fill(binCenter, genCosThetaValueHolder, evtweight);
+                }
             }
             // cout << "Tree_" << (nBin) << "is read" << endl;
         }
 
         //signal2DFromTree->Write();
-        gROOT->cd();
-        signal2DFromTree = (TH2*) signal2DFromTree->Clone("Cloned");
-        
-        TreeFile->cd();
-        heventtype->Write();
-        TreeFile->Close();
+        //        gROOT->cd();
+        //        signal2DFromTree = (TH2*) signal2DFromTree->Clone("Cloned");
+
+        //        TreeFile->cd();
+        //        heventtype->Write();
+        //        TreeFile->Close();
     }
 protected:
     string Name;
@@ -217,15 +607,16 @@ protected:
     int nsignal2DFromTreeBins;
 public:
     bool useTree;
-    TH2* setnsignal2DFromTreeBins(int n){
+
+    TH2* setnsignal2DFromTreeBins(int n) {
         nsignal2DFromTreeBins = n;
-        stringstream newName ;
-        newName << signal2DFromTree->GetName() << n ;
+        stringstream newName;
+        newName << signal2DFromTree->GetName() << n;
         gROOT->cd();
-        return (this->signal2DFromTreeRebinned = signal2DFromTree->RebinY( signal2DFromTree->GetNbinsY()/n , newName.str().c_str() ) );
+        return (this->signal2DFromTreeRebinned = signal2DFromTree->RebinY(signal2DFromTree->GetNbinsY() / n, newName.str().c_str()));
     }
-    double wttee,wttmm,wttem;
-protected:   
+    double wttee, wttmm, wttem;
+protected:
     virtual vector<double> getNdataNmc(int bin, double f0, double f_, double rec_gen) = 0;
 
     double getWeight(double costheta, double f0, double f_) {
@@ -260,7 +651,7 @@ public:
         ret.SetRange(0.0, 0.0, 0.000001, 1.0, 1.0, 2.0);
         return make_pair(ret, functor);
     }
-protected:
+
 
     virtual vector<double> getNdataNmc(int bin, double f0, double f_, double rec_gen) {
         int nbins = data->GetXaxis()->GetNbins();
@@ -291,7 +682,7 @@ protected:
                 gROOT->cd();
 
                 TH1* hithrecbin = this->signal2DFromTreeRebinned->ProjectionY("_py", bin, bin, "o");
-                
+
                 hithrecbin->Multiply(&(weightor.first), 1.0);
                 nSignal = hithrecbin->Integral();
             }
@@ -310,6 +701,7 @@ protected:
         vector<double> ret;
         ret.push_back(nData);
         ret.push_back(nMC);
+        ret.push_back(nSignal);
         return ret;
     }
 

@@ -18,136 +18,172 @@
 
 class CosThetaAnalysis : public Analyzer<TopAnalysis::TTBarDileptonicEvent> {
 public:
-    typedef Analyzer<TopAnalysis::TTBarDileptonicEvent> BASE;
+  typedef Analyzer<TopAnalysis::TTBarDileptonicEvent> BASE;
 
-    class dGammaFunctin {
-    public:
+  class dGammaFunctin {
+  public:
 
-        dGammaFunctin() {
+    dGammaFunctin() {
 
-        }
+    }
 
-        double operator() (double *x, double *p) {
-            double FNeg = *p;
-            double F0   = *(p+1);
-            double FPos = (1.0 - FNeg - F0);
+    double operator() (double *x, double *p) {
+      double FNeg = *p;
+      double F0   = *(p+1);
+      double FPos = (1.0 - FNeg - F0);
             
-            double norm_factor = *(p+2);
+      double norm_factor = *(p+2);
             
-            double costheta = *x ;
+      double costheta = *x ;
             
-            double aa = (1.0 - costheta )*(1.0 - costheta );
-            double bb = (1.0 - costheta*costheta);
-            double cc = (1.0 + costheta )*(1.0 + costheta );
+      double aa = (1.0 - costheta )*(1.0 - costheta );
+      double bb = (1.0 - costheta*costheta);
+      double cc = (1.0 + costheta )*(1.0 + costheta );
             
-            double ret(0.0);
-            ret = (FNeg*3.0*aa / 8.0) ;
-            ret += (F0*3.0*bb / 4.0 ) ;
-            ret += (FPos*3.0*cc / 8.0);
+      double ret(0.0);
+      ret = (FNeg*3.0*aa / 8.0) ;
+      ret += (F0*3.0*bb / 4.0 ) ;
+      ret += (FPos*3.0*cc / 8.0);
             
-            return norm_factor*ret;
-        };
-        
-        static TF1* GetFunction(string name){
-            dGammaFunctin* functor = new dGammaFunctin();
-            
-            TF1* ret = new TF1(name.c_str() , functor , -1.0 , 1.0 , 3);
-            
-            ret->SetParName(0 , "FNeg" );
-            ret->SetParName(1 , "F0" );
-            ret->SetParName(2 , "NormaFactor" );
-            
-            ret->SetParLimits(0 , 0.0 , 1.0);
-            ret->SetParLimits(1 , 0.0 , 1.0);
-            
-            ret->SetParameters( 0.4 , 0.6 , 1.0 );
-            
-            return ret;
-        };
-        
-        static TH1* Fit(TH1* hToFit , int nbins = -1,bool normalize = true, bool fixNormFactor = false){
-            string newName(hToFit->GetName());
-            newName += "_Fitted";
-            TH1* hret;
-            
-            if(nbins > 0){
-                int ngroups = (hToFit->GetNbinsX()/nbins);
-                newName += "_Nins" + boost::lexical_cast<string>(nbins);
-                
-                newName += ( fixNormFactor ? "_FixNormFactor" :  "");                    
-                
-                hret = hToFit->Rebin(ngroups , newName.c_str());
-            }else
-                hret = (TH1*)hToFit->Clone( newName.c_str() );
-            
-            if(normalize)
-                hret->Scale( 1./hToFit->Integral() );
-                            
-            TF1* f = GetFunction( string(hToFit->GetName()) );
-                
-            if(fixNormFactor)
-                f->FixParameter(2 , 1.0);
-            
-            TFitResultPtr fitres(hret->Fit(f , "BQRS"));
-            cout << hret->GetName() ;
-            fitres->Print("ALL");
-            
-            double f_int=f->Integral(-1.0 , 1.0);
-            double h_int = hret->Integral();
-            //hret->Scale( f_int / h_int );
-            //cout << h_int << "  " << hret->Integral() << "   " << f_int << endl;
-            //f->Print("ALL");
-            
-            return hret;
-        }
+      return norm_factor*ret;
     };
-
-    TopAnalysis::DiLeptonTTBarEventProperties::EventType EventTypeReader;
-    std::vector<double> AcceptedEventTypes;
-
-    string solverName;
-    TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions solverSolution;
-
-    bool FillGen;
-    bool FillRec;
-    bool FillTree;
-    vector<TopAnalysis::TTBarDileptonicEvent::TopDecays> GenDecayModes;
-    
-    TH1* hCosThetaPosLepton;
-    TH1* hCosThetaNegLepton;
-
-    TH1* hCosThetaPosLepton_Gen;
-    TH1* hCosThetaNegLepton_Gen;
-    TH2* hCosThetaPtLep_Gen;
-
-    TH1* hCosTheta1stLepton;
-    TH1* hCosTheta2ndLepton;
-
-    TH1* hCosThetaAllLeptonsUnWeighted;
         
-    TH2* hCosThetaAllLeptonsVsLeptonIsolation;
-    TH2* hCosThetaAllLeptonsVsLeptonJetDR;
-    TH2* hCosThetaAllLeptonsVsLeptonPt;
-    TH2* hCosThetaAllGenVsREC;
-    TH3* hCosThetaAllGenVsRECVsDR;
-    std::map<int , TTree*> allTrees;
-    double genCosThetaValueHolder;
-    double recCosThetaValueHolder;
-    double eventWeight;
-    bool   isElectron;
-    double LeptonPt;
-    double LeptonEta;
-    int nPU;
-    int nPV;
-    int eventType;
-    TFile* fileTree ;
+    static TF1* GetFunction(string name){
+      dGammaFunctin* functor = new dGammaFunctin();
+            
+      TF1* ret = new TF1(name.c_str() , functor , -1.0 , 1.0 , 3);
+            
+      ret->SetParName(0 , "FNeg" );
+      ret->SetParName(1 , "F0" );
+      ret->SetParName(2 , "NormaFactor" );
+            
+      ret->SetParLimits(0 , 0.0 , 1.0);
+      ret->SetParLimits(1 , 0.0 , 1.0);
+            
+      ret->SetParameters( 0.4 , 0.6 , 1.0 );
+            
+      return ret;
+    };
+        
+    static TH1* Fit(TH1* hToFit , int nbins = -1,bool normalize = true, bool fixNormFactor = false){
+      string newName(hToFit->GetName());
+      newName += "_Fitted";
+      TH1* hret;
+            
+      if(nbins > 0){
+	int ngroups = (hToFit->GetNbinsX()/nbins);
+	newName += "_Nins" + boost::lexical_cast<string>(nbins);
+                
+	newName += ( fixNormFactor ? "_FixNormFactor" :  "");                    
+                
+	hret = hToFit->Rebin(ngroups , newName.c_str());
+      }else
+	hret = (TH1*)hToFit->Clone( newName.c_str() );
+            
+      if(normalize)
+	hret->Scale( 1./hToFit->Integral() );
+                            
+      TF1* f = GetFunction( string(hToFit->GetName()) );
+                
+      if(fixNormFactor)
+	f->FixParameter(2 , 1.0);
+            
+      TFitResultPtr fitres(hret->Fit(f , "BQRS"));
+      cout << hret->GetName() ;
+      fitres->Print("ALL");
+            
+      double f_int=f->Integral(-1.0 , 1.0);
+      double h_int = hret->Integral();
+      //hret->Scale( f_int / h_int );
+      //cout << h_int << "  " << hret->Integral() << "   " << f_int << endl;
+      //f->Print("ALL");
+            
+      return hret;
+    }
+  };
+
+  TopAnalysis::DiLeptonTTBarEventProperties::EventType EventTypeReader;
+  std::vector<double> AcceptedEventTypes;
+
+  string solverName;
+  TopAnalysis::TTBarDileptonicEvent::SolverResults::solutions solverSolution;
+
+  bool FillGen;
+  bool FillRec;
+  bool FillTree;
+  vector<TopAnalysis::TTBarDileptonicEvent::TopDecays> GenDecayModes;
     
-    CosThetaAnalysis(const edm::ParameterSet& ps);
-    virtual ~CosThetaAnalysis();
+  TH1* hCosThetaPosLepton;
+  TH1* hCosThetaNegLepton;
+  TH2* hCosThetaNeg_vs_Pos;
+  TH2* hCosThetaNeg_vs_Pos_TTBar;
 
-    bool Run(TopAnalysis::TTBarDileptonicEvent* ev);
+  TH1* hCosThetaPosLepton_Gen;
+  TH1* hCosThetaNegLepton_Gen;
+  TH2* hCosThetaNeg_vs_Pos_Gen;
+  TH2* hCosThetaTopSpinNeg_vs_Pos_Gen;
 
-    virtual void End();
+  TH1* hCosThetaPosLepton_Gen_OLDDEF;
+  TH1* hCosThetaNegLepton_Gen_OLDDEF;
+    
+  TH2* hCosThetaPtLep_Gen;
+
+  TH1* hCosTheta1stLepton;
+  TH1* hCosTheta2ndLepton;
+
+  TH1* hWMass_Gen;
+  TH1* hTopMass_Gen;
+    
+  TH1* hCosThetaAllLeptonsUnWeighted;
+
+  TH2* hCosThetaAllLeptonsVsTopEta_Gen;
+  TH2* hCosThetaAllLeptonsVsTopEta;
+  TH2* hCosThetaAllLeptonsVsLeptonIsolation;
+  TH2* hCosThetaAllLeptonsVsLeptonJetDR;
+  TH2* hCosThetaAllLeptonsVsLeptonPt;
+  TH2* hCosThetaAllGenVsREC;
+  TH2* hCosTheta1VS2Gen;
+  TH2* hDiffCosThetaVSMW;
+  TH2* hDiffCosThetaVSPW;
+  TH2* hDiffCosThetaVSPTop;
+  TH2* hDiffCosThetaVSCosAngleTopW;
+  TH2* hDiffCosThetaVSbEnergy;
+  TH2* hCosAngleTopWVSbEnergy;
+  TH1* hCosAngleTopW;
+  TH3* hCosThetaAllGenVsRECVsDR;
+
+  std::map<int , TTree*> allTrees;
+    
+  float  PDFScalePDF;
+  float  PDFx1;
+  float  PDFx2;
+  float  PDFxPDF1;
+  float  PDFxPDF2;
+  int PDFID1;
+  int PDFID2;
+
+  double genTopCosThetaValueHolder;
+  double genAntiTopCosThetaValueHolder;
+    
+  double genCosThetaValueHolder;
+  double recCosThetaValueHolder;
+  double eventWeight;
+  bool   isElectron;
+  bool   isFirstLepton;
+  double LeptonPt;
+  double LeptonEta;
+  int nPU;
+  int nPV;
+  int eventType;
+  int GenEventType;
+  TFile* fileTree ;
+    
+  CosThetaAnalysis(const edm::ParameterSet& ps);
+  virtual ~CosThetaAnalysis();
+
+  bool Run(TopAnalysis::TTBarDileptonicEvent* ev);
+
+  virtual void End();
 private:
 
 };

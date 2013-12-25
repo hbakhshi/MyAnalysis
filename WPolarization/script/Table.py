@@ -1,3 +1,44 @@
+from uncertainties import ufloat, Variable, AffineScalarFunc
+from math import sqrt
+
+class uVariable(Variable):
+    def __repr__(self):
+        return str(self)
+    def __str__(self):
+        (nominal_value, std_dev) = (self._nominal_value, self.std_dev())
+
+        # String representation:
+
+        # Not putting spaces around "+/-" helps with arrays of
+        # Variable, as each value with an uncertainty is a
+        # block of signs (otherwise, the standard deviation can be
+        # mistaken for another element of the array).
+
+        return ("%s\pm%s" % (str(nominal_value), str(std_dev))
+                if std_dev
+                else str(nominal_value))
+
+def uround( a , i ):
+    if isinstance( a , (Variable, AffineScalarFunc) ):        
+        ret = uVariable( round(a.nominal_value , i) , round(a.std_dev() , i) )
+        return ret
+    else:
+        return round(a , i)
+
+def uabs( a  ):
+    if isinstance( a , (Variable, AffineScalarFunc) ):        
+        ret = uVariable( abs(a.nominal_value) , a.std_dev() )
+        return ret
+    else:
+        return abs(a)
+
+def usqrt(a):
+    if isinstance( a , (Variable, AffineScalarFunc) ):        
+        ret = uVariable( sqrt(a.nominal_value) , a.std_dev()/(2*sqrt(a.nominal_value)) )
+        return ret
+    else:
+        return sqrt(a)
+
 class RowObject(dict):
     """ allows access to dict via attributes as keys """
 
@@ -51,17 +92,17 @@ class Table(object):
         """ quite stupid, just for demonstration purposes """
         txt = ''
         if self.PrintHeader:
-            txt = "  |" + "|".join(sorted(self.rows[0].keys())).expandtabs()
+            txt = "  |" + "|".join(sorted(self.rows[0].keys())).expandtabs() + "|"
             txt += "\n"
         txt += "|-"
         for r in self.rows:
             txt += "\n|"
-            txt += "|".join([str(round(r[key] , 2)  if isinstance(r[key], (int, long, float, complex)) else r[key]) for key in sorted(self.rows[0].keys())])
+            txt += "|".join([str(uround(r[key] , 2)  if isinstance(r[key], (int, long, float, complex , Variable,AffineScalarFunc )) else r[key]) for key in sorted(self.rows[0].keys())]) + "|"
         txt += "\n|-"
         if self.PrintSum:
             txt += "\n"
             sumRow = self.GetSumRow()
-            txt += "| |" + "|".join( [str(round(sumRow[key] , 2)  if isinstance(sumRow[key], (int, long, float, complex)) else sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] )
+            txt += "| |" + "|".join( [str(uround(sumRow[key] , 2)  if isinstance(sumRow[key], (int, long, float, complex , Variable ,AffineScalarFunc )) else sumRow[key]) for key in sorted(self.rows[0].keys())[1:]] ) + "|"
 
         return txt
 

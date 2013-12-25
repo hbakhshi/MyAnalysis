@@ -316,6 +316,20 @@ namespace TopAnalysis {
                         this->MaxValue = 10.0;
                         this->NumberOfBins = 200;
                         break;
+                    case 7:
+                        part3 = "gen_pt_value";
+                        part3_title = "p_{t} ";
+                        this->MinValue = 0.0;
+                        this->MaxValue = 200;
+                        this->NumberOfBins = 20;
+                        break;
+                    case 8:
+                        part3 = "gen_eta_value";
+                        part3_title = "#eta ";
+                        this->MinValue = -10.0;
+                        this->MaxValue = 10.0;
+                        this->NumberOfBins = 20;
+                        break;
                 }
 
                 this->PropertyName = part1 + part2 + part3;
@@ -376,15 +390,38 @@ namespace TopAnalysis {
                     case 6:
                         ret = (gen.Vect() - rec.Vect()).Mag() / gen.Vect().Mag();
                         break;
+                    case 7:
+                        ret = gen.Pt() ;
+                        break;
+                    case 8:
+                        ret = gen.Eta() ;
+                        break;
                 }
                 return ret;
             }
         };
+
+      class LeptonsDPhi : public ObjectProperty<TopAnalysis::TTBarDileptonicEvent> {
+      public:
+	LeptonsDPhi() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("DPhi", "#Delta#Phi", -3.15 , 3.15 , 126 , "TTBarDileptonicEvent", 100778473) {
+	}
+
+	virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
+	  math::XYZTLorentzVector rec =t->FirstElectron->get4Vector(0);
+	  math::XYZTLorentzVector rec2=t->SecondElectron->get4Vector(0);
+
+	  double ret = -100000.0;
+	  ret = ROOT::Math::VectorUtil::DeltaPhi<math::XYZTLorentzVector, math::XYZTLorentzVector > (rec2, rec);
+	  
+	  return ret;
+	}
+      };
         
-        //TopAntiTop==1 means top 2 antitop
+        //TopAntiTop==1 means top 2 antitop 3 difference between them
         //obj : 1 Top
         //      2 W
         //      3 neutrino
+        //      4 lepton
         //what: 1 pt
         //      2 eta
         //      3 phi
@@ -393,7 +430,7 @@ namespace TopAnalysis {
         public:
 
             TopRecRestuls() : ObjectProperty<TopAnalysis::TTBarDileptonicEvent>("", "", 0, 6.0, 120, "TTBarDileptonicEvent", 100) {
-                string part1 = TopAntiTop == 1 ? "Top" : "Antitop";
+	      string part1 = TopAntiTop == 1 ? "Top" : ( TopAntiTop == 2 ? "Antitop" : ("TTBar") );
                 string part2 = "";
                 string part2_title = "";
                 switch (obj) {
@@ -407,6 +444,10 @@ namespace TopAnalysis {
                         part2 = "neutrinos";
                         part2_title = "#nu";
                         break;
+                    case 4:
+                        part2 = "leptons";
+                        part2_title = "leptons";
+                        break;
                 }
                 string part3 = "";
                 string part3_title = "";
@@ -415,38 +456,50 @@ namespace TopAnalysis {
                         part3 = "pt";
                         part3_title = "p_{t}";
                         this->MinValue = 0.0;
-                        this->MaxValue = 200.0;
-                        this->NumberOfBins = 200;
+                        this->MaxValue = 500.0;
+                        this->NumberOfBins = 50;
                         break;
                     case 2:
                         part3 = "Eta";
                         part3_title = "#eta";
-                        this->MinValue = -3.0;
-                        this->MaxValue = 3.0;
-                        this->NumberOfBins = 60;
+                        this->MinValue = -5.0;
+                        this->MaxValue = 5.0;
+                        this->NumberOfBins = 50;
+                        break;
+                    case 3:
+                        part3 = "Phi";
+                        part3_title = "#phi";
+                        this->MinValue = ROOT::Math::Pi();
+                        this->MaxValue = ROOT::Math::Pi();
+                        this->NumberOfBins = 126;
                         break;
                 }
 
-                this->PropertyName = part1 + part2 + part3;
-                this->PropertyTitle = part3_title + " of " + part2_title + "'s in " + part1 + " reconstruction";
+                this->PropertyName =  (TopAntiTop == 3 ? "dleta" : "") + part1 + part2 + part3;
+                this->PropertyTitle = (TopAntiTop == 3 ? "#Delta" : "") + part3_title + " of " + part2_title + "'s in " + part1 + " reconstruction";
 
                 this->PropertyID = 100 * TopAntiTop + 10 * obj + what;
             };
 
             virtual double ReadValue(const TopAnalysis::TTBarDileptonicEvent* t) const {
                 TLorentzVector rec;
+                TLorentzVector rec2;
 
                 const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t_rec = (TopAntiTop == 1 ? (t->Top_Rec) : (t->TopBar_Rec));
+                const TopAnalysis::TTBarDileptonicEvent::TopDecayChain* t2_rec = (TopAntiTop == 1 ? (t->TopBar_Rec) : (t->Top_Rec));
 
                 switch (obj) {
                     case 1:
                         rec = t_rec->getTop();
+                        rec2 = t2_rec->getTop();
                         break;
                     case 2:
                         rec = t_rec->getW();
+                        rec2 = t2_rec->getW();
                         break;
                     case 3:
                         rec = t_rec->W.neutrino;
+                        rec2 = t2_rec->W.neutrino;
                         break;
                 }
 
@@ -454,10 +507,19 @@ namespace TopAnalysis {
                 switch (what) {
                     case 1:
                         ret = rec.Pt();
+			if(TopAntiTop == 3)
+			  ret -= rec2.Pt() ;
                         break;
                     case 2:
                         ret = rec.Eta();
+			if(TopAntiTop == 3)
+			  ret -= rec2.Pt();
                         break;
+		case 3:
+		  ret = rec.Phi();
+		  if(TopAntiTop == 3)
+		    ret = ROOT::Math::VectorUtil::DeltaPhi<TLorentzVector, TLorentzVector > (rec2, rec);
+		  break;
                 }
                 return ret;
             }

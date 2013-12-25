@@ -406,9 +406,18 @@ void RunFitValidation(int StartPEX, int LPEX, int StartPEXPull, int LPEXPull, st
     outFile->Close();
 }
 
-void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname = "") {
-    string treeFileName = "trees_" + ttbarname + "_BSFDN.root";
-    SamplesInfo mySampleInfo(AllEventsHistogramDirectory , ttbarname);
+void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname, int printAll, int zwqscale, int sampleToRewieght, int other_syst) { //whattodo <100:print_everything, 101:print_the_results_from_tree
+    string treeFileName = "tree_*_SelectedTTBars_" + ttbarname + ".root";
+
+    int PdfSetID = 0;
+    if( other_syst > 99 && other_syst < 141 )
+      PdfSetID = other_syst - 100;
+    
+    double spin_correlation = 0;
+    if( other_syst > 999 && other_syst < 2001 )
+      spin_correlation = (double(other_syst) - 1000.0)/1000.0;
+
+    SamplesInfo mySampleInfo(AllEventsHistogramDirectory, ttbarname, zwqscale, sampleToRewieght ,other_syst );
     SamplesInfo::ttbarSampleInfo ttbarInfo = mySampleInfo.GetTTBarInfo(ttbarname);
     double wttee, wttmm, wttem;
     double Lumi_ee = mySampleInfo.Channels["EE"];
@@ -421,14 +430,14 @@ void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname
     TH1* bkg = 0;
     TH1* data = 0;
     for (; sampleItr != mySampleInfo.files_xsec.end(); sampleItr++) {
-
-        TH1* hist_ee = mySampleInfo.GetCosThetaPlot("EE", sampleItr->first, 10);
+        //cout << sampleItr->first << endl;
+        TH1* hist_ee = mySampleInfo.GetCosThetaPlotFromTrees("EE", sampleItr->first);
         hist_ee->Sumw2();
 
-        TH1* hist_mm = mySampleInfo.GetCosThetaPlot("MM", sampleItr->first, 10);
+        TH1* hist_mm = mySampleInfo.GetCosThetaPlotFromTrees("MM", sampleItr->first);
         hist_mm->Sumw2();
 
-        TH1* hist_em = mySampleInfo.GetCosThetaPlot("EM", sampleItr->first, 10);
+        TH1* hist_em = mySampleInfo.GetCosThetaPlotFromTrees("EM", sampleItr->first);
         hist_em->Sumw2();
 
         hist_ee->Scale(float(Lumi_ee * sampleItr->second) / float(mySampleInfo.ReadN0(sampleItr->first, "EE")));
@@ -472,9 +481,9 @@ void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname
             TH2* hist_em2d = mySampleInfo.GetCosTheta2DPlot("EM", 10);
             hist_em2d->Sumw2();
 
-            wttee = ttbarInfo.WEE;
-            wttmm = ttbarInfo.WMM;
-            wttem = ttbarInfo.WEM;;
+            wttee = ttbarInfo.WEE * (Channel == "Combined" || Channel == "EE" ? 1.0 : 0.0);
+            wttmm = ttbarInfo.WMM * (Channel == "Combined" || Channel == "MM" ? 1.0 : 0.0);
+            wttem = ttbarInfo.WEM * (Channel == "Combined" || Channel == "EM" ? 1.0 : 0.0);
 
             hist_ee2d->Scale(wttee);
             hist_mm2d->Scale(wttmm);
@@ -529,34 +538,45 @@ void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname
 
 
     std::vector<TH2*> allHistos;
-    allHistos.push_back(signalMC);    
-    
+    allHistos.push_back(signalMC);
+
     std::pair<TF3, LikelihoodFunction*> LLinPEXforFNegValueArray = LikelihoodFunction::getLLFunction(
             "Fitter", bkg, data, signalMC, true);
 
 
     double x[3] = {-1., -1., -1.};
     double xerr[3] = {-1., -1., -1.};
+
+    int fitres;
+    double fneg;
+    double f0;
+    double fpos;
+
+    double errfneg;
+    double errf0;
+    double errfpos;
+
     double correlation = 0.0;
+    if (printAll > 10) {
+        int fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+        double fneg = x[1];
+        double f0 = x[0];
+        double fpos = 1.0 - x[1] - x[0];
 
-    int fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
-    double fneg = x[1];
-    double f0 = x[0];
-    double fpos = 1.0 - x[1] - x[0];
+        double errfneg = xerr[1];
+        double errf0 = xerr[0];
+        double errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
 
-    double errfneg = xerr[1];
-    double errf0 = xerr[0];
-    double errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
 
-    cout << "| Old Results";
-    cout << "|" << fneg << "+-" << errfneg;
-    cout << "|" << f0 << "+-" << errf0;
-    cout << "|" << correlation;
-    cout << "|" << fpos << "+-" << errfpos;
-    cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
-
+        cout << "| Old Results";
+        cout << "|" << fneg << "+-" << errfneg;
+        cout << "|" << f0 << "+-" << errf0;
+        cout << "|" << correlation;
+        cout << "|" << fpos << "+-" << errfpos;
+        cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+    }
     if (treeFileName != "") {
-        LLinPEXforFNegValueArray.second->SetTreeFile(treeFileName , wttee , wttem , wttmm);
+      LLinPEXforFNegValueArray.second->SetTreeFile(treeFileName, wttee, wttem, wttmm , &(mySampleInfo.PUWeights) , other_syst==2 , PdfSetID, spin_correlation , abs(other_syst)==3 ? other_syst : 0  );
 
         fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
 
@@ -573,39 +593,78 @@ void RunFit(string Channel, string AllEventsHistogramDirectory, string ttbarname
         cout << "|" << f0 << "+-" << errf0;
         cout << "|" << correlation;
         cout << "|" << fpos << "+-" << errfpos;
-        cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+        cout << "|" << x[2] << "+-" << xerr[2] << "|" ;
+        
+        
+        if(printAll == 1){
+            TH1D htmp("htmp", "htmp" , 10 , -1 , 1);
 
-        LLinPEXforFNegValueArray.second->useTree = false;
+            TH1D* htmp_signla = signalMC->ProjectionX("htmp_signla");            
+            
+            htmp.Add(bkg, htmp_signla);
+            
+            for(int i=1; i<11 ; i++)
+                cout << htmp.GetBinContent(i) << "|";
 
-        int nBins[] = {10, 20, 50, 80, 100, 200, 400, 500, 1000, 2000, 5000, 10000};
+	    TFile* fOut = TFile::Open("fit_res.root", "RECREATE");
+	    TH1* hData = new TH1D("hData", "Data" , 10 , -1 , 1);
+	    TH1* hTTBar = new TH1D("hRWSignal", "Reweighted signal" , 10 , -1 , 1);
+	    TH1* hBKG = new TH1D("hBKG", "All Backgrounds" , 10 , -1 , 1);
+	    TH1* hError = new TH1D("hErr" , "All Errors" , 10 , -1 , 1);
 
-        for (int i = 0; i < 12; i++) {
-            allHistos.push_back( LLinPEXforFNegValueArray.second->setnsignal2DFromTreeBins(nBins[i]) );
+	    for(int i=1 ; i < 11 ; i++){
+	      vector<double> vals = LLinPEXforFNegValueArray.second->getNdataNmc( i , f0 , fneg , x[2] );
+	      hData->SetBinContent( i , vals[0] );
+	      hData->SetBinError( i , sqrt(vals[0]) );
+	      hBKG->SetBinContent( i , vals[1] - vals[2] );
+	      hTTBar->SetBinContent( i , vals[2] );
 
-            fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+	      vector<double> vals2 = LLinPEXforFNegValueArray.second->getNdataNmc( i , f0+errf0 , fneg+errfneg , x[2] );
+	      vector<double> vals3 = LLinPEXforFNegValueArray.second->getNdataNmc( i , f0-errf0 , fneg-errfneg , x[2] );
+	      double err = std::max( fabs(vals2[2]-vals[2]) , fabs(vals3[2]-vals[2]) ) ;
+	      hError->SetBinContent( i , err );
+	    }
+	    fOut->Write();
+        }
+        
+        cout << endl;
+        
+        if (printAll > 10) {
+            LLinPEXforFNegValueArray.second->useTree = false;
 
-            fneg = x[1];
-            f0 = x[0];
-            fpos = 1.0 - x[1] - x[0];
+            int nBins[] = {10, 20, 50, 80, 100, 200, 400, 500, 1000, 2000, 5000, 10000};
 
-            errfneg = xerr[1];
-            errf0 = xerr[0];
-            errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
+            for (int i = 0; i < 12; i++) {
+                allHistos.push_back(LLinPEXforFNegValueArray.second->setnsignal2DFromTreeBins(nBins[i]));
 
-            cout << "|" << nBins[i];
-            cout << "|" << fneg << "+-" << errfneg;
-            cout << "|" << f0 << "+-" << errf0;
-            cout << "|" << correlation;
-            cout << "|" << fpos << "+-" << errfpos;
-            cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+                fitres = GetMinimum(LLinPEXforFNegValueArray.first, x, xerr, correlation);
+
+                fneg = x[1];
+                f0 = x[0];
+                fpos = 1.0 - x[1] - x[0];
+
+                errfneg = xerr[1];
+                errf0 = xerr[0];
+                errfpos = sqrt(errf0 * errf0 + errfneg * errfneg + (2 * correlation));
+
+                cout << "|" << nBins[i];
+                cout << "|" << fneg << "+-" << errfneg;
+                cout << "|" << f0 << "+-" << errf0;
+                cout << "|" << correlation;
+                cout << "|" << fpos << "+-" << errfpos;
+                cout << "|" << x[2] << "+-" << xerr[2] << "|" << endl;
+            }
         }
     }
-    
-    TFile f("all2dhistos.root" , "RECREATE");
-    for(vector<TH2*>::const_iterator histo_itr = allHistos.begin() ; histo_itr != allHistos.end() ; histo_itr++)
-        (*histo_itr)->Write();
-    
-    f.Close();
+
+    if (printAll == 100) {
+
+        TFile f("all2dhistos.root", "RECREATE");
+        for (vector<TH2*>::const_iterator histo_itr = allHistos.begin(); histo_itr != allHistos.end(); histo_itr++)
+            (*histo_itr)->Write();
+
+        f.Close();
+    }
 }
 #endif	/* VALIDATOREXECUTER_H */
 

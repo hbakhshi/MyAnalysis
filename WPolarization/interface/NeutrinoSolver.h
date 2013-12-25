@@ -36,6 +36,8 @@ public:
     double top_mass, top_width, w_mass, w_width;
     bool FixMasses;
 
+  bool GenStudyOnly;
+
 
     TH1* hNSolutions;
     TH1* hNLoopsToSolve;

@@ -1292,7 +1292,7 @@ void BaseEventSelector<T>::AddSelectionPlotsJet() {
     ObjectPropertyFromFltArray* JetPt = new ObjectPropertyFromFltArray(this->TheTree->JPt, &(this->TheTree->NJets), jetPtInf);
     this->JetSelectionHistos.AddHisto1ToAll(JetPt);
 
-    ObjectPropertyFromFltArray::ObjectInfo jetEtaInf("Eta", "#Eta", -5.0, 5.0, 100, "Jet", 1);
+    ObjectPropertyFromFltArray::ObjectInfo jetEtaInf("Eta", "#eta", -5.0, 5.0, 100, "Jet", 1);
     ObjectPropertyFromFltArray* JetEta = new ObjectPropertyFromFltArray(this->TheTree->JEta, &(this->TheTree->NJets), jetEtaInf);
     this->JetSelectionHistos.AddHisto1ToAll(JetEta);
 

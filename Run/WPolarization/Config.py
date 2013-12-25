@@ -28,6 +28,11 @@ CPUN = 1
 if os.environ.has_key( 'CPUNumber' ):
     CPUN = int(os.environ['CPUNumber'])
 
+TOPMass = 172.9
+if os.environ.has_key( 'TOPMass' ):
+    TOPMass = float(os.environ['TOPMass'])
+
+
 __CopyTreeFileName =  STARTUPDIR + "/" + COPYTREEFILENAME
 
 ApplyJES = 0
@@ -219,6 +224,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_ee"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 0.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -228,6 +234,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_mm"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 1.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -237,6 +244,7 @@ process.WPolarization = cms.PSet(
             Name=cms.string("neutrino_solver_em"),
             Type=cms.string("neutrino_solver"),
             EventTypes=cms.vdouble( 2.25 , 3.25 ),
+            TopMass = cms.untracked.double( TOPMass ),
             bJetAssigner = cms.PSet (
                 method = cms.string("ranodm_firstbs"),
                 Name=cms.string("random_bAssigner")
@@ -271,6 +279,24 @@ process.WPolarization = cms.PSet(
             FillGen=cms.bool(False),
             GenDecayMode=cms.int32(1), #is hard-coded as em==me
             FillRec=cms.bool(True)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_ee"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 0.25 ),
+            ApplyWeights=cms.bool(False)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_mm"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 1.25 ),
+            ApplyWeights=cms.bool(False)
+            ),
+        cms.PSet(
+            Name=cms.string("dphi_em"),
+            Type=cms.string("DPhiAnalyzer"),
+            EventTypes=cms.vdouble( 2.25 , 3.25 ),
+            ApplyWeights=cms.bool(False)
             )
     )
 )

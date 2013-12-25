@@ -14,9 +14,10 @@ random_w2(random_seed.Integer(150000000)),
 random_t1(random_seed.Integer(150000000)),
 random_t2(random_seed.Integer(150000000)),
 bjetAssigner(ps.getParameterSet("bJetAssigner")),
-top_mass(172.9), top_width(1.5), w_mass(80.398), w_width(2.08),
+top_mass(ps.getUntrackedParameter<double>("TopMass",172.9)), top_width(1.5), w_mass(80.398), w_width(2.08),
 FixMasses(ps.getUntrackedParameter<bool>("FixMasses", false)),
 SwapBJetsIfNoSolution(ps.getUntrackedParameter<bool>("SwapBJetsIfNoSolution", true)),
+GenStudyOnly(ps.getUntrackedParameter<bool>("GenStudyOnly", false)),
 MaxLoopNumberToSolve(ps.getUntrackedParameter<int>("MaxLoopNumberToSolve", 1000)),
 AcceptedEventTypes(ps.getParameter<vector<double> >("EventTypes")),
 allHistograms("MinEffectiveMassResults") {
@@ -60,7 +61,12 @@ NeutrinoSolver::~NeutrinoSolver() {
 }
 
 bool NeutrinoSolver::Run(TopAnalysis::TTBarDileptonicEvent* ev) {
-    if (!bjetAssigner.Run(ev)) {
+
+  if(GenStudyOnly){
+    return true;
+  }
+    
+  if (!bjetAssigner.Run(ev)) {
         this->hNLoopsToSolve->Fill(-1);
         this->hNSolutions->Fill(-1);
         //cout << "it is running" << endl;

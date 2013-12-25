@@ -52,7 +52,7 @@ WPolarization : $(TARGETDIR)/WPolarization $(TARGETDIR)/FitValidation
 $(TARGETDIR)/FitValidation : $(FitValidation_OBJS:%=$(PWD)/obj/$(MACHINE)/%)
 	@echo $@ :
 	#@echo $^
-	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS)
+	$(LINK.cc) $(CCFLAGS) $(CPPFLAGS) $^ -o $@ $(LDLIBS) -L/usr/lib/x86_64-linux-gnu -lLHAPDF
 # Enable dependency checking
 .KEEP_STATE:
 .KEEP_STATE_FILE:.make.state.GNU-i386-Linux
