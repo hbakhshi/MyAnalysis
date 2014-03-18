@@ -1,8 +1,135 @@
+set group_subprocesses Auto
+set ignore_six_quark_processes False
+set loop_optimized_output True
+set gauge unitary
+set complex_mass_scheme False
+
 import model SMScalars
 
+define p = g u c d s u~ c~ d~ s~
+define j = g u c d s u~ c~ d~ s~
+define l+ = e+ mu+
+define l- = e- mu-
+define vl = ve vm vt
+define vl~ = ve~ vm~ vt~
+
 generate p p > t~ t H , (t~ > W- b~ , W- > l- vl~) , (t > W+ b , W+ > l+ vl) , H > s1 s1
-output TTHiggsInvis
-launch -m
+output TTHiggsInvis -f
+
+#shell rm -f TTHiggsInvis/Cards/delphes_card.dat
+shell sed -i '/set AdjacencyCut 2.0/c\set AdjacencyCut 2' TTHiggsInvis/Cards/delphes_card_CMS.dat
+shell cp TTHiggsInvis/Cards/delphes_card_CMS.dat TTHiggsInvis/Cards/delphes_card_default.dat
+
+launch -m --name=TTHiggsInvis_H125_S60 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S60 
+set nevents 100000
+set mh 125
+set msk 60
+
+launch -m --name=TTHiggsInvis_H125_S55 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S55 
+set nevents 100000
+set mh 125
+set msk 55
+
+launch -m --name=TTHiggsInvis_H125_S50 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S50 
+set nevents 100000
+set mh 125
+set msk 50
+
+launch -m --name=TTHiggsInvis_H125_S45 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S45 
+set nevents 100000
+set mh 125
+set msk 45
+
+launch -m --name=TTHiggsInvis_H125_S40 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S40 
+set nevents 100000
 set mh 125
 set msk 40
+
+launch -m --name=TTHiggsInvis_H125_S35 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S35 
+set nevents 100000
+set mh 125
+set msk 35
+
+launch -m --name=TTHiggsInvis_H125_S30 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S30 
+set nevents 100000
+set mh 125
+set msk 30
+
+launch -m --name=TTHiggsInvis_H125_S25 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S25 
+set nevents 100000
+set mh 125
+set msk 25
+
+launch -m --name=TTHiggsInvis_H125_S20 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S20 
+set nevents 100000
+set mh 125
+set msk 20
+
+launch -m --name=TTHiggsInvis_H125_S15 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H125_S15 
+set nevents 100000
+set mh 125
+set msk 15
+
+launch -m --name=TTHiggsInvis_H200_S95 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H200_S95 
+set nevents 100000
+set mh 200
+set msk 95
+
+launch -m --name=TTHiggsInvis_H200_S50 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H200_S50 
+set nevents 100000
+set mh 200
+set msk 50
+
+launch -m --name=TTHiggsInvis_H300_S145 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H300_S145 
+set nevents 100000
+set mh 300
+set msk 145
+
+launch -m --name=TTHiggsInvis_H500_S145 -s delphes
+set ebeam1 4000
+set ebeam2 4000
+set run_tag H500_S145 
+set nevents 100000
+set mh 500
+set msk 145
+
 done
