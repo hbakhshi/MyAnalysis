@@ -1,0 +1,8 @@
+import model SMScalars
+
+generate p p > t~ t H , (t~ > W- b~ , W- > l- vl~) , (t > W+ b , W+ > l+ vl) , H > s1 s1
+output TTHiggsInvis
+launch -m
+set mh 125
+set msk 40
+done
