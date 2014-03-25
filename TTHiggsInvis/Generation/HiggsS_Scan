@@ -14,11 +14,11 @@ define vl = ve vm vt
 define vl~ = ve~ vm~ vt~
 
 generate p p > t~ t H , (t~ > W- b~ , W- > l- vl~) , (t > W+ b , W+ > l+ vl) , H > s1 s1
-output TTHiggsInvis -f
+output /home/hbakhshi/work/GEN/TTHiggsInvis/TTHiggsInvis/Samples -f
 
 #shell rm -f TTHiggsInvis/Cards/delphes_card.dat
-shell sed -i '/set AdjacencyCut 2.0/c\set AdjacencyCut 2' TTHiggsInvis/Cards/delphes_card_CMS.dat
-shell cp TTHiggsInvis/Cards/delphes_card_CMS.dat TTHiggsInvis/Cards/delphes_card_default.dat
+shell sed -i '/set AdjacencyCut 2.0/c\set AdjacencyCut 2' /home/hbakhshi/work/GEN/TTHiggsInvis/TTHiggsInvis/Samples/Cards/delphes_card_CMS.dat
+shell cp /home/hbakhshi/work/GEN/TTHiggsInvis/TTHiggsInvis/Samples/Cards/delphes_card_CMS.dat /home/hbakhshi/work/GEN/TTHiggsInvis/TTHiggsInvis/Samples/Cards/delphes_card_default.dat
 
 launch -m --name=TTHiggsInvis_H125_S60 -s delphes
 set ebeam1 4000
